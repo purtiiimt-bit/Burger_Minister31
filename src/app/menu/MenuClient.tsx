@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 type MenuItem = {
   name: string;
@@ -8,6 +9,7 @@ type MenuItem = {
   description: string;
   veg: boolean;
   tag?: string;
+  image: string;
 };
 
 type MenuData = Record<string, MenuItem[]>;
@@ -81,13 +83,14 @@ export default function MenuClient({ menuData }: { menuData: MenuData }) {
                       )}
                     </div>
 
-                    {/* Image placeholder */}
-                    <div className="mb-4 h-36 overflow-hidden rounded-xl bg-surface-variant">
-                      <div className="flex h-full items-center justify-center">
-                        <svg className="h-10 w-10 text-on-surface/15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m18-12.75H3" />
-                        </svg>
-                      </div>
+                    {/* Food Image */}
+                    <div className="relative mb-4 h-36 overflow-hidden rounded-xl">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
                     </div>
 
                     <h3 className="font-[var(--font-heading)] text-lg font-bold">

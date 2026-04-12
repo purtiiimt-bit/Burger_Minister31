@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { images } from "@/lib/images";
 
 const featuredItems = [
   {
@@ -6,18 +8,21 @@ const featuredItems = [
     price: "₹129",
     description: "Our signature loaded burger with special minister sauce",
     tag: "Bestseller",
+    image: images.ministerSpecial,
   },
   {
     name: "Classic Cheese Burger",
     price: "₹69",
     description: "Melted cheese, crispy patty, fresh veggies",
     tag: "Popular",
+    image: images.cheeseBurger,
   },
   {
     name: "Paneer Royale",
     price: "₹89",
     description: "Premium paneer patty with tandoori seasoning",
     tag: "Chef's Pick",
+    image: images.paneerRoyale,
   },
 ];
 
@@ -61,45 +66,63 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative flex min-h-[90vh] items-center overflow-hidden pt-16">
-        <div className="absolute inset-0 bg-gradient-to-br from-surface via-surface-container to-tertiary-container/20" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-secondary-container/20 px-4 py-1.5 text-sm font-medium text-secondary">
-              <span className="h-2 w-2 rounded-full bg-secondary" />
-              100% Pure Vegetarian
+      <section className="relative overflow-hidden pt-16">
+        <Image
+          src={images.heroBg}
+          alt="Delicious burger background"
+          fill
+          className="object-cover opacity-15"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/70" />
+        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            {/* Left — Text */}
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-secondary-container/20 px-4 py-1.5 text-sm font-medium text-secondary">
+                <span className="h-2 w-2 rounded-full bg-secondary" />
+                100% Pure Vegetarian
+              </div>
+              <h1 className="font-[var(--font-heading)] text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
+                The Minister
+                <br />
+                <span className="text-primary">of Taste</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-on-surface/60">
+                Premium vegetarian burgers crafted with love in the heart of Noida.
+                Fresh ingredients, bold flavours, and a commitment to quality in every bite.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="/menu"
+                  className="btn-honeyed inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-semibold text-on-primary transition-all hover:scale-105"
+                >
+                  Order Now
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/menu"
+                  className="inline-flex items-center gap-2 rounded-full border border-outline-variant/30 px-8 py-3.5 text-base font-semibold text-on-surface transition-all hover:border-primary hover:text-primary"
+                >
+                  View Menu
+                </Link>
+              </div>
             </div>
-            <h1 className="font-[var(--font-heading)] text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-              The Minister
-              <br />
-              <span className="text-primary">of Taste</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-on-surface/60">
-              Premium vegetarian burgers crafted with love in the heart of Noida.
-              Fresh ingredients, bold flavours, and a commitment to quality in every bite.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/menu"
-                className="btn-honeyed inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-semibold text-on-primary transition-all hover:scale-105"
-              >
-                Order Now
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-              <Link
-                href="/menu"
-                className="inline-flex items-center gap-2 rounded-full border border-outline-variant/30 px-8 py-3.5 text-base font-semibold text-on-surface transition-all hover:border-primary hover:text-primary"
-              >
-                View Menu
-              </Link>
-            </div>
-          </div>
 
-          {/* Floating decorative element */}
-          <div className="absolute -right-10 top-1/2 hidden -translate-y-1/2 lg:block">
-            <div className="animate-float h-80 w-80 rounded-full bg-gradient-to-br from-primary/20 to-tertiary-container/30 blur-3xl" />
+            {/* Right — Burger Image */}
+            <div className="relative mx-auto hidden lg:block">
+              <div className="absolute -inset-8 rounded-full bg-primary/10 blur-3xl" />
+              <div className="relative h-[420px] w-[420px] overflow-hidden rounded-3xl border border-outline-variant/10">
+                <Image
+                  src={images.ministerSpecial}
+                  alt="Minister Special Burger"
+                  fill
+                  className="animate-float object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -124,13 +147,13 @@ export default function HomePage() {
                   i === 1 ? "sm:-translate-y-4" : ""
                 }`}
               >
-                {/* Image placeholder */}
-                <div className="relative mb-4 h-48 overflow-hidden rounded-xl bg-surface-variant">
-                  <div className="flex h-full items-center justify-center">
-                    <svg className="h-16 w-16 text-on-surface/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m18-12.75H3" />
-                    </svg>
-                  </div>
+                <div className="relative mb-4 h-48 overflow-hidden rounded-xl">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
                   <span className="absolute left-3 top-3 rounded-full bg-tertiary-container px-3 py-1 text-xs font-semibold text-tertiary">
                     {item.tag}
                   </span>
@@ -196,8 +219,15 @@ export default function HomePage() {
       </section>
 
       {/* Combo Deals Banner */}
-      <section className="mx-4 overflow-hidden rounded-3xl bg-gradient-to-r from-surface-container via-tertiary-container to-surface-container sm:mx-6 lg:mx-auto lg:max-w-7xl">
-        <div className="px-8 py-14 text-center sm:px-16">
+      <section className="relative mx-4 overflow-hidden rounded-3xl sm:mx-6 lg:mx-auto lg:max-w-7xl">
+        <Image
+          src={images.familyFeast}
+          alt="Combo deals"
+          fill
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface-container/90 via-tertiary-container/80 to-surface-container/90" />
+        <div className="relative px-8 py-14 text-center sm:px-16">
           <h2 className="font-[var(--font-heading)] text-3xl font-bold sm:text-4xl">
             Minister&apos;s Combo Deals
           </h2>
@@ -258,16 +288,18 @@ export default function HomePage() {
                   Get Directions
                 </Link>
               </div>
-              {/* Map placeholder */}
-              <div className="h-64 overflow-hidden rounded-xl bg-surface-variant lg:h-80">
-                <div className="flex h-full items-center justify-center text-on-surface/20">
-                  <div className="text-center">
-                    <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
-                    </svg>
-                    <p className="mt-2 text-sm">Sector 58, Noida</p>
-                  </div>
-                </div>
+              {/* Map embed */}
+              <div className="h-64 overflow-hidden rounded-xl lg:h-80">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.7!2d77.36!3d28.61!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sSector%2058%2C%20Noida!5e0!3m2!1sen!2sin!4v1"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: "invert(90%) hue-rotate(180deg)" }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Burger Minister Location"
+                />
               </div>
             </div>
           </div>

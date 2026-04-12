@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { images } from "@/lib/images";
 import type { Metadata } from "next";
 import CateringForm from "./CateringForm";
 
@@ -12,31 +14,19 @@ const services = [
     title: "Corporate Events",
     description:
       "Impress your team with premium veg burgers for office parties, team lunches, and corporate meetups. Custom menus available.",
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
-      </svg>
-    ),
+    image: images.corporateEvent,
   },
   {
     title: "Birthday Parties",
     description:
       "Make birthdays special with our party packages. Burgers, fries, shakes, and a whole lot of fun for all ages!",
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m18-12.75H3" />
-      </svg>
-    ),
+    image: images.birthdayParty,
   },
   {
     title: "Bulk Orders",
     description:
       "Planning a gathering? Order 50+ burgers with special bulk pricing and free delivery anywhere in Noida.",
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-      </svg>
-    ),
+    image: images.bulkOrder,
   },
 ];
 
@@ -96,17 +86,24 @@ export default function CateringPage() {
             {services.map((s) => (
               <div
                 key={s.title}
-                className="rounded-2xl bg-surface-container p-8 transition-all hover:bg-surface-container-high"
+                className="group overflow-hidden rounded-2xl bg-surface-container transition-all hover:bg-surface-container-high"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  {s.icon}
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={s.image}
+                    alt={s.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
                 </div>
-                <h3 className="mt-5 font-[var(--font-heading)] text-lg font-bold">
+                <div className="p-6">
+                <h3 className="font-[var(--font-heading)] text-lg font-bold">
                   {s.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-on-surface/60">
                   {s.description}
                 </p>
+                </div>
               </div>
             ))}
           </div>
