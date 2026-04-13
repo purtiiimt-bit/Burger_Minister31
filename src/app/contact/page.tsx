@@ -115,7 +115,7 @@ export default function ContactPage() {
                     </h3>
                     <div className="mt-2 flex gap-3">
                       <a
-                        href="https://instagram.com"
+                        href="https://www.instagram.com/burger_minister562?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1.5 rounded-lg bg-surface-variant px-3 py-1.5 text-sm text-on-surface/70 transition-colors hover:text-primary"

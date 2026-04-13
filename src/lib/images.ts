@@ -26,7 +26,7 @@ export const images = {
   periPeriFries:
     "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600&q=80",
   cheeseFries:
-    "https://images.unsplash.com/photo-1585109649979-3e67f1d55ce5?w=600&q=80",
+    "https://images.unsplash.com/photo-1541592106381-b31e9677c0e4?w=600&q=80",
 
   // Momos
   steamedMomos:

@@ -3,6 +3,7 @@ import { Epilogue, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/context/CartContext";
 
 const epilogue = Epilogue({
   variable: "--font-epilogue",
@@ -52,9 +53,11 @@ export default function RootLayout({
       className={`${epilogue.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <CartProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
