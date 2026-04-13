@@ -54,6 +54,24 @@ export const images = {
   familyFeast:
     "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=600&q=80",
 
+  // Category Banners
+  catBurgers:
+    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
+  catSandwiches:
+    "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800&q=80",
+  catMomos:
+    "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&q=80",
+  catFries:
+    "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800&q=80",
+  catPizza:
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
+  catShakes:
+    "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=800&q=80",
+  catCoffee:
+    "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&q=80",
+  catCoolers:
+    "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=800&q=80",
+
   // About
   kitchen:
     "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80",

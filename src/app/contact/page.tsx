@@ -45,7 +45,7 @@ export default function ContactPage() {
                       C-44, C Block, Sector 58, Noida, Uttar Pradesh 201301
                     </p>
                     <a
-                      href="https://maps.google.com/?q=C-44,+C+Block,+Sector+58,+Noida"
+                      href="https://maps.app.goo.gl/JGiLiytokNhZE2Da9"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-honeyed mt-3 inline-block rounded-full px-5 py-2 text-sm font-semibold text-on-primary"

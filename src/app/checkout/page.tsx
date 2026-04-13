@@ -11,6 +11,11 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string> | null>(null);
+
+  const UPI_ID = "paytmqr6j4v4s@ptys";
 
   if (items.length === 0) {
     return (
@@ -31,20 +36,29 @@ export default function CheckoutPage() {
     );
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleProceedToPayment(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setFormData({
+      name: data.get("name") as string,
+      phone: data.get("phone") as string,
+      address: data.get("address") as string,
+      orderType: data.get("orderType") as string,
+      note: data.get("note") as string,
+    });
+    setShowPayment(true);
+    // Scroll to top on mobile
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function handleConfirmOrder() {
+    if (!formData) return;
     setLoading(true);
     setError("");
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
     const orderData = {
-      name: formData.get("name") as string,
-      phone: formData.get("phone") as string,
-      address: formData.get("address") as string,
-      orderType: formData.get("orderType") as string,
-      note: formData.get("note") as string,
+      ...formData,
       items: items.map((i) => ({
         name: i.name,
         quantity: i.quantity,
@@ -66,11 +80,183 @@ export default function CheckoutPage() {
       clearCart();
       router.push("/thankyou");
     } catch {
-      setError("Order submit nahi ho paya. Please try again ya call karein: +91 9643100501");
+      setError(
+        "Order submit nahi ho paya. Please try again ya call karein: +91 9643100501"
+      );
       setLoading(false);
     }
   }
 
+  function copyUPI() {
+    navigator.clipboard.writeText(UPI_ID);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  // ─── Payment Modal ───
+  if (showPayment) {
+    return (
+      <div className="pt-16">
+        <section className="py-12">
+          <div className="mx-auto max-w-lg px-4 sm:px-6">
+            {/* Back button */}
+            <button
+              onClick={() => setShowPayment(false)}
+              className="mb-6 flex items-center gap-2 text-sm text-on-surface/50 transition-colors hover:text-primary"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to Details
+            </button>
+
+            {/* Payment Card */}
+            <div className="overflow-hidden rounded-2xl border border-primary/20 bg-surface-container">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-primary/20 to-tertiary/10 px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                    <svg
+                      className="h-5 w-5 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="font-[var(--font-heading)] text-lg font-bold">
+                      Pay via UPI
+                    </h2>
+                    <p className="text-xs text-on-surface/50">
+                      Scan QR or use UPI ID
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 py-6">
+                {/* Amount */}
+                <div className="mb-6 text-center">
+                  <p className="text-sm text-on-surface/50">Amount to Pay</p>
+                  <p className="font-[var(--font-heading)] text-3xl font-bold text-primary">
+                    ₹{totalPrice}
+                  </p>
+                </div>
+
+                {/* QR Code */}
+                <div className="mx-auto mb-4 w-52 overflow-hidden rounded-2xl bg-white p-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/qr-code.png"
+                    alt="Scan to Pay via UPI"
+                    className="h-auto w-full rounded-xl"
+                  />
+                </div>
+                <p className="mb-6 text-center text-xs text-on-surface/40">
+                  Paytm — Anand Kumar
+                </p>
+
+                {/* Divider */}
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-outline-variant/20" />
+                  <span className="text-xs text-on-surface/30">OR</span>
+                  <div className="h-px flex-1 bg-outline-variant/20" />
+                </div>
+
+                {/* UPI ID */}
+                <div className="mb-6 rounded-xl bg-surface-container-low p-4">
+                  <p className="mb-1.5 text-xs text-on-surface/50">UPI ID</p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-sm font-semibold text-primary">
+                      {UPI_ID}
+                    </code>
+                    <button
+                      onClick={copyUPI}
+                      className="rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary/20"
+                    >
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Order summary mini */}
+                <div className="mb-6 rounded-xl bg-surface-container-low p-4">
+                  <p className="mb-2 text-xs font-medium text-on-surface/50">
+                    Order for {formData?.name}
+                  </p>
+                  <div className="space-y-1.5">
+                    {items.map((item) => (
+                      <div
+                        key={item.name}
+                        className="flex items-center justify-between text-xs text-on-surface/70"
+                      >
+                        <span>
+                          {item.name} x{item.quantity}
+                        </span>
+                        <span>₹{item.price * item.quantity}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Info Note */}
+                <div className="mb-6 rounded-xl bg-secondary/5 p-4">
+                  <p className="text-sm font-medium text-secondary">
+                    Payment optional hai abhi
+                  </p>
+                  <p className="mt-1 text-xs text-on-surface/50">
+                    Aap chaahein toh abhi UPI se pay kar sakte hain, ya order receive karte waqt bhi payment kar sakte hain. Ye QR aapki suvidha ke liye hai — bina payment ke bhi order confirm ho jayega.
+                  </p>
+                </div>
+
+                {/* Error */}
+                {error && (
+                  <p className="mb-4 rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
+                    {error}
+                  </p>
+                )}
+
+                {/* Confirm Button */}
+                <button
+                  onClick={handleConfirmOrder}
+                  disabled={loading}
+                  className="btn-honeyed w-full rounded-full py-3.5 text-base font-semibold text-on-primary transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                >
+                  {loading
+                    ? "Confirming..."
+                    : `Confirm Order — ₹${totalPrice}`}
+                </button>
+
+                {/* Cash option */}
+                <p className="mt-3 text-center text-xs text-on-surface/30">
+                  Cash on Pickup/Delivery bhi available hai — payment zaruri nahi
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // ─── Checkout Form ───
   return (
     <div className="pt-16">
       <section className="py-12">
@@ -81,7 +267,7 @@ export default function CheckoutPage() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-5">
             {/* Form — Left */}
-            <form onSubmit={handleSubmit} className="lg:col-span-3">
+            <form onSubmit={handleProceedToPayment} className="lg:col-span-3">
               <div className="rounded-2xl bg-surface-container p-6">
                 <h2 className="font-[var(--font-heading)] text-lg font-bold">
                   Your Details
@@ -89,7 +275,10 @@ export default function CheckoutPage() {
 
                 <div className="mt-4 space-y-4">
                   <div>
-                    <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-on-surface/70">
+                    <label
+                      htmlFor="name"
+                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                    >
                       Full Name *
                     </label>
                     <input
@@ -102,7 +291,10 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-on-surface/70">
+                    <label
+                      htmlFor="phone"
+                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                    >
                       Phone Number *
                     </label>
                     <input
@@ -115,7 +307,10 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="orderType" className="mb-1.5 block text-sm font-medium text-on-surface/70">
+                    <label
+                      htmlFor="orderType"
+                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                    >
                       Order Type *
                     </label>
                     <select
@@ -129,7 +324,10 @@ export default function CheckoutPage() {
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="address" className="mb-1.5 block text-sm font-medium text-on-surface/70">
+                    <label
+                      htmlFor="address"
+                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                    >
                       Delivery Address (if delivery)
                     </label>
                     <textarea
@@ -141,7 +339,10 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="note" className="mb-1.5 block text-sm font-medium text-on-surface/70">
+                    <label
+                      htmlFor="note"
+                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                    >
                       Special Instructions
                     </label>
                     <textarea
@@ -154,18 +355,11 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {error && (
-                  <p className="mt-4 rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
-                    {error}
-                  </p>
-                )}
-
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="btn-honeyed mt-6 w-full rounded-full py-3 text-base font-semibold text-on-primary transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                  className="btn-honeyed mt-6 w-full rounded-full py-3 text-base font-semibold text-on-primary transition-all hover:scale-[1.02]"
                 >
-                  {loading ? "Placing Order..." : `Place Order — ₹${totalPrice}`}
+                  Proceed to Payment — ₹{totalPrice}
                 </button>
               </div>
             </form>
@@ -180,11 +374,20 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.name} className="flex items-center gap-3">
                       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-                        <Image src={item.image} alt={item.name} fill className="object-cover" />
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-medium">{item.name}</p>
-                        <p className="text-xs text-on-surface/50">x{item.quantity}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">
+                          {item.name}
+                        </p>
+                        <p className="text-xs text-on-surface/50">
+                          x{item.quantity}
+                        </p>
                       </div>
                       <p className="text-sm font-semibold text-primary">
                         ₹{item.price * item.quantity}
@@ -194,7 +397,9 @@ export default function CheckoutPage() {
                 </div>
                 <div className="mt-4 border-t border-outline-variant/10 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-on-surface/70">Total</span>
+                    <span className="font-medium text-on-surface/70">
+                      Total
+                    </span>
                     <span className="font-[var(--font-heading)] text-xl font-bold text-primary">
                       ₹{totalPrice}
                     </span>
