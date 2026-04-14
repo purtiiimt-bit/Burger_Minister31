@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact — Visit Us in Sector 58, Noida",
   description:
-    "Find Burger Minister at Sector 58, Noida. Get directions, call us, or send a message. Open daily 4 PM – 10 PM.",
+    "Find Burger Minister at C-44, C Block, Sector 58, Noida. Call +91 9643100501, get directions, or send us a message. Open daily 4 PM – 3 AM.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
@@ -71,7 +72,7 @@ export default function ContactPage() {
                     <p className="mt-1 text-sm text-on-surface/60">
                       Monday to Sunday:{" "}
                       <span className="font-medium text-secondary">
-                        4:00 PM – 10:00 PM
+                        4:00 PM – 3:00 AM
                       </span>
                     </p>
                     <p className="mt-1 text-xs text-secondary">Open all 7 days!</p>

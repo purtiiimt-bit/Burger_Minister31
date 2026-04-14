@@ -3,9 +3,10 @@ import { images } from "@/lib/images";
 import MenuClient from "./MenuClient";
 
 export const metadata: Metadata = {
-  title: "Menu",
+  title: "Menu — Veg Burgers, Momos, Fries & More",
   description:
-    "Explore Burger Minister's full menu — 100% vegetarian burgers, sandwiches, fries, momos, pizza, shakes, coolers & more. Fresh, delicious, and affordable.",
+    "Explore Burger Minister's full menu — 100% vegetarian burgers, sandwiches, fries, kurkure momos, pizza, shakes & coolers. Fresh daily in Sector 58, Noida.",
+  alternates: { canonical: "/menu" },
 };
 
 const categoryBanners: Record<string, string> = {

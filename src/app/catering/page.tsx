@@ -4,9 +4,10 @@ import type { Metadata } from "next";
 import CateringForm from "./CateringForm";
 
 export const metadata: Metadata = {
-  title: "Catering & Events",
+  title: "Catering & Events — Bulk Veg Food Orders in Noida",
   description:
-    "Burger Minister catering for corporate events, birthdays, and parties in Noida. Bulk orders with special pricing. 100% vegetarian.",
+    "Burger Minister catering for corporate events, birthdays, and parties in Noida. Bulk veg orders with special pricing. 100% vegetarian food.",
+  alternates: { canonical: "/catering" },
 };
 
 const services = [

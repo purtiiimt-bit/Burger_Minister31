@@ -2,6 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { images } from "@/lib/images";
 import FeaturedMenu from "@/components/FeaturedMenu";
+import TrustBadges from "@/components/TrustBadges";
+import Testimonials from "@/components/Testimonials";
+import FAQ from "@/components/FAQ";
+import { FAQSchema } from "@/components/Schema";
 
 const whyUs = [
   {
@@ -42,6 +46,7 @@ const whyUs = [
 export default function HomePage() {
   return (
     <>
+      <FAQSchema />
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-16">
         <Image
@@ -103,6 +108,16 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Trust Badges Strip */}
+      <section className="border-y border-outline-variant/10 bg-surface-container-low/50 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <TrustBadges />
+        </div>
+      </section>
+
+      {/* Testimonials — Real Google Reviews */}
+      <Testimonials />
 
       {/* Featured Menu */}
       <FeaturedMenu />
@@ -175,6 +190,9 @@ export default function HomePage() {
         <span className="hidden sm:inline">WhatsApp Order</span>
       </a>
 
+      {/* FAQ */}
+      <FAQ />
+
       {/* Location Teaser */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -207,7 +225,7 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p className="text-on-surface/70">
-                      Daily 4:00 PM – 10:00 PM
+                      Daily 4:00 PM – 3:00 AM
                       <span className="ml-2 text-sm text-secondary">(Open all 7 days)</span>
                     </p>
                   </div>

@@ -3,9 +3,10 @@ import { images } from "@/lib/images";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "About Us — Our Story & Values",
   description:
-    "Learn about Burger Minister — our story, values, and commitment to 100% vegetarian, premium-quality burgers in Noida.",
+    "Learn about Burger Minister — our story, values, and commitment to 100% vegetarian, premium-quality burgers in Sector 58, Noida.",
+  alternates: { canonical: "/about" },
 };
 
 const values = [

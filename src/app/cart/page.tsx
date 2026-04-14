@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
+import SocialProof from "@/components/SocialProof";
+import TrustBadges from "@/components/TrustBadges";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
@@ -35,6 +37,8 @@ export default function CartPage() {
     <div className="pt-16">
       <section className="py-12">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <SocialProof />
+
           <h1 className="font-[var(--font-heading)] text-3xl font-bold sm:text-4xl">
             Your <span className="text-primary">Cart</span>
           </h1>
@@ -104,8 +108,32 @@ export default function CartPage() {
             ))}
           </div>
 
+          {/* Review Quote */}
+          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-outline-variant/10 bg-surface-container-low/50 p-4">
+            <svg
+              className="h-5 w-5 shrink-0 text-primary/60"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
+            </svg>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm italic text-on-surface/70">
+                &ldquo;Ghar baithe fresh veg burger mil raha hai — what a time!&rdquo;
+              </p>
+              <p className="mt-1 text-xs text-on-surface/40">
+                — Kavita, Sector 62 · 2 hrs ago
+              </p>
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="mt-6">
+            <TrustBadges />
+          </div>
+
           {/* Total */}
-          <div className="mt-8 rounded-2xl bg-surface-container p-6">
+          <div className="mt-6 rounded-2xl bg-surface-container p-6">
             <div className="flex items-center justify-between">
               <span className="text-lg text-on-surface/70">Total</span>
               <span className="font-[var(--font-heading)] text-2xl font-bold text-primary">

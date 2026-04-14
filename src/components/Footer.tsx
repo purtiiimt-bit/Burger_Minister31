@@ -73,7 +73,7 @@ export default function Footer() {
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-on-surface/60">
               <li>Monday – Sunday</li>
-              <li className="text-secondary font-medium">4:00 PM – 10:00 PM</li>
+              <li className="text-secondary font-medium">4:00 PM – 3:00 AM</li>
               <li>Open all 7 days!</li>
             </ul>
           </div>
