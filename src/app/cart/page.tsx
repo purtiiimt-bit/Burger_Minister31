@@ -214,15 +214,6 @@ export default function CartPage() {
                   >
                     MINISTER05 — 5% off
                   </button>
-                  <button
-                    onClick={() => {
-                      const res = applyCoupon("MINISTER38");
-                      setMsg({ ok: res.ok, text: res.message });
-                    }}
-                    className="rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
-                  >
-                    MINISTER38 — 10% off
-                  </button>
                 </div>
               </>
             )}
