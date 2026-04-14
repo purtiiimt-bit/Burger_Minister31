@@ -4,22 +4,18 @@ import { useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 
+type Variant = { label: string; price: number };
 type MenuItem = {
   name: string;
-  price: string;
   description: string;
   veg: boolean;
   tag?: string;
+  price?: number;
+  variants?: Variant[];
 };
 
 type MenuData = Record<string, MenuItem[]>;
 
-function parsePrice(priceStr: string): number {
-  const match = priceStr.match(/(\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
-}
-
-// Placeholder image for cart (no per-item images now)
 const PLACEHOLDER_IMG =
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&q=60";
 
@@ -33,21 +29,17 @@ export default function MenuClient({
   const categories = ["All", ...Object.keys(menuData)];
   const [active, setActive] = useState("All");
   const { addItem, items } = useCart();
-  const [addedItem, setAddedItem] = useState<string | null>(null);
+  const [addedKey, setAddedKey] = useState<string | null>(null);
 
   const filteredCategories =
     active === "All"
       ? Object.entries(menuData)
       : Object.entries(menuData).filter(([cat]) => cat === active);
 
-  const handleAdd = (item: MenuItem) => {
-    addItem({
-      name: item.name,
-      price: parsePrice(item.price),
-      image: PLACEHOLDER_IMG,
-    });
-    setAddedItem(item.name);
-    setTimeout(() => setAddedItem(null), 1000);
+  const handleAdd = (displayName: string, price: number) => {
+    addItem({ name: displayName, price, image: PLACEHOLDER_IMG });
+    setAddedKey(displayName);
+    setTimeout(() => setAddedKey(null), 900);
   };
 
   const getItemQty = (name: string) => {
@@ -123,53 +115,90 @@ export default function MenuClient({
               {/* Item Cards Grid */}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {catItems.map((item) => {
-                  const qty = getItemQty(item.name);
-                  const justAdded = addedItem === item.name;
                   return (
                     <div
                       key={item.name}
-                      className="group flex items-center justify-between gap-4 rounded-xl bg-surface-container p-4 transition-all hover:bg-surface-container-high"
+                      className="rounded-xl bg-surface-container p-4 transition-all hover:bg-surface-container-high"
                     >
-                      {/* Left: Info */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          {/* Veg dot */}
-                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-secondary">
-                            <span className="h-2 w-2 rounded-full bg-secondary" />
-                          </span>
-                          <h3 className="truncate font-[var(--font-heading)] text-sm font-bold sm:text-base">
-                            {item.name}
-                          </h3>
-                          {item.tag && (
-                            <span className="shrink-0 rounded-full bg-tertiary-container px-2 py-0.5 text-[10px] font-semibold text-tertiary">
-                              {item.tag}
-                            </span>
-                          )}
+                      {/* Header: name + tag */}
+                      <div className="flex items-start gap-2">
+                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-secondary">
+                          <span className="h-2 w-2 rounded-full bg-secondary" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="truncate font-[var(--font-heading)] text-sm font-bold sm:text-base">
+                              {item.name}
+                            </h3>
+                            {item.tag && (
+                              <span className="shrink-0 rounded-full bg-tertiary-container px-2 py-0.5 text-[10px] font-semibold text-tertiary">
+                                {item.tag}
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-0.5 line-clamp-1 text-xs text-on-surface/40">
+                            {item.description}
+                          </p>
                         </div>
-                        <p className="mt-1 line-clamp-1 text-xs text-on-surface/40">
-                          {item.description}
-                        </p>
                       </div>
 
-                      {/* Right: Price + Add */}
-                      <div className="flex shrink-0 items-center gap-3">
-                        <span className="font-[var(--font-heading)] text-base font-bold text-primary">
-                          {item.price}
-                        </span>
-                        <button
-                          onClick={() => handleAdd(item)}
-                          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                            justAdded
-                              ? "scale-105 bg-secondary text-on-primary"
-                              : "bg-surface-variant text-primary hover:bg-primary hover:text-on-primary"
-                          }`}
-                        >
-                          {justAdded
-                            ? "Added!"
-                            : qty > 0
-                              ? `+ (${qty})`
-                              : "Add"}
-                        </button>
+                      {/* Action row: variants OR single price */}
+                      <div className="mt-3 flex items-center justify-end gap-2">
+                        {item.variants ? (
+                          item.variants.map((v) => {
+                            const displayName = `${item.name} — ${v.label}`;
+                            const qty = getItemQty(displayName);
+                            const justAdded = addedKey === displayName;
+                            return (
+                              <button
+                                key={v.label}
+                                onClick={() => handleAdd(displayName, v.price)}
+                                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                                  justAdded
+                                    ? "scale-105 bg-secondary text-on-primary"
+                                    : qty > 0
+                                      ? "bg-primary text-on-primary"
+                                      : "bg-surface-variant text-on-surface/80 hover:bg-primary hover:text-on-primary"
+                                }`}
+                              >
+                                <span className="opacity-70">{v.label}</span>
+                                <span>₹{v.price}</span>
+                                {qty > 0 && !justAdded && (
+                                  <span className="opacity-80">·{qty}</span>
+                                )}
+                                {justAdded && <span>✓</span>}
+                              </button>
+                            );
+                          })
+                        ) : (
+                          (() => {
+                            const qty = getItemQty(item.name);
+                            const justAdded = addedKey === item.name;
+                            return (
+                              <>
+                                <span className="font-[var(--font-heading)] text-base font-bold text-primary">
+                                  ₹{item.price}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    handleAdd(item.name, item.price!)
+                                  }
+                                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                                    justAdded
+                                      ? "scale-105 bg-secondary text-on-primary"
+                                      : "bg-surface-variant text-primary hover:bg-primary hover:text-on-primary"
+                                  }`}
+                                >
+                                  {justAdded
+                                    ? "Added!"
+                                    : qty > 0
+                                      ? `+ (${qty})`
+                                      : "Add"}
+                                </button>
+                              </>
+                            );
+                          })()
+                        )}
                       </div>
                     </div>
                   );
