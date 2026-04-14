@@ -1,6 +1,6 @@
 import { faqs } from "@/lib/faqs";
 
-const SITE_URL = "https://burger-minister.vercel.app";
+const SITE_URL = "https://burger-minister.com";
 
 export function LocalBusinessSchema() {
   const schema = {

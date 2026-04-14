@@ -19,7 +19,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://burger-minister.vercel.app"),
+  metadataBase: new URL("https://burger-minister.com"),
   title: {
     default: "Burger Minister | Best 100% Veg Burgers in Sector 58, Noida",
     template: "%s | Burger Minister",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Burger Minister | Best 100% Veg Burgers in Sector 58, Noida",
     description:
       "Noida's favorite 100% Pure Vegetarian burger restaurant. Premium burgers, momos, fries & more crafted fresh daily.",
-    url: "https://burger-minister.vercel.app",
+    url: "https://burger-minister.com",
     siteName: "Burger Minister",
     type: "website",
     locale: "en_IN",
