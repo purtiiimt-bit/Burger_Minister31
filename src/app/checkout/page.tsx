@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, subtotal, discount, totalPrice, coupon, clearCart } = useCart();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -65,6 +65,9 @@ export default function CheckoutPage() {
         price: i.price,
         subtotal: i.price * i.quantity,
       })),
+      subtotal,
+      coupon,
+      discount,
       totalPrice,
     };
 
@@ -396,7 +399,17 @@ export default function CheckoutPage() {
                   ))}
                 </div>
                 <div className="mt-4 border-t border-outline-variant/10 pt-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between text-sm text-on-surface/60">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="mt-1 flex items-center justify-between text-sm text-secondary">
+                      <span>Discount ({coupon})</span>
+                      <span>− ₹{discount}</span>
+                    </div>
+                  )}
+                  <div className="mt-3 flex items-center justify-between border-t border-outline-variant/10 pt-3">
                     <span className="font-medium text-on-surface/70">
                       Total
                     </span>

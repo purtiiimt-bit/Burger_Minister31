@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
@@ -7,7 +8,26 @@ import SocialProof from "@/components/SocialProof";
 import TrustBadges from "@/components/TrustBadges";
 
 export default function CartPage() {
-  const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
+  const {
+    items,
+    updateQuantity,
+    removeItem,
+    subtotal,
+    discount,
+    totalPrice,
+    totalItems,
+    coupon,
+    applyCoupon,
+    removeCoupon,
+  } = useCart();
+  const [code, setCode] = useState("");
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  function handleApply() {
+    const res = applyCoupon(code);
+    setMsg({ ok: res.ok, text: res.message });
+    if (res.ok) setCode("");
+  }
 
   if (items.length === 0) {
     return (
@@ -132,9 +152,95 @@ export default function CartPage() {
             <TrustBadges />
           </div>
 
+          {/* Coupon */}
+          <div className="mt-6 rounded-2xl bg-surface-container p-5">
+            <div className="flex items-center gap-2">
+              <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
+              </svg>
+              <h3 className="font-[var(--font-heading)] text-base font-bold">
+                Have a coupon?
+              </h3>
+            </div>
+
+            {coupon ? (
+              <div className="mt-3 flex items-center justify-between rounded-xl border border-primary/30 bg-primary/10 px-4 py-3">
+                <div>
+                  <p className="font-[var(--font-heading)] text-sm font-bold text-primary">
+                    {coupon} applied
+                  </p>
+                  <p className="text-xs text-on-surface/60">
+                    You saved ₹{discount}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    removeCoupon();
+                    setMsg(null);
+                  }}
+                  className="text-xs text-on-surface/50 hover:text-red-400"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="mt-3 flex gap-2">
+                  <input
+                    type="text"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => e.key === "Enter" && handleApply()}
+                    placeholder="Enter code"
+                    className="flex-1 rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 text-sm uppercase tracking-wide text-on-surface placeholder:text-on-surface/30 focus:border-primary focus:outline-none"
+                  />
+                  <button
+                    onClick={handleApply}
+                    className="btn-honeyed rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {msg && !msg.ok && (
+                  <p className="mt-2 text-xs text-red-400">{msg.text}</p>
+                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      const res = applyCoupon("MINISTER05");
+                      setMsg({ ok: res.ok, text: res.message });
+                    }}
+                    className="rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
+                  >
+                    MINISTER05 — 5% off
+                  </button>
+                  <button
+                    onClick={() => {
+                      const res = applyCoupon("MINISTER38");
+                      setMsg({ ok: res.ok, text: res.message });
+                    }}
+                    className="rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
+                  >
+                    MINISTER38 — 10% off
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Total */}
           <div className="mt-6 rounded-2xl bg-surface-container p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-sm text-on-surface/60">
+              <span>Subtotal</span>
+              <span>₹{subtotal}</span>
+            </div>
+            {discount > 0 && (
+              <div className="mt-1 flex items-center justify-between text-sm text-secondary">
+                <span>Discount ({coupon})</span>
+                <span>− ₹{discount}</span>
+              </div>
+            )}
+            <div className="mt-3 flex items-center justify-between border-t border-outline-variant/10 pt-3">
               <span className="text-lg text-on-surface/70">Total</span>
               <span className="font-[var(--font-heading)] text-2xl font-bold text-primary">
                 ₹{totalPrice}
