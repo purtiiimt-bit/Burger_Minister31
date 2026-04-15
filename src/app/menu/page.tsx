@@ -46,7 +46,6 @@ const menuData: Record<string, MenuItemData[]> = {
     { name: "Cheese Burger", price: 80, description: "Melted cheese, crispy patty, lettuce, and tangy mayo", veg: true },
     { name: "Peri Peri Cheese Burger", price: 90, description: "Fiery peri peri seasoning with loaded melted cheese", veg: true, tag: "Popular" },
     { name: "Cheese Loaded Burger", price: 120, description: "Extra cheese overload — for the real cheese lovers", veg: true, tag: "Bestseller" },
-    { name: "Corn Cheese Blast Burger", price: 150, description: "Sweet corn & triple cheese blast with signature sauce", veg: true, tag: "Premium" },
   ],
   Sandwiches: [
     { name: "Classic Sandwich", price: 90, description: "Fresh veggies, butter, chutney — simple aur tasty", veg: true },

@@ -8,18 +8,18 @@ import { images } from "@/lib/images";
 
 const featuredItems = [
   {
-    name: "Corn Cheese Blast Burger",
-    price: 150,
-    description: "Sweet corn & triple cheese blast with signature sauce",
-    tag: "Premium",
-    image: images.ministerSpecial,
-  },
-  {
     name: "Cheese Loaded Burger",
     price: 120,
     description: "Extra cheese overload — for the real cheese lovers",
     tag: "Bestseller",
     image: images.cheeseBurger,
+  },
+  {
+    name: "Double Tikki Burger",
+    price: 100,
+    description: "Double stacked tikki, double the crunch, double the taste",
+    tag: "Premium",
+    image: images.ministerSpecial,
   },
   {
     name: "Peri Peri Cheese Burger",

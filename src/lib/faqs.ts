@@ -9,7 +9,7 @@ export const faqs = [
   },
   {
     q: "What are the best veg burgers at Burger Minister?",
-    a: "Our bestseller veg burgers include the Cheese Loaded Burger, Corn Cheese Blast Burger, and Peri Peri Cheese Burger. We also have Double Tikki, Crisp Tikki, and Classic Cheese Burger — all 100% vegetarian and freshly made to order.",
+    a: "Our bestseller veg burgers include the Cheese Loaded Burger, Peri Peri Cheese Burger, and Double Tikki Burger. We also have Crisp Tikki, Cheese Burger, and our Corn Cheese Blast Sandwich — all 100% vegetarian and freshly made to order.",
   },
   {
     q: "Do you offer home delivery in Noida?",
