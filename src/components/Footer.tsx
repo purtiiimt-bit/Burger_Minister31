@@ -11,6 +11,21 @@ const footerLinks = [
 export default function Footer() {
   return (
     <footer className="border-t border-outline-variant/10 bg-surface-container-low">
+      {/* Ribbon */}
+      <div className="border-b border-outline-variant/10 bg-primary/5">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80 sm:px-6 lg:px-8">
+          <span>100% Pure Vegetarian</span>
+          <span className="h-1 w-1 rounded-full bg-primary/40" />
+          <span>Fresh to Order</span>
+          <span className="h-1 w-1 rounded-full bg-primary/40" />
+          <span>FSSAI Certified</span>
+          <span className="h-1 w-1 rounded-full bg-primary/40" />
+          <span>Open Till 3 AM</span>
+          <span className="h-1 w-1 rounded-full bg-primary/40" />
+          <span>Sector 58, Noida</span>
+        </div>
+      </div>
+
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}

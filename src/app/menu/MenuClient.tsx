@@ -28,8 +28,7 @@ export default function MenuClient({
 }) {
   const categories = ["All", ...Object.keys(menuData)];
   const [active, setActive] = useState("All");
-  const { addItem, items } = useCart();
-  const [addedKey, setAddedKey] = useState<string | null>(null);
+  const { addItem, updateQuantity, items } = useCart();
 
   const filteredCategories =
     active === "All"
@@ -38,8 +37,6 @@ export default function MenuClient({
 
   const handleAdd = (displayName: string, price: number) => {
     addItem({ name: displayName, price, image: PLACEHOLDER_IMG });
-    setAddedKey(displayName);
-    setTimeout(() => setAddedKey(null), 900);
   };
 
   const getItemQty = (name: string) => {
@@ -90,6 +87,7 @@ export default function MenuClient({
                     src={categoryBanners[category] || PLACEHOLDER_IMG}
                     alt={category}
                     fill
+                    sizes="(min-width:1024px) 1024px, 100vw"
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-surface/90 via-surface/70 to-transparent" />
@@ -148,53 +146,74 @@ export default function MenuClient({
                           item.variants.map((v) => {
                             const displayName = `${item.name} — ${v.label}`;
                             const qty = getItemQty(displayName);
-                            const justAdded = addedKey === displayName;
                             return (
                               <button
                                 key={v.label}
                                 onClick={() => handleAdd(displayName, v.price)}
-                                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                                  justAdded
-                                    ? "scale-105 bg-secondary text-on-primary"
-                                    : qty > 0
-                                      ? "bg-primary text-on-primary"
-                                      : "bg-surface-variant text-on-surface/80 hover:bg-primary hover:text-on-primary"
+                                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                  qty > 0
+                                    ? "bg-primary text-on-primary"
+                                    : "bg-surface-variant text-on-surface/80 hover:bg-primary hover:text-on-primary"
                                 }`}
                               >
                                 <span className="opacity-70">{v.label}</span>
                                 <span>₹{v.price}</span>
-                                {qty > 0 && !justAdded && (
-                                  <span className="opacity-80">·{qty}</span>
+                                {qty > 0 && (
+                                  <span
+                                    key={qty}
+                                    className="qty-pop ml-0.5 rounded-full bg-on-primary/20 px-1.5 text-[10px]"
+                                  >
+                                    {qty}
+                                  </span>
                                 )}
-                                {justAdded && <span>✓</span>}
                               </button>
                             );
                           })
                         ) : (
                           (() => {
                             const qty = getItemQty(item.name);
-                            const justAdded = addedKey === item.name;
                             return (
                               <>
                                 <span className="font-[var(--font-heading)] text-base font-bold text-primary">
                                   ₹{item.price}
                                 </span>
-                                <button
-                                  onClick={() =>
-                                    handleAdd(item.name, item.price!)
-                                  }
-                                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                                    justAdded
-                                      ? "scale-105 bg-secondary text-on-primary"
-                                      : "bg-surface-variant text-primary hover:bg-primary hover:text-on-primary"
-                                  }`}
-                                >
-                                  {justAdded
-                                    ? "Added!"
-                                    : qty > 0
-                                      ? `+ (${qty})`
-                                      : "Add"}
-                                </button>
+                                {qty === 0 ? (
+                                  <button
+                                    onClick={() =>
+                                      handleAdd(item.name, item.price!)
+                                    }
+                                    className="rounded-lg bg-surface-variant px-4 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-on-primary"
+                                  >
+                                    Add
+                                  </button>
+                                ) : (
+                                  <div className="flex items-center gap-0 overflow-hidden rounded-lg bg-primary/10 ring-1 ring-primary/40">
+                                    <button
+                                      aria-label="Remove one"
+                                      onClick={() =>
+                                        updateQuantity(item.name, qty - 1)
+                                      }
+                                      className="flex h-7 w-7 items-center justify-center text-primary transition-colors hover:bg-primary/20"
+                                    >
+                                      −
+                                    </button>
+                                    <span
+                                      key={qty}
+                                      className="qty-pop w-6 text-center text-xs font-bold text-primary"
+                                    >
+                                      {qty}
+                                    </span>
+                                    <button
+                                      aria-label="Add one"
+                                      onClick={() =>
+                                        handleAdd(item.name, item.price!)
+                                      }
+                                      className="flex h-7 w-7 items-center justify-center text-primary transition-colors hover:bg-primary/20"
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                )}
                               </>
                             );
                           })()

@@ -1,3 +1,5 @@
+import SectionEyebrow from "./SectionEyebrow";
+
 const reviews = [
   {
     name: "Shorya Sagar",
@@ -65,17 +67,19 @@ function Stars({ count }: { count: number }) {
 
 export default function Testimonials() {
   return (
-    <section className="bg-surface-container-low/50 py-20">
+    <section className="bg-surface-container-low/50 py-20" id="reviews">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-4 py-1.5">
+          <SectionEyebrow>Voices From Sector 58</SectionEyebrow>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-4 py-1.5">
             <Stars count={5} />
             <span className="text-sm font-semibold text-amber-400">
               4.8 / 5 on Google Reviews
             </span>
           </div>
-          <h2 className="font-[var(--font-heading)] text-3xl font-bold sm:text-4xl">
-            What Our <span className="text-primary">Customers</span> Say
+          <h2 className="mt-4 font-[var(--font-heading)] text-3xl font-bold tracking-tight sm:text-4xl">
+            What our{" "}
+            <em className="font-normal italic text-primary">customers</em> say
           </h2>
           <p className="mt-3 text-on-surface/60">
             Real reviews from real Burger Minister lovers

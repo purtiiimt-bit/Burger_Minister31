@@ -8,9 +8,9 @@ export function LocalBusinessSchema() {
     "@type": "FoodEstablishment",
     "@id": `${SITE_URL}/#restaurant`,
     name: "Burger Minister",
-    alternateName: "Burger Minister - Best Veg Burgers in Noida",
+    alternateName: "BM — Burger Minister · Crowned with Flavour, Served with Pride",
     description:
-      "100% Pure Vegetarian burger restaurant in Sector 58, Noida. Premium veg burgers, momos, sandwiches, fries, pizza, shakes and more. Fresh daily, hygiene first.",
+      "Burger Minister is Sector 58 Noida's most-loved 100% pure-veg late-night kitchen. Handcrafted burgers, kurkure momos, BM Special fries, sandwiches, pizza, shakes and coolers — fresh to order, FSSAI-compliant, hygiene first. Daily 4 PM – 3 AM.",
     url: SITE_URL,
     telephone: "+91-9643100501",
     image: `${SITE_URL}/qr-code.png`,
@@ -59,10 +59,23 @@ export function LocalBusinessSchema() {
     },
     areaServed: [
       { "@type": "City", name: "Noida" },
+      // Noida sectors within ~3km of Sector 58
       { "@type": "Place", name: "Sector 58, Noida" },
       { "@type": "Place", name: "Sector 59, Noida" },
+      { "@type": "Place", name: "Sector 60, Noida" },
+      { "@type": "Place", name: "Sector 61, Noida" },
       { "@type": "Place", name: "Sector 62, Noida" },
       { "@type": "Place", name: "Sector 63, Noida" },
+      { "@type": "Place", name: "Sector 50, Noida" },
+      { "@type": "Place", name: "Sector 51, Noida" },
+      { "@type": "Place", name: "Sector 52, Noida" },
+      { "@type": "Place", name: "Sector 55, Noida" },
+      { "@type": "Place", name: "Sector 56, Noida" },
+      { "@type": "Place", name: "Sector 57, Noida" },
+      // Nearby colonies / villages
+      { "@type": "Place", name: "Mamura, Noida" },
+      { "@type": "Place", name: "Bishanpura, Noida" },
+      { "@type": "Place", name: "Hoshiyarpur, Noida" },
     ],
     sameAs: [
       "https://www.instagram.com/burger_minister562",

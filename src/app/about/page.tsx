@@ -101,6 +101,7 @@ export default function AboutPage() {
                 src={images.kitchen}
                 alt="Burger Minister Kitchen"
                 fill
+                sizes="(min-width:1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>

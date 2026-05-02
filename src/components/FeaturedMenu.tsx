@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { useState } from "react";
 import { images } from "@/lib/images";
 
 const featuredItems = [
@@ -33,35 +32,34 @@ const featuredItems = [
 const PLACEHOLDER_IMG =
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&q=60";
 
-export default function FeaturedMenu() {
-  const { addItem, items } = useCart();
-  const [addedItem, setAddedItem] = useState<string | null>(null);
+export default function FeaturedMenu({ hideHeader = false }: { hideHeader?: boolean }) {
+  const { addItem, updateQuantity, items } = useCart();
 
   const handleAdd = (item: (typeof featuredItems)[0]) => {
     addItem({ name: item.name, price: item.price, image: PLACEHOLDER_IMG });
-    setAddedItem(item.name);
-    setTimeout(() => setAddedItem(null), 1000);
   };
 
   const getQty = (name: string) =>
     items.find((i) => i.name === name)?.quantity || 0;
 
+  const Wrapper = hideHeader ? "div" : "section";
   return (
-    <section className="bg-surface-container-low py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className="font-[var(--font-heading)] text-3xl font-bold sm:text-4xl">
-            Our <span className="text-primary">Signature</span> Burgers
-          </h2>
-          <p className="mt-3 text-on-surface/60">
-            Handcrafted with premium ingredients, every single day.
-          </p>
-        </div>
+    <Wrapper className={hideHeader ? "" : "bg-surface-container-low py-20"}>
+      <div className={hideHeader ? "" : "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"}>
+        {!hideHeader && (
+          <div className="text-center">
+            <h2 className="font-[var(--font-heading)] text-3xl font-bold sm:text-4xl">
+              Our <span className="text-primary">Signature</span> Burgers
+            </h2>
+            <p className="mt-3 text-on-surface/60">
+              Handcrafted with premium ingredients, every single day.
+            </p>
+          </div>
+        )}
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${hideHeader ? "" : "mt-12"}`}>
           {featuredItems.map((item, i) => {
             const qty = getQty(item.name);
-            const justAdded = addedItem === item.name;
             return (
               <div
                 key={item.name}
@@ -74,6 +72,7 @@ export default function FeaturedMenu() {
                     src={item.image}
                     alt={item.name}
                     fill
+                    sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                   <span className="absolute left-3 top-3 rounded-full bg-tertiary-container px-3 py-1 text-xs font-semibold text-tertiary">
@@ -91,27 +90,44 @@ export default function FeaturedMenu() {
                   <span className="font-[var(--font-heading)] text-2xl font-bold text-primary">
                     ₹{item.price}
                   </span>
-                  <button
-                    onClick={() => handleAdd(item)}
-                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${
-                      justAdded
-                        ? "scale-105 bg-secondary text-on-primary"
-                        : "bg-surface-variant text-primary hover:bg-primary hover:text-on-primary"
-                    }`}
-                  >
-                    {justAdded
-                      ? "Added!"
-                      : qty > 0
-                        ? `Add More (${qty})`
-                        : "Add to Cart"}
-                  </button>
+                  {qty === 0 ? (
+                    <button
+                      onClick={() => handleAdd(item)}
+                      className="rounded-xl bg-surface-variant px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-on-primary"
+                    >
+                      Add to Cart
+                    </button>
+                  ) : (
+                    <div className="flex items-center overflow-hidden rounded-xl bg-primary/10 ring-1 ring-primary/40">
+                      <button
+                        aria-label="Remove one"
+                        onClick={() => updateQuantity(item.name, qty - 1)}
+                        className="flex h-9 w-9 items-center justify-center text-base text-primary transition-colors hover:bg-primary/20"
+                      >
+                        −
+                      </button>
+                      <span
+                        key={qty}
+                        className="qty-pop w-7 text-center text-sm font-bold text-primary"
+                      >
+                        {qty}
+                      </span>
+                      <button
+                        aria-label="Add one"
+                        onClick={() => handleAdd(item)}
+                        className="flex h-9 w-9 items-center justify-center text-base text-primary transition-colors hover:bg-primary/20"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="mt-10 text-center">
+        <div className={`text-center ${hideHeader ? "mt-8" : "mt-10"}`}>
           <Link
             href="/menu"
             className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
@@ -133,6 +149,6 @@ export default function FeaturedMenu() {
           </Link>
         </div>
       </div>
-    </section>
+    </Wrapper>
   );
 }

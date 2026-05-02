@@ -137,3 +137,14 @@ html {
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
 }
+
+/* Quantity pop — fires whenever the qty span re-mounts (key change) */
+@keyframes qtyPop {
+  0%   { transform: scale(1.5); color: var(--secondary); }
+  60%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+.qty-pop {
+  animation: qtyPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
