@@ -242,14 +242,33 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Info Note */}
-                <div className="mb-6 rounded-xl bg-secondary/5 p-4">
-                  <p className="text-sm font-medium text-secondary">
-                    Payment optional hai abhi
-                  </p>
-                  <p className="mt-1 text-xs text-on-surface/50">
-                    Aap chaahein toh abhi UPI se pay kar sakte hain, ya order receive karte waqt bhi payment kar sakte hain. Ye QR aapki suvidha ke liye hai — bina payment ke bhi order confirm ho jayega.
-                  </p>
+                {/* Info Note — highlighted, token mandatory */}
+                <div className="mb-6 rounded-2xl border-2 border-primary/40 bg-primary/10 p-4 shadow-[0_0_24px_rgba(230,196,67,0.15)]">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/20">
+                      <svg
+                        className="h-6 w-6 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.8}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-[var(--font-heading)] text-sm font-bold text-primary">
+                        Order confirm hone ke baad — counter se Pickup Token zaroor lijiye 🎟️
+                      </p>
+                      <p className="mt-1.5 text-xs leading-relaxed text-on-surface/70">
+                        Payment yahin QR se kijiye <span className="text-on-surface/50">ya</span> counter pe aakar — jaise aap chaahein. Lekin <span className="font-semibold text-secondary">token lena zaroori hai</span> — wahi aapka order ka pyaara golden pass hai.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Error */}
@@ -272,7 +291,7 @@ export default function CheckoutPage() {
 
                 {/* Cash option */}
                 <p className="mt-3 text-center text-xs text-on-surface/30">
-                  Cash on Pickup/Delivery bhi available hai — payment zaruri nahi
+                  Pay yahin ya counter pe — bas token lena mat bhuliye 🎟️
                 </p>
               </div>
             </div>
