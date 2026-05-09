@@ -13,6 +13,7 @@
 const SHEET_NAME = "Orders";
 const COUNTER_SHEET = "Counter";
 const TZ = "Asia/Kolkata";
+const NOTIFY_EMAIL = "Burgerminister38@gmail.com"; // owner email for new-order alerts
 
 function ensureSheets_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -99,6 +100,43 @@ function doPost(e) {
       data.note || "",
       data.coupon || "",
     ]);
+
+    // Email notification (kept from original script, with order number prepended)
+    try {
+      const itemsHuman =
+        typeof data.items === "string"
+          ? data.items
+          : (Array.isArray(data.items) ? data.items : [])
+              .map(function (i) {
+                return (i.quantity || 1) + "x " + (i.name || "?") + " — Rs " + (i.price || 0);
+              })
+              .join("\n");
+
+      const emailBody =
+        "NEW ORDER " + orderNumber + "\n\n" +
+        "Source: " + (data.source || "WEBSITE") + "\n" +
+        "Name: " + (data.customerName || data.name || "—") + "\n" +
+        "Phone: " + (data.customerPhone || data.phone || "—") + "\n" +
+        "Type: " + (data.orderType || data.type || "—") + "\n" +
+        "Address: " + (data.address || "—") + "\n\n" +
+        "Items:\n" + (itemsHuman || "—") + "\n\n" +
+        "Subtotal: Rs " + (data.subtotal || 0) + "\n" +
+        (data.discountAmount ? "Discount: -Rs " + data.discountAmount + "\n" : "") +
+        (data.freeFries ? "Free Fries: YES\n" : "") +
+        "Total: Rs " + (data.total || 0) + "\n" +
+        "Payment: " + (data.paymentMode || "UPI") + "\n" +
+        "Note: " + (data.note || "—") + "\n" +
+        "Time: " + (data.time || "");
+
+      MailApp.sendEmail({
+        to: NOTIFY_EMAIL,
+        subject: "🍔 " + orderNumber + " — Rs " + (data.total || 0) + " from " + (data.customerName || data.name || "Counter"),
+        body: emailBody,
+      });
+    } catch (mailErr) {
+      // Don't fail the order if email fails
+      Logger.log("Mail error: " + mailErr);
+    }
 
     return ContentService.createTextOutput(
       JSON.stringify({ success: true, orderNumber })
