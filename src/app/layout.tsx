@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Epilogue, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import LayoutChrome from "@/components/LayoutChrome";
 import { CartProvider } from "@/context/CartContext";
 import { LocalBusinessSchema } from "@/components/Schema";
 
@@ -137,9 +136,7 @@ export default function RootLayout({
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
         <LocalBusinessSchema />
         <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <LayoutChrome>{children}</LayoutChrome>
         </CartProvider>
       </body>
     </html>

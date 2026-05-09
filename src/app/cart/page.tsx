@@ -19,6 +19,9 @@ export default function CartPage() {
     coupon,
     applyCoupon,
     removeCoupon,
+    freeFriesEarned,
+    freeFriesActive,
+    freeFriesShortfall,
   } = useCart();
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -27,6 +30,11 @@ export default function CartPage() {
     const res = applyCoupon(code);
     setMsg({ ok: res.ok, text: res.message });
     if (res.ok) setCode("");
+  }
+
+  function quickApply(c: string) {
+    const res = applyCoupon(c);
+    setMsg({ ok: res.ok, text: res.message });
   }
 
   if (items.length === 0) {
@@ -153,70 +161,153 @@ export default function CartPage() {
             <TrustBadges />
           </div>
 
-          {/* Coupon */}
+          {/* Offers */}
           <div className="mt-6 rounded-2xl bg-surface-container p-5">
             <div className="flex items-center gap-2">
               <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
               </svg>
               <h3 className="font-[var(--font-heading)] text-base font-bold">
-                Have a coupon?
+                Offers for you
               </h3>
             </div>
 
-            {coupon ? (
-              <div className="mt-3 flex items-center justify-between rounded-xl border border-primary/30 bg-primary/10 px-4 py-3">
-                <div>
-                  <p className="font-[var(--font-heading)] text-sm font-bold text-primary">
-                    {coupon} applied
-                  </p>
-                  <p className="text-xs text-on-surface/60">
-                    You saved ₹{discount}
-                  </p>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {/* Free Fries */}
+              <div
+                className={`rounded-xl border p-3 transition-all ${
+                  freeFriesActive
+                    ? "border-secondary/40 bg-secondary/10"
+                    : freeFriesEarned
+                      ? "border-outline-variant/15 bg-surface-container-low/50 opacity-60"
+                      : "border-outline-variant/15 bg-surface-container-low/50 opacity-50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base">🍟</span>
+                  <span
+                    className={`font-[var(--font-heading)] text-xs font-bold ${
+                      freeFriesActive ? "text-secondary" : "text-on-surface/60"
+                    }`}
+                  >
+                    FREE FRIES
+                  </span>
                 </div>
+                <p className="mt-1 text-[11px] text-on-surface/60">
+                  On orders ₹299+
+                </p>
+                {freeFriesActive ? (
+                  <p className="mt-1.5 text-[11px] font-semibold text-secondary">
+                    ✓ Unlocked!
+                  </p>
+                ) : freeFriesEarned ? (
+                  <p className="mt-1.5 text-[11px] text-on-surface/40">
+                    Replaced by {coupon}
+                  </p>
+                ) : (
+                  <p className="mt-1.5 text-[11px] text-on-surface/40">
+                    Add ₹{freeFriesShortfall} more
+                  </p>
+                )}
+              </div>
+
+              {/* MINISTER10 */}
+              <button
+                disabled={coupon === "MINISTER10"}
+                onClick={() => quickApply("MINISTER10")}
+                className={`rounded-xl border p-3 text-left transition-all ${
+                  coupon === "MINISTER10"
+                    ? "border-primary/50 bg-primary/15"
+                    : "border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10"
+                }`}
+              >
+                <div className="font-[var(--font-heading)] text-xs font-bold text-primary">
+                  MINISTER10
+                </div>
+                <p className="mt-1 text-[11px] text-on-surface/60">10% off</p>
+                <p
+                  className={`mt-1.5 text-[11px] font-semibold ${
+                    coupon === "MINISTER10"
+                      ? "text-primary"
+                      : "text-on-surface/40"
+                  }`}
+                >
+                  {coupon === "MINISTER10"
+                    ? "✓ Applied"
+                    : freeFriesActive
+                      ? "Tap to swap"
+                      : "Tap to apply"}
+                </p>
+              </button>
+
+              {/* MINISTER05 */}
+              <button
+                disabled={coupon === "MINISTER05"}
+                onClick={() => quickApply("MINISTER05")}
+                className={`rounded-xl border p-3 text-left transition-all ${
+                  coupon === "MINISTER05"
+                    ? "border-primary/50 bg-primary/15"
+                    : "border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10"
+                }`}
+              >
+                <div className="font-[var(--font-heading)] text-xs font-bold text-primary">
+                  MINISTER05
+                </div>
+                <p className="mt-1 text-[11px] text-on-surface/60">5% off</p>
+                <p
+                  className={`mt-1.5 text-[11px] font-semibold ${
+                    coupon === "MINISTER05"
+                      ? "text-primary"
+                      : "text-on-surface/40"
+                  }`}
+                >
+                  {coupon === "MINISTER05" ? "✓ Applied" : "Tap to apply"}
+                </p>
+              </button>
+            </div>
+
+            {coupon && (
+              <div className="mt-3 flex items-center justify-between rounded-lg bg-primary/5 px-3 py-2 text-xs">
+                <span className="text-primary">
+                  <span className="font-bold">{coupon}</span> applied · You saved ₹{discount}
+                </span>
                 <button
                   onClick={() => {
                     removeCoupon();
                     setMsg(null);
                   }}
-                  className="text-xs text-on-surface/50 hover:text-red-400"
+                  className="text-on-surface/50 hover:text-red-400"
                 >
                   Remove
                 </button>
               </div>
-            ) : (
-              <>
-                <div className="mt-3 flex gap-2">
+            )}
+
+            {!coupon && (
+              <details className="mt-3 group">
+                <summary className="cursor-pointer text-[11px] font-medium text-on-surface/40 hover:text-on-surface/60">
+                  Have another code?
+                </summary>
+                <div className="mt-2 flex gap-2">
                   <input
                     type="text"
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === "Enter" && handleApply()}
                     placeholder="Enter code"
-                    className="flex-1 rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 text-sm uppercase tracking-wide text-on-surface placeholder:text-on-surface/30 focus:border-primary focus:outline-none"
+                    className="flex-1 rounded-lg border border-outline-variant/20 bg-surface-container-low px-3 py-2 text-xs uppercase tracking-wide text-on-surface placeholder:text-on-surface/30 focus:border-primary focus:outline-none"
                   />
                   <button
                     onClick={handleApply}
-                    className="btn-honeyed rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary"
+                    className="rounded-lg bg-surface-variant px-4 py-2 text-xs font-semibold text-primary hover:bg-primary hover:text-on-primary"
                   >
                     Apply
                   </button>
                 </div>
                 {msg && !msg.ok && (
-                  <p className="mt-2 text-xs text-red-400">{msg.text}</p>
+                  <p className="mt-2 text-[11px] text-red-400">{msg.text}</p>
                 )}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    onClick={() => {
-                      const res = applyCoupon("MINISTER05");
-                      setMsg({ ok: res.ok, text: res.message });
-                    }}
-                    className="rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
-                  >
-                    MINISTER05 — 5% off
-                  </button>
-                </div>
-              </>
+              </details>
             )}
           </div>
 
@@ -230,6 +321,12 @@ export default function CartPage() {
               <div className="mt-1 flex items-center justify-between text-sm text-secondary">
                 <span>Discount ({coupon})</span>
                 <span>− ₹{discount}</span>
+              </div>
+            )}
+            {freeFriesActive && (
+              <div className="mt-1 flex items-center justify-between text-sm text-secondary">
+                <span>🍟 Free Fries (Half)</span>
+                <span>FREE</span>
               </div>
             )}
             <div className="mt-3 flex items-center justify-between border-t border-outline-variant/10 pt-3">

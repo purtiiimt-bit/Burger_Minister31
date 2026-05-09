@@ -11,8 +11,13 @@ export type CartItem = {
 
 export const COUPONS: Record<string, { percent: number }> = {
   MINISTER05: { percent: 5 },
-  MINISTER38: { percent: 10 },
+  MINISTER10: { percent: 10 },
+  MINISTER38: { percent: 10 }, // legacy verbal-only alias for MINISTER10
 };
+
+// Free-fries threshold offer
+export const FREE_FRIES_THRESHOLD = 299;
+export const FREE_FRIES_ITEM = "Classic Salted Fries (Half) — FREE";
 
 type CartContextType = {
   items: CartItem[];
@@ -27,7 +32,14 @@ type CartContextType = {
   discount: number;
   applyCoupon: (code: string) => { ok: boolean; message: string };
   removeCoupon: () => void;
+  freeFriesEarned: boolean;       // earned by threshold
+  freeFriesActive: boolean;       // actually applied (mutex with 10%)
+  freeFriesShortfall: number;
 };
+
+// Coupons that are mutually exclusive with the Free Fries offer.
+// Customer can pick one or the other — not both. Admin overrides this on /admin.
+const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38"]);
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -114,6 +126,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     ? Math.round((subtotal * COUPONS[coupon].percent) / 100)
     : 0;
   const totalPrice = Math.max(0, subtotal - discount);
+  const freeFriesEarned = subtotal >= FREE_FRIES_THRESHOLD;
+  const freeFriesActive =
+    freeFriesEarned && !(coupon && MUTEX_WITH_FREE_FRIES.has(coupon));
+  const freeFriesShortfall = Math.max(0, FREE_FRIES_THRESHOLD - subtotal);
 
   return (
     <CartContext.Provider
@@ -130,6 +146,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         discount,
         applyCoupon,
         removeCoupon,
+        freeFriesEarned,
+        freeFriesActive,
+        freeFriesShortfall,
       }}
     >
       {children}

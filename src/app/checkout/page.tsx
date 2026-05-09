@@ -7,7 +7,15 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export default function CheckoutPage() {
-  const { items, subtotal, discount, totalPrice, coupon, clearCart } = useCart();
+  const {
+    items,
+    subtotal,
+    discount,
+    totalPrice,
+    coupon,
+    freeFriesActive,
+    clearCart,
+  } = useCart();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -57,17 +65,29 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
 
+    // If free fries earned, append a ₹0 line item so kitchen sees it on the receipt
+    const cartItems = items.map((i) => ({
+      name: i.name,
+      quantity: i.quantity,
+      price: i.price,
+      subtotal: i.price * i.quantity,
+    }));
+    if (freeFriesActive) {
+      cartItems.push({
+        name: "Classic Salted Fries (Half) — FREE",
+        quantity: 1,
+        price: 0,
+        subtotal: 0,
+      });
+    }
+
     const orderData = {
       ...formData,
-      items: items.map((i) => ({
-        name: i.name,
-        quantity: i.quantity,
-        price: i.price,
-        subtotal: i.price * i.quantity,
-      })),
+      items: cartItems,
       subtotal,
       coupon,
       discount,
+      freeFries: freeFriesActive,
       totalPrice,
     };
 
@@ -80,8 +100,11 @@ export default function CheckoutPage() {
 
       if (!res.ok) throw new Error("Order failed");
 
+      const data = await res.json().catch(() => ({}));
+      const num = data?.orderNumber || "";
+
       clearCart();
-      router.push("/thankyou");
+      router.push(num ? `/thankyou?orderNumber=${encodeURIComponent(num)}` : "/thankyou");
     } catch {
       setError(
         "Order submit nahi ho paya. Please try again ya call karein: +91 9643100501"
@@ -408,6 +431,12 @@ export default function CheckoutPage() {
                     <div className="mt-1 flex items-center justify-between text-sm text-secondary">
                       <span>Discount ({coupon})</span>
                       <span>− ₹{discount}</span>
+                    </div>
+                  )}
+                  {freeFriesActive && (
+                    <div className="mt-1 flex items-center justify-between text-sm text-secondary">
+                      <span>🍟 Free Fries (Half)</span>
+                      <span>FREE</span>
                     </div>
                   )}
                   <div className="mt-3 flex items-center justify-between border-t border-outline-variant/10 pt-3">
