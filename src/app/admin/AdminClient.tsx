@@ -95,9 +95,38 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main panel
 // ─────────────────────────────────────────────────────────────────────────────
+type Stats = { todayCount: number; lifetimeTotal: number } | null;
+
 function Panel({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>("search");
   const [toast, setToast] = useState<Toast>(null);
+  const [stats, setStats] = useState<Stats>(null);
+  const [statsTick, setStatsTick] = useState(0);
+
+  // Fetch stats on mount + every 30s + after every successful order
+  useEffect(() => {
+    let alive = true;
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/stats", { cache: "no-store" });
+        const data = await res.json();
+        if (alive && data?.success && data.stats) {
+          setStats({
+            todayCount: data.stats.todayCount || 0,
+            lifetimeTotal: data.stats.lifetimeTotal || 0,
+          });
+        }
+      } catch {
+        // ignore
+      }
+    }
+    load();
+    const id = setInterval(load, 30000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, [statsTick]);
 
   useEffect(() => {
     if (!toast) return;
@@ -109,6 +138,8 @@ function Panel({ onLogout }: { onLogout: () => void }) {
     localStorage.removeItem(AUTH_KEY);
     onLogout();
   }
+
+  const refreshStats = () => setStatsTick((x) => x + 1);
 
   return (
     <div className="min-h-screen pb-24">
@@ -131,6 +162,29 @@ function Panel({ onLogout }: { onLogout: () => void }) {
           </button>
         </div>
 
+        {/* Stats strip */}
+        <div className="mx-auto flex max-w-3xl items-center justify-around gap-2 border-t border-outline-variant/10 px-4 py-2.5">
+          <div className="text-center">
+            <div className="text-[10px] uppercase tracking-wider text-on-surface/50">
+              Today
+            </div>
+            <div className="font-[var(--font-heading)] text-xl font-bold text-primary">
+              {stats?.todayCount ?? "—"}
+            </div>
+          </div>
+          <div className="h-8 w-px bg-outline-variant/15" />
+          <div className="text-center">
+            <div className="text-[10px] uppercase tracking-wider text-on-surface/50">
+              Lifetime
+            </div>
+            <div className="font-[var(--font-heading)] text-xl font-bold text-secondary">
+              {stats?.lifetimeTotal != null
+                ? stats.lifetimeTotal.toLocaleString("en-IN")
+                : "—"}
+            </div>
+          </div>
+        </div>
+
         {/* Tabs */}
         <nav className="mx-auto flex max-w-3xl gap-2 px-4 pb-3">
           <TabBtn active={tab === "search"} onClick={() => setTab("search")}>
@@ -146,7 +200,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
         {tab === "search" ? (
           <SearchTab onToast={setToast} />
         ) : (
-          <NewOrderTab onToast={setToast} />
+          <NewOrderTab onToast={setToast} onPlaced={refreshStats} />
         )}
       </main>
 
@@ -380,7 +434,13 @@ function Row({
 // ─────────────────────────────────────────────────────────────────────────────
 type CartLine = { name: string; price: number; quantity: number };
 
-function NewOrderTab({ onToast }: { onToast: (t: Toast) => void }) {
+function NewOrderTab({
+  onToast,
+  onPlaced,
+}: {
+  onToast: (t: Toast) => void;
+  onPlaced?: () => void;
+}) {
   const flat = useMemo(() => flattenMenu(), []);
   const categories = useMemo(() => Object.keys(flat), [flat]);
   const [activeCat, setActiveCat] = useState(categories[0]);
@@ -491,6 +551,7 @@ function NewOrderTab({ onToast }: { onToast: (t: Toast) => void }) {
       setPhone("");
       setPaymentMode("UPI");
       setExpanded(false);
+      onPlaced?.();
     } catch {
       onToast({ kind: "err", msg: "Network error" });
     } finally {

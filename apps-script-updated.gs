@@ -36,47 +36,86 @@ function ensureSheets_() {
       "Address",
       "Note",
       "Coupon",
+      "Lifetime #",
     ]);
   }
   let counter = ss.getSheetByName(COUNTER_SHEET);
   if (!counter) {
     counter = ss.insertSheet(COUNTER_SHEET);
-    counter.getRange("A1").setValue("");
-    counter.getRange("B1").setValue(0);
+    counter.getRange("A1").setValue("");   // last reset date (yyyy-MM-dd IST)
+    counter.getRange("B1").setValue(0);    // today's counter (resets daily)
+    counter.getRange("C1").setValue(0);    // lifetime counter (never resets)
+    counter.getRange("A2").setValue("Last Reset");
+    counter.getRange("B2").setValue("Today");
+    counter.getRange("C2").setValue("Lifetime");
   }
   return { orders, counter };
 }
 
+// Increments BOTH today's counter (daily reset) and lifetime counter (never resets)
 function nextOrderNumber_(counter) {
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
   const lastDate = counter.getRange("A1").getValue();
   let n = Number(counter.getRange("B1").getValue() || 0);
+  let lifetime = Number(counter.getRange("C1").getValue() || 0);
+
   if (lastDate !== today) {
     n = 0;
     counter.getRange("A1").setValue(today);
   }
   n += 1;
+  lifetime += 1;
   counter.getRange("B1").setValue(n);
-  return "#" + String(n).padStart(3, "0");
+  counter.getRange("C1").setValue(lifetime);
+
+  return {
+    orderNumber: "#" + String(n).padStart(3, "0"),
+    todayCount: n,
+    lifetimeTotal: lifetime,
+  };
+}
+
+function getStats_(counter) {
+  const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
+  const lastDate = counter.getRange("A1").getValue();
+  // If today hasn't been reset yet, today count is 0 (will reset on next order)
+  const todayCount =
+    lastDate === today ? Number(counter.getRange("B1").getValue() || 0) : 0;
+  const lifetime = Number(counter.getRange("C1").getValue() || 0);
+  return { todayCount, lifetimeTotal: lifetime, lastReset: lastDate };
 }
 
 /**
- * Manually reset the counter to 0. Run this once before going live so the
- * first real order is #001. From the Apps Script editor, select this function
- * in the dropdown and click Run.
+ * Manually reset the daily counter (Today's #) to 0. Run this once before going
+ * live so the first real order is #001. Lifetime counter is NOT touched here.
+ * Editor → dropdown → resetCounter → ▶ Run.
  */
 function resetCounter() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const counter = ss.getSheetByName(COUNTER_SHEET) || ss.insertSheet(COUNTER_SHEET);
-  counter.getRange("A1").setValue("");  // forces fresh-day reset on next order
+  counter.getRange("A1").setValue("");
   counter.getRange("B1").setValue(0);
+  // Don't touch C1 (lifetime)
+}
+
+/**
+ * DANGER: Wipes the lifetime counter too. Only run if you really want to start
+ * tracking from zero (e.g., new outlet, fresh launch).
+ */
+function resetLifetime() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const counter = ss.getSheetByName(COUNTER_SHEET) || ss.insertSheet(COUNTER_SHEET);
+  counter.getRange("A1").setValue("");
+  counter.getRange("B1").setValue(0);
+  counter.getRange("C1").setValue(0);
 }
 
 function doPost(e) {
   try {
     const { orders, counter } = ensureSheets_();
     const data = JSON.parse(e.postData.contents);
-    const orderNumber = nextOrderNumber_(counter);
+    const numbers = nextOrderNumber_(counter);
+    const orderNumber = numbers.orderNumber;
 
     // Prefer structured itemsArray (new clients); fall back to items (legacy string or array)
     const itemsRaw = data.itemsArray || data.items || [];
@@ -99,6 +138,7 @@ function doPost(e) {
       data.address || "",
       data.note || "",
       data.coupon || "",
+      numbers.lifetimeTotal,
     ]);
 
     // Email notification (kept from original script, with order number prepended)
@@ -139,7 +179,12 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(
-      JSON.stringify({ success: true, orderNumber })
+      JSON.stringify({
+        success: true,
+        orderNumber: orderNumber,
+        todayCount: numbers.todayCount,
+        lifetimeTotal: numbers.lifetimeTotal,
+      })
     ).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(
@@ -150,7 +195,16 @@ function doPost(e) {
 
 function doGet(e) {
   try {
-    const { orders } = ensureSheets_();
+    const { orders, counter } = ensureSheets_();
+
+    // Stats endpoint: ?stats=1 → returns counts only
+    if (e.parameter && e.parameter.stats) {
+      const stats = getStats_(counter);
+      return ContentService.createTextOutput(
+        JSON.stringify({ success: true, stats })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     const param = (e.parameter && e.parameter.number) || "";
     const target = "#" + String(param).replace(/^#/, "").padStart(3, "0");
 
