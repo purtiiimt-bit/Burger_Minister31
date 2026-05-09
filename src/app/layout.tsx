@@ -3,7 +3,11 @@ import { Epilogue, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import LayoutChrome from "@/components/LayoutChrome";
 import { CartProvider } from "@/context/CartContext";
-import { LocalBusinessSchema } from "@/components/Schema";
+import {
+  LocalBusinessSchema,
+  OrganizationSchema,
+  WebSiteSchema,
+} from "@/components/Schema";
 
 const epilogue = Epilogue({
   variable: "--font-epilogue",
@@ -121,6 +125,27 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  manifest: "/manifest.json",
+  themeColor: "#16130b",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/favicon.ico",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Burger Minister",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: true,
+    address: true,
+    email: true,
+  },
 };
 
 export default function RootLayout({
@@ -134,6 +159,8 @@ export default function RootLayout({
       className={`${epilogue.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
+        <OrganizationSchema />
+        <WebSiteSchema />
         <LocalBusinessSchema />
         <CartProvider>
           <LayoutChrome>{children}</LayoutChrome>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { images } from "@/lib/images";
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/Schema";
 
 export const metadata: Metadata = {
   title: "About Us — Our Story & Values",
@@ -59,6 +60,12 @@ const milestones = [
 export default function AboutPage() {
   return (
     <div className="pt-16">
+      <BreadcrumbSchema
+        trail={[
+          { name: "Home", url: "/" },
+          { name: "About Us", url: "/about" },
+        ]}
+      />
       {/* Hero */}
       <section className="bg-surface-container-low py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">

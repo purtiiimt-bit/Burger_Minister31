@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { images } from "@/lib/images";
 import { menuData } from "@/lib/menuData";
+import { MenuSchema, BreadcrumbSchema } from "@/components/Schema";
 import MenuClient from "./MenuClient";
 
 export const metadata: Metadata = {
@@ -22,5 +23,16 @@ const categoryBanners: Record<string, string> = {
 };
 
 export default function MenuPage() {
-  return <MenuClient menuData={menuData} categoryBanners={categoryBanners} />;
+  return (
+    <>
+      <MenuSchema />
+      <BreadcrumbSchema
+        trail={[
+          { name: "Home", url: "/" },
+          { name: "Menu", url: "/menu" },
+        ]}
+      />
+      <MenuClient menuData={menuData} categoryBanners={categoryBanners} />
+    </>
+  );
 }

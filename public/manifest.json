@@ -1,0 +1,56 @@
+{
+  "name": "Burger Minister",
+  "short_name": "BM",
+  "description": "Burger Minister — Crowned with Flavour, Served with Pride. 100% pure-veg burgers, momos, fries & shakes in Sector 58, Noida.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#16130b",
+  "theme_color": "#e6c443",
+  "orientation": "portrait",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["food", "lifestyle", "restaurants"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "View Menu",
+      "url": "/menu",
+      "description": "Browse our full vegetarian menu"
+    },
+    {
+      "name": "Order Now",
+      "url": "/menu",
+      "description": "Place an order"
+    },
+    {
+      "name": "Catering",
+      "url": "/catering",
+      "description": "Catering packages for events"
+    }
+  ]
+}

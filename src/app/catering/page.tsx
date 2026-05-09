@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { images } from "@/lib/images";
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/Schema";
 import CateringForm from "./CateringForm";
 
 export const metadata: Metadata = {
@@ -128,6 +129,12 @@ const packages: PackageData[] = [
 export default function CateringPage() {
   return (
     <div className="pt-16">
+      <BreadcrumbSchema
+        trail={[
+          { name: "Home", url: "/" },
+          { name: "Catering & Events", url: "/catering" },
+        ]}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-surface-container-low via-surface to-tertiary-container/20 py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">

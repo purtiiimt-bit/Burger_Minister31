@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/Schema";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -11,6 +12,12 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="pt-16">
+      <BreadcrumbSchema
+        trail={[
+          { name: "Home", url: "/" },
+          { name: "Contact", url: "/contact" },
+        ]}
+      />
       {/* Hero */}
       <section className="bg-surface-container-low py-16">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
