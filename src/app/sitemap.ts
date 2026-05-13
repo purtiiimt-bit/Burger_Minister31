@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
+import { getAllSlugs } from "@/lib/menuContent";
+import { getAllLocationSlugs } from "@/lib/locationContent";
 
 const SITE_URL = "https://burger-minister.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return [
+  const corePages: MetadataRoute.Sitemap = [
     {
       url: `${SITE_URL}/`,
       lastModified: now,
@@ -16,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}/menu`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${SITE_URL}/contact`,
@@ -36,5 +38,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${SITE_URL}/faq`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
   ];
+
+  const itemPages: MetadataRoute.Sitemap = getAllSlugs().map((slug) => ({
+    url: `${SITE_URL}/menu/${slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  const locationPages: MetadataRoute.Sitemap = getAllLocationSlugs().map(
+    (slug) => ({
+      url: `${SITE_URL}/near/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    })
+  );
+
+  return [...corePages, ...itemPages, ...locationPages];
 }

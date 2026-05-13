@@ -11,13 +11,13 @@ export const realReviews = [
   {
     author: "Shorya Sagar",
     rating: 5,
-    body: "I recently visited Burger Minister in Noida and I lovee his burgers and momos. His kurkure momo was soo delicious and yummy, and the service was so good. Bhaiya is very polite. Definitely coming back!",
+    body: "I recently visited Burger Minister in Noida and I loved his burgers and momos. The kurkure momos were so delicious and yummy, and the service was great. The owner is very polite. Definitely coming back!",
     datePublished: "2026-04-01",
   },
   {
     author: "Madhukar Yadav",
     rating: 5,
-    body: "If you're a snack lover, this place is an absolute gem! The peri peri fries are perfectly crispy with the right amount of spice. Veg momos are a total delight — soft, juicy, and packed with flavor. Highly recommended!",
+    body: "If you're a snack lover, this place is an absolute gem! The peri peri fries are perfectly crispy with the right amount of spice. Veg momos are a total delight, soft, juicy, and packed with flavor. Highly recommended!",
     datePublished: "2026-02-01",
   },
   {
@@ -29,13 +29,13 @@ export const realReviews = [
   {
     author: "Sarwagy Singh Virat",
     rating: 5,
-    body: "Bhaiya bohot ache hai, khaana bhi acha hai, must try everything. All night delivery available.",
+    body: "The owner is very nice, food is great too. Must try everything.",
     datePublished: "2025-12-15",
   },
   {
     author: "Kartik",
     rating: 5,
-    body: "Such a tasty burger with perfectly crispy fries and kurkure momo. Loved every bite. Must try — also pocket friendly!",
+    body: "Such a tasty burger with perfectly crispy fries and kurkure momo. Loved every bite. Must try, also pocket friendly!",
     datePublished: "2026-02-05",
   },
 ];
@@ -47,10 +47,10 @@ export function LocalBusinessSchema() {
     "@type": "FoodEstablishment",
     "@id": RESTAURANT_ID,
     name: "Burger Minister",
-    alternateName: "BM — Burger Minister · Crowned with Flavour, Served with Pride",
+    alternateName: "BM Burger Minister. Crowned with Flavour, Served with Pride.",
     slogan: "Crowned with Flavour, Served with Pride",
     description:
-      "Burger Minister is Sector 58 Noida's most-loved 100% pure-veg late-night kitchen. Handcrafted burgers, kurkure momos, BM Special fries, sandwiches, pizza, shakes and coolers — fresh to order, FSSAI-compliant, hygiene first. Daily 4 PM – 3 AM.",
+      "Burger Minister is a pure vegetarian dine-in restaurant at D13 Bhaiji Market, Sector 58, Noida. We serve handcrafted burgers, fresh momos, BM Special fries, sandwiches, pizzas, milkshakes, cold coffee, and coolers. FSSAI compliant, hygiene first, made fresh to order. Open daily 11 AM to 11 PM.",
     url: SITE_URL,
     telephone: "+91-9643100501",
     image: [
@@ -61,7 +61,7 @@ export function LocalBusinessSchema() {
     servesCuisine: ["Indian", "Fast Food", "Vegetarian", "Burgers", "Momos"],
     address: {
       "@type": "PostalAddress",
-      streetAddress: "C-44, C Block, Sector 58",
+      streetAddress: "D13, Bhaiji Market, Sector 58",
       addressLocality: "Noida",
       addressRegion: "Uttar Pradesh",
       postalCode: "201301",
@@ -85,8 +85,8 @@ export function LocalBusinessSchema() {
           "Saturday",
           "Sunday",
         ],
-        opens: "16:00",
-        closes: "03:00",
+        opens: "11:00",
+        closes: "23:00",
       },
     ],
     acceptsReservations: "False",
@@ -157,7 +157,7 @@ export function OrganizationSchema() {
     logo: `${SITE_URL}/icon-512.png`,
     image: `${SITE_URL}/icon-512.png`,
     description:
-      "Burger Minister — Crowned with Flavour, Served with Pride. A 100% pure-vegetarian late-night kitchen in Sector 58, Noida.",
+      "Burger Minister. Crowned with Flavour, Served with Pride. A 100% pure-vegetarian dine-in restaurant in Sector 58, Noida.",
     foundingDate: "2024",
     foundingLocation: {
       "@type": "Place",

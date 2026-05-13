@@ -148,10 +148,11 @@ export default function CartPage() {
             </svg>
             <div className="min-w-0 flex-1">
               <p className="text-sm italic text-on-surface/70">
-                &ldquo;Ghar baithe fresh veg burger mil raha hai — what a time!&rdquo;
+                &ldquo;Walked in for a quick bite, walked out a regular. The
+                Cheese Loaded Burger is a treat.&rdquo;
               </p>
               <p className="mt-1 text-xs text-on-surface/40">
-                — Kavita, Sector 62 · 2 hrs ago
+                Kavita, Sector 62. 2 hrs ago.
               </p>
             </div>
           </div>

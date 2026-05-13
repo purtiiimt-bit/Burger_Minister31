@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { nameToSlug } from "@/lib/slug";
+import { getAllSlugs } from "@/lib/menuContent";
+
+const detailSlugs = new Set(getAllSlugs());
 
 type Variant = { label: string; price: number };
 type MenuItem = {
@@ -53,7 +58,7 @@ export default function MenuClient({
             Our <span className="text-primary">Menu</span>
           </h1>
           <p className="mt-3 text-on-surface/60">
-            Crafted with love, served with pride — 100% Vegetarian
+            Crafted with love, served with pride. 100% Vegetarian.
           </p>
 
           {/* Filter Chips */}
@@ -113,6 +118,8 @@ export default function MenuClient({
               {/* Item Cards Grid */}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {catItems.map((item) => {
+                  const slug = nameToSlug(item.name);
+                  const hasDetail = detailSlugs.has(slug);
                   return (
                     <div
                       key={item.name}
@@ -125,9 +132,18 @@ export default function MenuClient({
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
-                            <h3 className="truncate font-[var(--font-heading)] text-sm font-bold sm:text-base">
-                              {item.name}
-                            </h3>
+                            {hasDetail ? (
+                              <Link
+                                href={`/menu/${slug}`}
+                                className="truncate font-[var(--font-heading)] text-sm font-bold text-on-surface hover:text-primary sm:text-base"
+                              >
+                                {item.name}
+                              </Link>
+                            ) : (
+                              <h3 className="truncate font-[var(--font-heading)] text-sm font-bold sm:text-base">
+                                {item.name}
+                              </h3>
+                            )}
                             {item.tag && (
                               <span className="shrink-0 rounded-full bg-tertiary-container px-2 py-0.5 text-[10px] font-semibold text-tertiary">
                                 {item.tag}
@@ -137,6 +153,14 @@ export default function MenuClient({
                           <p className="mt-0.5 line-clamp-1 text-xs text-on-surface/40">
                             {item.description}
                           </p>
+                          {hasDetail && (
+                            <Link
+                              href={`/menu/${slug}`}
+                              className="mt-1 inline-block text-[11px] font-semibold text-primary/70 hover:text-primary"
+                            >
+                              View details →
+                            </Link>
+                          )}
                         </div>
                       </div>
 
@@ -144,7 +168,7 @@ export default function MenuClient({
                       <div className="mt-3 flex items-center justify-end gap-2">
                         {item.variants ? (
                           item.variants.map((v) => {
-                            const displayName = `${item.name} — ${v.label}`;
+                            const displayName = `${item.name} (${v.label})`;
                             const qty = getItemQty(displayName);
                             return (
                               <button

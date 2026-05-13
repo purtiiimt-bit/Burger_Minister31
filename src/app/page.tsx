@@ -15,7 +15,7 @@ const heroStats = [
   { v: "★ 4.8", l: "Google Rating" },
   { v: "13+", l: "Types of Momos" },
   { v: "15 min", l: "Prep Time" },
-  { v: "From ₹60", l: "Pocket-Friendly" },
+  { v: "From ₹59", l: "Pocket Friendly" },
 ];
 
 const floatingTags = [
@@ -88,9 +88,9 @@ export default function HomePage() {
 
               {/* Lede */}
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-on-surface/60">
-                Handcrafted veg burgers, kurkure momos, BM Special fries,
-                sandwiches, pizza & shakes — fresh to order, daily from 4 PM
-                to 3 AM. Noida&apos;s most-loved late-night kitchen.
+                Handcrafted veg burgers, fresh momos, BM Special fries,
+                sandwiches, pizza and shakes. Made fresh to order, daily from 11 AM
+                to 11 PM. Sector 58 Noida&apos;s favourite pure vegetarian dine-in.
               </p>
 
               {/* Live ticker */}
@@ -264,8 +264,8 @@ export default function HomePage() {
             </h2>
             <p className="mt-3 text-lg text-on-surface/70">
               Starting from just{" "}
-              <span className="font-bold text-primary">₹119</span> — Burger +
-              Fries + Drink
+              <span className="font-bold text-primary">₹169</span>. Burger plus
+              Fries plus Drink.
             </p>
             <Link
               href="/menu"
@@ -303,7 +303,7 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                     </svg>
                     <p className="text-on-surface/70">
-                      C-44, C Block, Sector 58, Noida, Uttar Pradesh 201301
+                      D13, Bhaiji Market, Sector 58, Noida, Uttar Pradesh 201301
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -319,7 +319,7 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p className="text-on-surface/70">
-                      Daily 4:00 PM – 3:00 AM
+                      Daily 11:00 AM – 11:00 PM
                       <span className="ml-2 text-sm text-secondary">
                         (Open all 7 days)
                       </span>

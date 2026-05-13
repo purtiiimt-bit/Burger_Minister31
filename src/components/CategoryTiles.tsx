@@ -5,7 +5,7 @@ const categories = [
   {
     num: "N°01",
     name: "Burgers",
-    meta: "From ₹60",
+    meta: "From ₹59",
     href: "/menu#Burgers",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
@@ -17,20 +17,8 @@ const categories = [
   },
   {
     num: "N°02",
-    name: "Momos",
-    meta: "13+ types",
-    href: "/menu#Momos",
-    icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 6c-5 0-9 3-9 9 0 6 4 9 9 9s9-3 9-9c0-6-4-9-9-9z" />
-        <path d="M16 8v14M11 9.5l1.5 12M21 9.5l-1.5 12M9 13l14 4M9 17l14-2" />
-      </svg>
-    ),
-  },
-  {
-    num: "N°03",
     name: "Sandwiches",
-    meta: "Crisp & gooey",
+    meta: "Crisp and gooey",
     href: "/menu#Sandwiches",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
@@ -40,21 +28,9 @@ const categories = [
     ),
   },
   {
-    num: "N°04",
-    name: "Fries",
-    meta: "BM Special",
-    href: "/menu#Fries",
-    icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 26h14l-1.5-12H10.5z" />
-        <path d="M11 14l1-8M16 14V5M21 14l-1-8" />
-      </svg>
-    ),
-  },
-  {
-    num: "N°05",
+    num: "N°03",
     name: "Pizza",
-    meta: "8″ fresh",
+    meta: "8 inch, fresh",
     href: "/menu#Pizza",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
@@ -66,27 +42,65 @@ const categories = [
     ),
   },
   {
-    num: "N°06",
-    name: "Shakes & Coolers",
-    meta: "Med & Lrg",
-    href: "/menu#Shakes",
+    num: "N°04",
+    name: "Momos",
+    meta: "13+ types",
+    href: "/menu#Momos",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M8 8h16l-2 18H10z" />
-        <path d="M9 13h14M16 4v4" />
+        <path d="M16 6c-5 0-9 3-9 9 0 6 4 9 9 9s9-3 9-9c0-6-4-9-9-9z" />
+        <path d="M16 8v14M11 9.5l1.5 12M21 9.5l-1.5 12M9 13l14 4M9 17l14-2" />
+      </svg>
+    ),
+  },
+  {
+    num: "N°05",
+    name: "Fries",
+    meta: "BM Special",
+    href: "/menu#Fries",
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 26h14l-1.5-12H10.5z" />
+        <path d="M11 14l1-8M16 14V5M21 14l-1-8" />
+      </svg>
+    ),
+  },
+  {
+    num: "N°06",
+    name: "Snacks",
+    meta: "Quick bites",
+    href: "/menu#Snacks",
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="16" cy="16" r="10" />
+        <circle cx="12" cy="14" r="1" fill="currentColor" />
+        <circle cx="20" cy="14" r="1" fill="currentColor" />
+        <circle cx="14" cy="20" r="1" fill="currentColor" />
+        <circle cx="18" cy="18" r="1" fill="currentColor" />
       </svg>
     ),
   },
   {
     num: "N°07",
-    name: "Coffee",
-    meta: "Cold & Hot",
-    href: "/menu#Coffee",
+    name: "Royal Combos",
+    meta: "Save up to ₹68",
+    href: "/menu#Royal%20Combos",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 12h16v9a5 5 0 01-5 5h-6a5 5 0 01-5-5v-9z" />
-        <path d="M22 14h2a3 3 0 013 3v2a3 3 0 01-3 3h-2" />
-        <path d="M11 4c0 2-1 3-1 5M16 4c0 2-1 3-1 5" />
+        <path d="M6 7l4 4-4 4 4 4-4 4M26 7l-4 4 4 4-4 4 4 4" />
+        <rect x="10" y="11" width="12" height="10" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    num: "N°08",
+    name: "Beverages",
+    meta: "Coffee, Shakes, Coolers",
+    href: "/menu#Cold%20Coffee",
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 8h16l-2 18H10z" />
+        <path d="M9 13h14M16 4v4" />
       </svg>
     ),
   },
@@ -102,7 +116,7 @@ export default function CategoryTiles() {
         <div className="text-center">
           <SectionEyebrow>Browse By Category</SectionEyebrow>
           <h2 className="mt-4 font-[var(--font-heading)] text-3xl font-bold tracking-tight sm:text-4xl">
-            Seven <em className="font-normal italic text-primary">delicious</em> chapters
+            Eight <em className="font-normal italic text-primary">delicious</em> chapters
           </h2>
         </div>
 

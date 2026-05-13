@@ -6,6 +6,7 @@ const footerLinks = [
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
   { href: "/catering", label: "Catering" },
+  { href: "/faq", label: "FAQs" },
 ];
 
 export default function Footer() {
@@ -20,7 +21,7 @@ export default function Footer() {
           <span className="h-1 w-1 rounded-full bg-primary/40" />
           <span>FSSAI Certified</span>
           <span className="h-1 w-1 rounded-full bg-primary/40" />
-          <span>Open Till 3 AM</span>
+          <span>11 AM to 11 PM</span>
           <span className="h-1 w-1 rounded-full bg-primary/40" />
           <span>Sector 58, Noida</span>
         </div>
@@ -41,8 +42,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-on-surface/60">
-              Premium 100% Pure Vegetarian burgers crafted with love in Noida.
-              Quality, taste, and hygiene — guaranteed.
+              Premium 100% pure vegetarian burgers crafted with love in Noida.
+              Quality, taste, and hygiene, guaranteed.
             </p>
           </div>
 
@@ -71,8 +72,8 @@ export default function Footer() {
               Contact
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-on-surface/60">
-              <li>C-44, C Block, Sector 58</li>
-              <li>Noida, UP 201301</li>
+              <li>D13, Bhaiji Market</li>
+              <li>Sector 58, Noida, UP 201301</li>
               <li>
                 <a href="tel:+919643100501" className="hover:text-primary">
                   +91 9643100501
@@ -87,9 +88,9 @@ export default function Footer() {
               Hours
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-on-surface/60">
-              <li>Monday – Sunday</li>
-              <li className="text-secondary font-medium">4:00 PM – 3:00 AM</li>
-              <li>Open all 7 days!</li>
+              <li>Monday to Sunday</li>
+              <li className="text-secondary font-medium">11:00 AM – 11:00 PM</li>
+              <li>Open all 7 days</li>
             </ul>
           </div>
         </div>

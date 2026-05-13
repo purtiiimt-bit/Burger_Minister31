@@ -49,11 +49,12 @@ export default async function ThankYouPage({
         )}
 
         <p className="mt-6 text-sm text-on-surface/50">
-          Hum jaldi hi aapko call karenge order confirm karne ke liye. Koi query
-          ho toh call karein:{" "}
+          We will call you shortly to confirm your order. For any questions
+          please call us at{" "}
           <a href="tel:+919643100501" className="text-primary hover:underline">
             +91 9643100501
           </a>
+          .
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">

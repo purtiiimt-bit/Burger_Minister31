@@ -17,7 +17,7 @@ export const COUPONS: Record<string, { percent: number }> = {
 
 // Free-fries threshold offer
 export const FREE_FRIES_THRESHOLD = 299;
-export const FREE_FRIES_ITEM = "Classic Salted Fries (Half) — FREE";
+export const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
 
 type CartContextType = {
   items: CartItem[];

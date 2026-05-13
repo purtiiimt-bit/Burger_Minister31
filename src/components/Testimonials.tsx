@@ -6,7 +6,7 @@ const reviews = [
     meta: "2 reviews · a month ago",
     rating: 5,
     quote:
-      "I recently visited Burger Minister in Noida and I lovee his burgers and momos. His kurkure momo was soo delicious and yummy, and the service was so good. Bhaiya is very polite. Definitely coming back!",
+      "I recently visited Burger Minister in Noida and I loved his burgers and momos. The kurkure momos were so delicious and yummy, and the service was great. The owner is very polite. Definitely coming back!",
     initial: "S",
     color: "bg-rose-600",
   },
@@ -15,7 +15,7 @@ const reviews = [
     meta: "Local review · 3 months ago",
     rating: 5,
     quote:
-      "If you're a snack lover, this place is an absolute gem! The peri peri fries are perfectly crispy with the right amount of spice. Veg momos are a total delight — soft, juicy, and packed with flavor. Highly recommended!",
+      "If you're a snack lover, this place is an absolute gem! The peri peri fries are perfectly crispy with the right amount of spice. Veg momos are a total delight, soft, juicy, and packed with flavor. Highly recommended!",
     initial: "M",
     color: "bg-amber-600",
   },
@@ -33,7 +33,7 @@ const reviews = [
     meta: "Local Guide · 39 reviews",
     rating: 5,
     quote:
-      "Bhaiya bohot ache hai, khaana bhi acha hai, must try everything. All night delivery available.",
+      "The owner is very nice, food is great too. Must try everything.",
     initial: "S",
     color: "bg-green-600",
   },
@@ -42,7 +42,7 @@ const reviews = [
     meta: "3 months ago",
     rating: 5,
     quote:
-      "Such a tasty burger with perfectly crispy fries and kurkure momo. Loved every bite. Must try — also pocket friendly!",
+      "Such a tasty burger with perfectly crispy fries and kurkure momo. Loved every bite. Must try, also pocket friendly!",
     initial: "K",
     color: "bg-teal-600",
   },

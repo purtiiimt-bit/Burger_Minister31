@@ -122,7 +122,7 @@ Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             access_key: web3formsKey,
-            subject: `🍔 ${orderNumber || "New Order"} — ₹${order.totalPrice} from ${order.name}`,
+            subject: `🍔 ${orderNumber || "New Order"} (₹${order.totalPrice}) from ${order.name}`,
             message:
               (orderNumber ? `Order Number: ${orderNumber}\n\n` : "") +
               orderSummary,

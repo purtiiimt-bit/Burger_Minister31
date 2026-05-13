@@ -5,21 +5,24 @@ import { MenuSchema, BreadcrumbSchema } from "@/components/Schema";
 import MenuClient from "./MenuClient";
 
 export const metadata: Metadata = {
-  title: "Menu — Veg Burgers, Momos, Fries & More",
+  title: "Menu. Veg Burgers, Momos, Fries and More",
   description:
-    "Explore Burger Minister's full menu — 100% vegetarian burgers, sandwiches, fries, kurkure momos, pizza, shakes & coolers. Fresh daily in Sector 58, Noida.",
+    "Explore Burger Minister's full menu. 100% vegetarian burgers, sandwiches, fries, momos, pizza, shakes and coolers. Made fresh daily in Sector 58, Noida.",
   alternates: { canonical: "/menu" },
 };
 
 const categoryBanners: Record<string, string> = {
   Burgers: images.catBurgers,
   Sandwiches: images.catSandwiches,
+  Pizza: images.catPizza,
   Momos: images.catMomos,
   Fries: images.catFries,
-  Pizza: images.catPizza,
-  Shakes: images.catShakes,
-  Coffee: images.catCoffee,
+  Snacks: images.catFries,
+  "Royal Combos": images.catBurgers,
+  "Cold Coffee": images.catCoffee,
+  "Milk Shakes": images.catShakes,
   Coolers: images.catCoolers,
+  Extras: images.catSandwiches,
 };
 
 export default function MenuPage() {

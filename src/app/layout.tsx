@@ -24,11 +24,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://burger-minister.com"),
   title: {
-    default: "Burger Minister — Crowned with Flavour, Served with Pride | Sector 58 Noida",
-    template: "%s | Burger Minister",
+    default: "Burger Minister, Pure Veg Cafe in Sector 58 Noida",
+    template: "%s",
   },
   description:
-    "Crowned with Flavour, Served with Pride — Burger Minister is Sector 58 Noida's most-loved 100% pure-veg kitchen. Handcrafted burgers, kurkure momos, BM Special fries, sandwiches, pizza, shakes & coolers. Fresh to order, daily 4 PM – 3 AM.",
+    "100% pure vegetarian dine-in cafe at D13, Bhaiji Market, Sector 58, Noida. Burgers, momos, pizza, fries, shakes. Open daily 11 AM to 11 PM.",
   keywords: [
     // Brand
     "burger minister",
@@ -90,9 +90,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Burger Minister — Crowned with Flavour, Served with Pride",
+    title: "Burger Minister. Crowned with Flavour, Served with Pride",
     description:
-      "100% Pure Vegetarian late-night kitchen in Sector 58 Noida. Handcrafted burgers, kurkure momos, BM Special fries, shakes & more — fresh to order.",
+      "100% pure vegetarian dine-in restaurant in Sector 58 Noida. Handcrafted burgers, fresh momos, BM Special fries, milkshakes and more, made fresh to order. Open 11 AM to 11 PM.",
     url: "https://burger-minister.com",
     siteName: "Burger Minister",
     type: "website",
@@ -102,15 +102,15 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1660715683691-d1614d1dd361?w=1200&h=630&q=80&auto=format&fit=crop",
         width: 1200,
         height: 630,
-        alt: "Burger Minister — 100% pure-veg burgers, Sector 58 Noida",
+        alt: "Burger Minister. 100% pure veg burgers, Sector 58 Noida",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Burger Minister — Crowned with Flavour, Served with Pride",
+    title: "Burger Minister. Crowned with Flavour, Served with Pride",
     description:
-      "Sector 58 Noida's most-loved 100% pure-veg kitchen. Burgers, momos, fries & shakes — fresh to order, 4 PM – 3 AM.",
+      "Sector 58 Noida's pure veg dine-in restaurant. Burgers, momos, fries and shakes, made fresh to order. Open 11 AM to 11 PM.",
     images: [
       "https://images.unsplash.com/photo-1660715683691-d1614d1dd361?w=1200&h=630&q=80&auto=format&fit=crop",
     ],

@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/Schema";
 
 export const metadata: Metadata = {
-  title: "About Us — Our Story & Values",
+  title: "About Us. Our Story and Values",
   description:
-    "Learn about Burger Minister — our story, values, and commitment to 100% vegetarian, premium-quality burgers in Sector 58, Noida.",
+    "Learn about Burger Minister. Our story, values, and commitment to 100% vegetarian, premium-quality burgers in Sector 58, Noida.",
   alternates: { canonical: "/about" },
 };
 
@@ -54,7 +54,7 @@ const milestones = [
   { year: "2023", text: "Launched full menu with combos" },
   { year: "2024", text: "10,000+ happy customers served" },
   { year: "2025", text: "Expanded catering services" },
-  { year: "2026", text: "Going digital — website launch" },
+  { year: "2026", text: "Going digital. Website launch." },
 ];
 
 export default function AboutPage() {
@@ -153,9 +153,9 @@ export default function AboutPage() {
               <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10H0z" />
             </svg>
             <p className="mt-4 font-[var(--font-heading)] text-xl font-semibold leading-relaxed text-on-surface/90 sm:text-2xl">
-              We don&apos;t just make burgers. We craft experiences — one bite at a time.
+              We don&apos;t just make burgers. We craft experiences, one bite at a time.
             </p>
-            <p className="mt-4 text-sm text-primary">— Team Burger Minister</p>
+            <p className="mt-4 text-sm text-primary">Team Burger Minister</p>
           </div>
         </div>
       </section>

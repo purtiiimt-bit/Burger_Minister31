@@ -3,9 +3,9 @@ import { BreadcrumbSchema } from "@/components/Schema";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact — Visit Us in Sector 58, Noida",
+  title: "Contact. Visit Us in Sector 58, Noida",
   description:
-    "Find Burger Minister at C-44, C Block, Sector 58, Noida. Call +91 9643100501, get directions, or send us a message. Open daily 4 PM – 3 AM.",
+    "Find Burger Minister at D13, Bhaiji Market, Sector 58, Noida. Call +91 9643100501, get directions or send us a message. Open daily 11 AM to 11 PM.",
   alternates: { canonical: "/contact" },
 };
 
@@ -25,7 +25,7 @@ export default function ContactPage() {
             Find <span className="text-primary">Us</span>
           </h1>
           <p className="mt-3 text-on-surface/60">
-            Visit us or get in touch — we&apos;d love to hear from you!
+            Visit us or get in touch. We would love to hear from you.
           </p>
         </div>
       </section>
@@ -50,7 +50,7 @@ export default function ContactPage() {
                       Our Location
                     </h3>
                     <p className="mt-1 text-sm text-on-surface/60">
-                      C-44, C Block, Sector 58, Noida, Uttar Pradesh 201301
+                      D13, Bhaiji Market, Sector 58, Noida, Uttar Pradesh 201301
                     </p>
                     <a
                       href="https://maps.app.goo.gl/JGiLiytokNhZE2Da9"
@@ -79,10 +79,10 @@ export default function ContactPage() {
                     <p className="mt-1 text-sm text-on-surface/60">
                       Monday to Sunday:{" "}
                       <span className="font-medium text-secondary">
-                        4:00 PM – 3:00 AM
+                        11:00 AM – 11:00 PM
                       </span>
                     </p>
-                    <p className="mt-1 text-xs text-secondary">Open all 7 days!</p>
+                    <p className="mt-1 text-xs text-secondary">Open all 7 days for dine-in</p>
                   </div>
                 </div>
               </div>

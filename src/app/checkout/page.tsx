@@ -74,7 +74,7 @@ export default function CheckoutPage() {
     }));
     if (freeFriesActive) {
       cartItems.push({
-        name: "Classic Salted Fries (Half) — FREE",
+        name: "Classic Salted Fries (Half), FREE",
         quantity: 1,
         price: 0,
         subtotal: 0,
@@ -107,7 +107,7 @@ export default function CheckoutPage() {
       router.push(num ? `/thankyou?orderNumber=${encodeURIComponent(num)}` : "/thankyou");
     } catch {
       setError(
-        "Order submit nahi ho paya. Please try again ya call karein: +91 9643100501"
+        "Sorry, we couldn't submit your order. Please try again or call us at +91 9643100501."
       );
       setLoading(false);
     }
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <p className="mb-6 text-center text-xs text-on-surface/40">
-                  Paytm — Anand Kumar
+                  Paytm. Anand Kumar
                 </p>
 
                 {/* Divider */}
@@ -242,7 +242,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Info Note — highlighted, token mandatory */}
+                {/* Info Note. Highlighted, token mandatory */}
                 <div className="mb-6 rounded-2xl border-2 border-primary/40 bg-primary/10 p-4 shadow-[0_0_24px_rgba(230,196,67,0.15)]">
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/20">
@@ -262,10 +262,10 @@ export default function CheckoutPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-[var(--font-heading)] text-sm font-bold text-primary">
-                        Order confirm hone ke baad — counter se Pickup Token zaroor lijiye 🎟️
+                        Please collect your Pickup Token at the counter 🎟️
                       </p>
                       <p className="mt-1.5 text-xs leading-relaxed text-on-surface/70">
-                        Payment yahin QR se kijiye <span className="text-on-surface/50">ya</span> counter pe aakar — jaise aap chaahein. Lekin <span className="font-semibold text-secondary">token lena zaroori hai</span> — wahi aapka order ka pyaara golden pass hai.
+                        You can pay here using UPI <span className="text-on-surface/50">or</span> at the counter when you arrive. Either way works. <span className="font-semibold text-secondary">Picking up your token is mandatory</span>. It is your golden pass to collect the order.
                       </p>
                     </div>
                   </div>
@@ -286,12 +286,12 @@ export default function CheckoutPage() {
                 >
                   {loading
                     ? "Confirming..."
-                    : `Confirm Order — ₹${totalPrice}`}
+                    : `Confirm Order (₹${totalPrice})`}
                 </button>
 
                 {/* Cash option */}
                 <p className="mt-3 text-center text-xs text-on-surface/30">
-                  Pay yahin ya counter pe — bas token lena mat bhuliye 🎟️
+                  Pay here or at the counter. Just don&apos;t forget your token 🎟️
                 </p>
               </div>
             </div>
@@ -404,7 +404,7 @@ export default function CheckoutPage() {
                   type="submit"
                   className="btn-honeyed mt-6 w-full rounded-full py-3 text-base font-semibold text-on-primary transition-all hover:scale-[1.02]"
                 >
-                  Proceed to Payment — ₹{totalPrice}
+                  Proceed to Payment (₹{totalPrice})
                 </button>
               </div>
             </form>

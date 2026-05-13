@@ -8,23 +8,23 @@ import { images } from "@/lib/images";
 const featuredItems = [
   {
     name: "Cheese Loaded Burger",
-    price: 120,
-    description: "Extra cheese overload — for the real cheese lovers",
+    price: 139,
+    description: "Extra cheese overload for the real cheese lovers.",
     tag: "Bestseller",
     image: images.cheeseBurger,
   },
   {
-    name: "Double Tikki Burger",
-    price: 100,
-    description: "Double stacked tikki, double the crunch, double the taste",
+    name: "Double Cheesy Patty Burger",
+    price: 199,
+    description: "Two patties, double cheese, double the crunch.",
     tag: "Premium",
     image: images.ministerSpecial,
   },
   {
-    name: "Peri Peri Cheese Burger",
-    price: 90,
-    description: "Fiery peri peri seasoning with loaded melted cheese",
-    tag: "Popular",
+    name: "Peri Peri Paneer Burger",
+    price: 149,
+    description: "Fiery peri peri paneer with melted cheese.",
+    tag: "Spicy",
     image: images.paneerTikka,
   },
 ];

@@ -169,7 +169,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
               Today
             </div>
             <div className="font-[var(--font-heading)] text-xl font-bold text-primary">
-              {stats?.todayCount ?? "—"}
+              {stats?.todayCount ?? "..."}
             </div>
           </div>
           <div className="h-8 w-px bg-outline-variant/15" />
@@ -180,7 +180,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
             <div className="font-[var(--font-heading)] text-xl font-bold text-secondary">
               {stats?.lifetimeTotal != null
                 ? stats.lifetimeTotal.toLocaleString("en-IN")
-                : "—"}
+                : "..."}
             </div>
           </div>
         </div>
@@ -513,7 +513,7 @@ function NewOrderTab({
 
       // Append free fries as ₹0 line so kitchen sees it on the printed ticket
       const printItems = freeFries
-        ? [...cart, { name: "Classic Salted Fries (Half) — FREE", price: 0, quantity: 1 }]
+        ? [...cart, { name: "Classic Salted Fries (Half), FREE", price: 0, quantity: 1 }]
         : cart;
 
       const order: Order = {
@@ -706,7 +706,7 @@ function NewOrderTab({
                     </button>
                   </div>
                   <p className="text-[10px] text-on-surface/40">
-                    Admin can apply both — customer side they&apos;re mutually exclusive.
+                    Admin can apply both. Customer side they are mutually exclusive.
                   </p>
                 </div>
 

@@ -5,7 +5,7 @@ import { BreadcrumbSchema } from "@/components/Schema";
 import CateringForm from "./CateringForm";
 
 export const metadata: Metadata = {
-  title: "Catering & Events — Bulk Veg Food Orders in Noida",
+  title: "Catering and Events. Bulk Veg Food Orders in Noida",
   description:
     "Burger Minister catering for corporate events, birthdays, and parties in Noida. Bulk veg orders with special pricing. 100% vegetarian food.",
   alternates: { canonical: "/catering" },
@@ -91,7 +91,7 @@ const packages: PackageData[] = [
       { qty: 12, label: "Kurkure Veg Momos (Half)", menuPrice: 70 },
       { qty: 8, label: "Kurkure Paneer Momos (Half)", menuPrice: 80 },
       { qty: 10, label: "Peri Peri Fries (Half)", menuPrice: 80 },
-      { qty: 25, label: "Shakes / Coolers (M) — pick 3 flavours", menuPrice: 60 },
+      { qty: 25, label: "Shakes / Coolers (pick 3 flavours)", menuPrice: 60 },
       { qty: 1, label: "BM Special Fries (complimentary)", menuPrice: 170 },
     ],
     perks: [
@@ -211,7 +211,7 @@ export default function CateringPage() {
             Catering <span className="text-primary">Packages</span>
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-on-surface/60">
-            Transparent pricing — see exactly what you get and how much you save vs. à-la-carte menu rates.
+            Transparent pricing. See exactly what you get and how much you save vs. à la carte menu rates.
           </p>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -372,7 +372,7 @@ export default function CateringPage() {
           <p className="mt-4 font-[var(--font-heading)] text-lg font-semibold leading-relaxed text-on-surface/90 sm:text-xl">
             &ldquo;Burger Minister catered our office party and everyone loved it! Fresh, tasty, and super professional.&rdquo;
           </p>
-          <p className="mt-3 text-sm text-primary">— Rahul S., Noida</p>
+          <p className="mt-3 text-sm text-primary">Rahul S., Noida</p>
         </div>
       </section>
 
