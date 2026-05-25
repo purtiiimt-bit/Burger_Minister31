@@ -4,10 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { flattenMenu, type FlatItem } from "@/lib/menuData";
 import { isPrinterSupported, printOrder } from "@/lib/printer";
 import type { Order, OrderItem } from "@/lib/orderTypes";
+import BooksTab from "./BooksTab";
 
 const AUTH_KEY = "bm-admin-auth";
 
-type Tab = "search" | "new";
+type Tab = "search" | "new" | "books";
 type Toast = { kind: "ok" | "err" | "info"; msg: string } | null;
 
 export default function AdminClient() {
@@ -188,20 +189,21 @@ function Panel({ onLogout }: { onLogout: () => void }) {
         {/* Tabs */}
         <nav className="mx-auto flex max-w-3xl gap-2 px-4 pb-3">
           <TabBtn active={tab === "search"} onClick={() => setTab("search")}>
-            🔍 Search Order
+            🔍 Search
           </TabBtn>
           <TabBtn active={tab === "new"} onClick={() => setTab("new")}>
             ➕ New Order
+          </TabBtn>
+          <TabBtn active={tab === "books"} onClick={() => setTab("books")}>
+            💰 Books
           </TabBtn>
         </nav>
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        {tab === "search" ? (
-          <SearchTab onToast={setToast} />
-        ) : (
-          <NewOrderTab onToast={setToast} onPlaced={refreshStats} />
-        )}
+        {tab === "search" && <SearchTab onToast={setToast} />}
+        {tab === "new" && <NewOrderTab onToast={setToast} onPlaced={refreshStats} />}
+        {tab === "books" && <BooksTab onToast={setToast} />}
       </main>
 
       {toast && (

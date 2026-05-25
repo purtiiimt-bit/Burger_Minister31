@@ -21,18 +21,18 @@ export const momoContent: Record<string, MomoEntry> = {
   "steam-veg-momos": {
     slug: "steam-veg-momos",
     name: "Steam Veg Momos",
-    price: 45,
-    variants: [{ label: "Half", price: 45 }, { label: "Full", price: 80 }],
-    title: "Steam Veg Momos from ₹45, Burger Minister Sector 58 Noida",
+    price: 40,
+    variants: [{ label: "Half", price: 40 }, { label: "Full", price: 80 }],
+    title: "Steam Veg Momos from ₹40, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Soft steamed veg momos at Burger Minister Sector 58 Noida. Half plate ₹45, full plate ₹80. Hand-folded, pure veg, served with house red chutney.",
+      "Soft steamed veg momos at Burger Minister Sector 58 Noida. Half plate ₹40, full plate ₹80. Hand-folded, pure veg, served with house red chutney.",
     image: IMG_STEAM,
     imageAlt:
       "Steam veg momos at Burger Minister Sector 58, hand-folded dumplings on a white plate with red chutney on the side.",
     eyebrow: "Momos · Sector 58, Noida",
     category: "momos",
     lede:
-      "Our Steam Veg Momos are the comfort plate of the menu. Hand-folded dumplings with a mild filling of cabbage, carrot, onion, ginger, and garlic, steamed soft till the wrappers turn pillowy. A half plate has six pieces, a full plate has twelve. Served warm with our house red chutney on the side. A clean, light starter to share, or to eat solo over a cold coffee.",
+      "Our Steam Veg Momos are the comfort plate of the menu. Hand-folded dumplings with a mild filling of cabbage, carrot, onion, ginger, and garlic, steamed soft till the wrappers turn pillowy. A half plate has six pieces, a full plate has twelve. Served warm with our house red chutney on the side. A clean, light starter to share, or to eat solo over a cold coffee. Half plate ₹40, full plate ₹80.",
     whatMakesSpecial:
       "We roll the wrappers fresh in the morning. The filling is hand-chopped, never minced, so the texture stays crunchy inside the soft wrapper. The momos go into the steamer to order, which is why they arrive warm and slightly bouncy. The red chutney is house made with real garlic and a quiet heat.",
     whatIsInIt:
@@ -73,7 +73,7 @@ export const momoContent: Record<string, MomoEntry> = {
       },
       {
         q: "How many pieces in a half versus a full plate?",
-        a: "A half plate has six pieces at ₹45. A full plate has twelve pieces at ₹80. The full plate works well as a starter for two people.",
+        a: "A half plate has six pieces at ₹40. A full plate has twelve pieces at ₹80. The full plate works well as a starter for two people.",
       },
     ],
     related: ["kurkure-veg-momos", "gravy-veg-momos", "mint-mojito"],
@@ -82,11 +82,11 @@ export const momoContent: Record<string, MomoEntry> = {
   "steam-paneer-momos": {
     slug: "steam-paneer-momos",
     name: "Steam Paneer Momos",
-    price: 55,
-    variants: [{ label: "Half", price: 55 }, { label: "Full", price: 100 }],
-    title: "Steam Paneer Momos from ₹55, Burger Minister Sector 58 Noida",
+    price: 50,
+    variants: [{ label: "Half", price: 50 }, { label: "Full", price: 100 }],
+    title: "Steam Paneer Momos from ₹50, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Steamed paneer momos at Burger Minister Sector 58. Half plate ₹55, full plate ₹100. Fresh grated paneer filling, pure veg, served with house chutney.",
+      "Steamed paneer momos at Burger Minister Sector 58. Half plate ₹50, full plate ₹100. Fresh grated paneer filling, pure veg, served with house chutney.",
     image: IMG_STEAM,
     imageAlt:
       "Steam paneer momos at Burger Minister Sector 58, soft white dumplings filled with grated paneer.",
@@ -143,11 +143,11 @@ export const momoContent: Record<string, MomoEntry> = {
   "fried-veg-momos": {
     slug: "fried-veg-momos",
     name: "Fried Veg Momos",
-    price: 50,
-    variants: [{ label: "Half", price: 50 }, { label: "Full", price: 90 }],
-    title: "Fried Veg Momos from ₹50, Burger Minister Sector 58 Noida",
+    price: 45,
+    variants: [{ label: "Half", price: 45 }, { label: "Full", price: 90 }],
+    title: "Fried Veg Momos from ₹45, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Crispy fried veg momos at Burger Minister Sector 58 Noida. Half plate ₹50, full plate ₹90. Hand-folded then deep fried, served with red chutney.",
+      "Crispy fried veg momos at Burger Minister Sector 58 Noida. Half plate ₹45, full plate ₹90. Hand-folded then deep fried, served with red chutney.",
     image: IMG_FRIED,
     imageAlt:
       "Fried veg momos at Burger Minister Sector 58, golden crispy dumplings stacked on a plate.",
@@ -204,11 +204,11 @@ export const momoContent: Record<string, MomoEntry> = {
   "fried-paneer-momos": {
     slug: "fried-paneer-momos",
     name: "Fried Paneer Momos",
-    price: 60,
-    variants: [{ label: "Half", price: 60 }, { label: "Full", price: 110 }],
-    title: "Fried Paneer Momos from ₹60, Burger Minister Sector 58 Noida",
+    price: 55,
+    variants: [{ label: "Half", price: 55 }, { label: "Full", price: 110 }],
+    title: "Fried Paneer Momos from ₹55, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Crispy fried paneer momos at Burger Minister Sector 58. Half plate ₹60, full plate ₹110. Fresh paneer filling, golden fried, with house chutney.",
+      "Crispy fried paneer momos at Burger Minister Sector 58. Half plate ₹55, full plate ₹110. Fresh paneer filling, golden fried, with house chutney.",
     image: IMG_FRIED,
     imageAlt:
       "Fried paneer momos at Burger Minister Sector 58, golden crispy dumplings with paneer filling.",
@@ -266,10 +266,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "gravy-veg-momos",
     name: "Gravy Veg Momos",
     price: 65,
-    variants: [{ label: "Half", price: 65 }, { label: "Full", price: 120 }],
+    variants: [{ label: "Half", price: 65 }, { label: "Full", price: 130 }],
     title: "Gravy Veg Momos from ₹65, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Veg momos in spicy red gravy at Burger Minister Sector 58. Half plate ₹65, full plate ₹120. Tossed in house onion-tomato gravy, almost a meal.",
+      "Veg momos in spicy red gravy at Burger Minister Sector 58. Half plate ₹65, full plate ₹130. Tossed in house onion-tomato gravy, almost a meal.",
     image: IMG_GRAVY,
     imageAlt:
       "Gravy veg momos at Burger Minister Sector 58, dumplings tossed in red onion tomato gravy.",
@@ -317,7 +317,7 @@ export const momoContent: Record<string, MomoEntry> = {
       },
       {
         q: "Can I get this with paneer momos?",
-        a: "Yes. We have Gravy Paneer Momos as a separate item at ₹75 half, ₹140 full.",
+        a: "Yes. We have Gravy Paneer Momos as a separate item at ₹75 half, ₹150 full.",
       },
     ],
     related: ["gravy-paneer-momos", "kurkure-veg-momos", "mint-mojito"],
@@ -327,10 +327,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "gravy-paneer-momos",
     name: "Gravy Paneer Momos",
     price: 75,
-    variants: [{ label: "Half", price: 75 }, { label: "Full", price: 140 }],
+    variants: [{ label: "Half", price: 75 }, { label: "Full", price: 150 }],
     title: "Gravy Paneer Momos from ₹75, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Paneer momos in rich red gravy at Burger Minister Sector 58. Half plate ₹75, full plate ₹140. Paneer dumplings tossed in spicy house gravy.",
+      "Paneer momos in rich red gravy at Burger Minister Sector 58. Half plate ₹75, full plate ₹150. Paneer dumplings tossed in spicy house gravy.",
     image: IMG_GRAVY,
     imageAlt:
       "Gravy paneer momos at Burger Minister Sector 58, paneer dumplings in spicy red gravy.",
@@ -388,10 +388,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "malai-veg-momos",
     name: "Malai Veg Momos",
     price: 70,
-    variants: [{ label: "Half", price: 70 }, { label: "Full", price: 130 }],
+    variants: [{ label: "Half", price: 70 }, { label: "Full", price: 140 }],
     title: "Malai Veg Momos from ₹70, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Veg momos in creamy malai sauce at Burger Minister Sector 58. Half plate ₹70, full plate ₹130. Steamed veg momos coated in mild malai gravy.",
+      "Veg momos in creamy malai sauce at Burger Minister Sector 58. Half plate ₹70, full plate ₹140. Steamed veg momos coated in mild malai gravy.",
     image: IMG_KURKURE,
     imageAlt:
       "Malai veg momos at Burger Minister Sector 58, dumplings coated in creamy white malai sauce.",
@@ -449,10 +449,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "malai-paneer-momos",
     name: "Malai Paneer Momos",
     price: 80,
-    variants: [{ label: "Half", price: 80 }, { label: "Full", price: 150 }],
+    variants: [{ label: "Half", price: 80 }, { label: "Full", price: 160 }],
     title: "Malai Paneer Momos from ₹80, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Paneer momos in mild malai sauce at Burger Minister Sector 58. Half plate ₹80, full plate ₹150. Creamy, rich, kid-friendly veg comfort food.",
+      "Paneer momos in mild malai sauce at Burger Minister Sector 58. Half plate ₹80, full plate ₹160. Creamy, rich, kid-friendly veg comfort food.",
     image: IMG_KURKURE,
     imageAlt:
       "Malai paneer momos at Burger Minister Sector 58, paneer dumplings in creamy white sauce.",
@@ -510,10 +510,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "kurkure-veg-momos",
     name: "Kurkure Veg Momos",
     price: 70,
-    variants: [{ label: "Half", price: 70 }, { label: "Full", price: 130 }],
+    variants: [{ label: "Half", price: 70 }, { label: "Full", price: 140 }],
     title: "Kurkure Veg Momos from ₹70, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Bestseller kurkure veg momos at Burger Minister Sector 58. Half plate ₹70, full plate ₹130. Crispy breadcrumb-coated dumplings, three chutneys.",
+      "Bestseller kurkure veg momos at Burger Minister Sector 58. Half plate ₹70, full plate ₹140. Crispy breadcrumb-coated dumplings, three chutneys.",
     image: IMG_KURKURE,
     imageAlt:
       "Kurkure veg momos at Burger Minister Sector 58, crispy breadcrumb-coated dumplings on a plate.",
@@ -571,10 +571,10 @@ export const momoContent: Record<string, MomoEntry> = {
     slug: "kurkure-paneer-momos",
     name: "Kurkure Paneer Momos",
     price: 80,
-    variants: [{ label: "Half", price: 80 }, { label: "Full", price: 150 }],
+    variants: [{ label: "Half", price: 80 }, { label: "Full", price: 160 }],
     title: "Kurkure Paneer Momos from ₹80, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Kurkure paneer momos at Burger Minister Sector 58. Half plate ₹80, full plate ₹150. Crispy breadcrumb shell, fresh paneer filling, three chutneys.",
+      "Kurkure paneer momos at Burger Minister Sector 58. Half plate ₹80, full plate ₹160. Crispy breadcrumb shell, fresh paneer filling, three chutneys.",
     image: IMG_KURKURE,
     imageAlt:
       "Kurkure paneer momos at Burger Minister Sector 58, crispy breadcrumb-coated paneer dumplings.",
@@ -752,18 +752,18 @@ export const momoContent: Record<string, MomoEntry> = {
 
   "pizza-momo": {
     slug: "pizza-momo",
-    name: "Pizza Momo",
-    price: 90,
-    title: "Pizza Momo ₹90, Burger Minister Sector 58 Noida",
+    name: "Pizza Momos (Veg)",
+    price: 99,
+    title: "Pizza Momos (Veg) ₹99, Burger Minister Sector 58 Noida",
     metaDescription:
-      "Fusion Pizza Momo at Burger Minister Sector 58. Six veg momos topped with marinara, mozzarella, capsicum, and olive. Half pizza, half momo, ₹90.",
+      "Fusion Pizza Momos at Burger Minister Sector 58. Veg momos topped with marinara, mozzarella, capsicum, and olive. Half pizza, half momo, ₹99.",
     image: IMG_GRAVY,
     imageAlt:
-      "Pizza Momo at Burger Minister Sector 58, veg momos topped with melted cheese, marinara and capsicum.",
+      "Pizza Momos at Burger Minister Sector 58, veg momos topped with melted cheese, marinara and capsicum.",
     eyebrow: "Momos · Sector 58, Noida",
     category: "momos",
     lede:
-      "Our most playful experiment. Six steamed veg momos topped with marinara, fresh mozzarella, and a few rings of capsicum and olive, then run under the salamander till the cheese bubbles. Half pizza, half momo, fully unique to Burger Minister. Try it once, you will order it twice.",
+      "Our most playful experiment, now also available with paneer. Six steamed veg momos topped with marinara, fresh mozzarella, and a few rings of capsicum and olive, then run under the salamander till the cheese bubbles. Half pizza, half momo, fully unique to Burger Minister. Veg plate ₹99, paneer plate ₹119. Try it once, you will order it twice.",
     whatMakesSpecial:
       "It started as a staff meal joke and ended up on the menu because regulars kept asking. The marinara is our own, made fresh weekly. The cheese is real mozzarella, not blend. The momos stay soft under the cheese while the top gets a light bubbly char.",
     whatIsInIt:

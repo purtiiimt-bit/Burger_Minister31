@@ -13,7 +13,7 @@ import { FAQSchema } from "@/components/Schema";
 
 const heroStats = [
   { v: "★ 4.8", l: "Google Rating" },
-  { v: "13+", l: "Types of Momos" },
+  { v: "15+", l: "Types of Momos" },
   { v: "15 min", l: "Prep Time" },
   { v: "From ₹59", l: "Pocket Friendly" },
 ];

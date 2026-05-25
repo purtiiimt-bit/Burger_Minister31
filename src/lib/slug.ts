@@ -2,8 +2,9 @@
 // Used to derive /menu/[slug] from the displayName stored in menuData.
 
 const SLUG_OVERRIDES: Record<string, string> = {
-  // Mc Puff card in menuData = "Mc Puff (3 pcs)" but detail page is veg-puff
-  "Mc Puff": "veg-puff",
+  // Puff card in menuData = "BM Puff (3 pcs)" but detail page slug stays "veg-puff" for SEO continuity
+  "BM Puff": "veg-puff",
+  "Mc Puff": "veg-puff", // legacy alias
 };
 
 export function nameToSlug(name: string): string {

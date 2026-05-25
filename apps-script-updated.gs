@@ -12,6 +12,7 @@
 
 const SHEET_NAME = "Orders";
 const COUNTER_SHEET = "Counter";
+const EXPENSES_SHEET = "Expenses";
 const TZ = "Asia/Kolkata";
 const NOTIFY_EMAIL = "Burgerminister38@gmail.com"; // owner email for new-order alerts
 
@@ -110,10 +111,273 @@ function resetLifetime() {
   counter.getRange("C1").setValue(0);
 }
 
+// ─────────────────────────────────────────────────────────────
+// BOOKS MODULE — Expenses sheet + Sales/Expense aggregations
+// ─────────────────────────────────────────────────────────────
+
+function ensureExpensesSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(EXPENSES_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(EXPENSES_SHEET);
+    sheet.appendRow([
+      "Date",
+      "Time",
+      "Timestamp",
+      "Category",
+      "Amount",
+      "Note",
+      "Status",
+    ]);
+  }
+  return sheet;
+}
+
+// Compute IST date range for "today", "week" (last 7 days), "month" (current calendar month)
+function dateRange_(period) {
+  const nowIST = new Date(
+    Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd'T'HH:mm:ss")
+  );
+  let from, to;
+  if (period === "today") {
+    from = new Date(nowIST);
+    from.setHours(0, 0, 0, 0);
+    to = new Date(nowIST);
+    to.setHours(23, 59, 59, 999);
+  } else if (period === "week") {
+    from = new Date(nowIST);
+    from.setDate(from.getDate() - 6);
+    from.setHours(0, 0, 0, 0);
+    to = new Date(nowIST);
+    to.setHours(23, 59, 59, 999);
+  } else if (period === "month") {
+    from = new Date(nowIST.getFullYear(), nowIST.getMonth(), 1, 0, 0, 0, 0);
+    to = new Date(nowIST);
+    to.setHours(23, 59, 59, 999);
+  } else {
+    from = new Date(0);
+    to = new Date();
+  }
+  return { from: from, to: to };
+}
+
+function inRange_(timestamp, from, to) {
+  if (!timestamp) return false;
+  const d = new Date(timestamp);
+  if (isNaN(d.getTime())) return false;
+  return d >= from && d <= to;
+}
+
+function aggregateBooks_(period) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  const expenses = ensureExpensesSheet_();
+  const range = dateRange_(period);
+
+  let sales = 0;
+  let orderCount = 0;
+  let cashSales = 0;
+  let upiSales = 0;
+  const itemCounts = {};
+  const itemRevenue = {};
+
+  if (orders) {
+    const oRows = orders.getDataRange().getValues();
+    for (let i = 1; i < oRows.length; i++) {
+      const row = oRows[i];
+      // Cols: [Order#, Timestamp, Source, Items, Subtotal, Disc%, DiscRs, Total, PayMode, Name, Phone, OrderType, Address, Note, Coupon, Lifetime]
+      const ts = row[1];
+      if (!inRange_(ts, range.from, range.to)) continue;
+      const total = Number(row[7]) || 0;
+      sales += total;
+      orderCount += 1;
+      const mode = String(row[8] || "UPI").toUpperCase();
+      if (mode === "CASH") cashSales += total;
+      else upiSales += total;
+      try {
+        const items = JSON.parse(row[3] || "[]");
+        if (Array.isArray(items)) {
+          items.forEach(function (it) {
+            const name = it.name || "Unknown";
+            const qty = Number(it.quantity || 1);
+            const price = Number(it.price || 0);
+            itemCounts[name] = (itemCounts[name] || 0) + qty;
+            itemRevenue[name] = (itemRevenue[name] || 0) + qty * price;
+          });
+        }
+      } catch (_) {
+        // ignore malformed items
+      }
+    }
+  }
+
+  let totalExpenses = 0;
+  const expenseByCategory = {};
+  const eRows = expenses.getDataRange().getValues();
+  for (let i = 1; i < eRows.length; i++) {
+    const row = eRows[i];
+    // Cols: [Date, Time, Timestamp, Category, Amount, Note, Status]
+    const ts = row[2] || row[0];
+    if (!inRange_(ts, range.from, range.to)) continue;
+    const status = String(row[6] || "").toUpperCase();
+    if (status === "DELETED") continue;
+    const amount = Number(row[4]) || 0;
+    const category = row[3] || "Misc";
+    totalExpenses += amount;
+    expenseByCategory[category] = (expenseByCategory[category] || 0) + amount;
+  }
+
+  const topItems = Object.keys(itemCounts)
+    .map(function (name) {
+      return { name: name, count: itemCounts[name], revenue: itemRevenue[name] || 0 };
+    })
+    .sort(function (a, b) {
+      return b.count - a.count;
+    })
+    .slice(0, 10);
+
+  const categories = Object.keys(expenseByCategory)
+    .map(function (cat) {
+      return { category: cat, amount: expenseByCategory[cat] };
+    })
+    .sort(function (a, b) {
+      return b.amount - a.amount;
+    });
+
+  return {
+    period: period,
+    sales: sales,
+    expenses: totalExpenses,
+    net: sales - totalExpenses,
+    orderCount: orderCount,
+    avgOrder: orderCount > 0 ? Math.round(sales / orderCount) : 0,
+    cashSales: cashSales,
+    upiSales: upiSales,
+    topItems: topItems,
+    categories: categories,
+  };
+}
+
+function feed_(dateParam) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  const expenses = ensureExpensesSheet_();
+
+  let targetDate;
+  if (!dateParam || dateParam === "today") {
+    targetDate = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
+  } else {
+    targetDate = dateParam;
+  }
+  // IST midnight to midnight
+  const from = new Date(targetDate + "T00:00:00+05:30");
+  const to = new Date(targetDate + "T23:59:59+05:30");
+
+  const items = [];
+
+  if (orders) {
+    const oRows = orders.getDataRange().getValues();
+    for (let i = 1; i < oRows.length; i++) {
+      const row = oRows[i];
+      const ts = row[1];
+      if (!inRange_(ts, from, to)) continue;
+      let firstItem = "Order";
+      try {
+        const parsed = JSON.parse(row[3] || "[]");
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          firstItem = parsed[0].name + (parsed.length > 1 ? " + " + (parsed.length - 1) + " more" : "");
+        }
+      } catch (_) {}
+      items.push({
+        kind: "sale",
+        time: ts,
+        amount: Number(row[7]) || 0,
+        label: row[0] + " · " + firstItem,
+        paymentMode: row[8] || "UPI",
+        source: row[2] || "WEBSITE",
+      });
+    }
+  }
+
+  const eRows = expenses.getDataRange().getValues();
+  for (let i = 1; i < eRows.length; i++) {
+    const row = eRows[i];
+    const ts = row[2] || row[0];
+    if (!inRange_(ts, from, to)) continue;
+    const status = String(row[6] || "").toUpperCase();
+    if (status === "DELETED") continue;
+    const cat = row[3] || "Misc";
+    const note = row[5] || "";
+    items.push({
+      kind: "expense",
+      time: ts,
+      amount: Number(row[4]) || 0,
+      label: cat + (note ? " · " + note : ""),
+      category: cat,
+      rowIndex: i + 1,
+    });
+  }
+
+  items.sort(function (a, b) {
+    return new Date(b.time).getTime() - new Date(a.time).getTime();
+  });
+  return items.slice(0, 80);
+}
+
+function addExpense_(data) {
+  const expenses = ensureExpensesSheet_();
+  const now = new Date();
+  let entryDate = now;
+  if (data.date) {
+    const parsed = new Date(data.date);
+    if (!isNaN(parsed.getTime())) entryDate = parsed;
+  }
+  const amount = Number(data.amount) || 0;
+  if (amount <= 0) {
+    return { success: false, message: "Amount must be greater than zero" };
+  }
+  expenses.appendRow([
+    Utilities.formatDate(entryDate, TZ, "yyyy-MM-dd"),
+    Utilities.formatDate(entryDate, TZ, "HH:mm:ss"),
+    now,
+    String(data.category || "Misc"),
+    amount,
+    String(data.note || ""),
+    "",
+  ]);
+  return { success: true };
+}
+
+function deleteExpense_(rowIndex) {
+  const expenses = ensureExpensesSheet_();
+  const idx = Number(rowIndex);
+  if (!idx || idx < 2) {
+    return { success: false, message: "Invalid row index" };
+  }
+  // Soft delete: mark Status = DELETED so we keep an audit trail
+  expenses.getRange(idx, 7).setValue("DELETED");
+  return { success: true };
+}
+
 function doPost(e) {
   try {
-    const { orders, counter } = ensureSheets_();
     const data = JSON.parse(e.postData.contents);
+
+    // Books actions piggyback on POST. Use _action to route.
+    if (data && data._action === "addExpense") {
+      const result = addExpense_(data);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (data && data._action === "deleteExpense") {
+      const result = deleteExpense_(data.rowIndex);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const { orders, counter } = ensureSheets_();
     const numbers = nextOrderNumber_(counter);
     const orderNumber = numbers.orderNumber;
 
@@ -201,8 +465,25 @@ function doGet(e) {
     if (e.parameter && e.parameter.stats) {
       const stats = getStats_(counter);
       return ContentService.createTextOutput(
-        JSON.stringify({ success: true, stats })
+        JSON.stringify({ success: true, stats: stats })
       ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Books endpoints: ?books=today|week|month | ?books=feed&date=today
+    if (e.parameter && e.parameter.books) {
+      const action = String(e.parameter.books);
+      if (action === "today" || action === "week" || action === "month") {
+        const agg = aggregateBooks_(action);
+        return ContentService.createTextOutput(
+          JSON.stringify(Object.assign({ success: true }, agg))
+        ).setMimeType(ContentService.MimeType.JSON);
+      }
+      if (action === "feed") {
+        const items = feed_(e.parameter.date || "today");
+        return ContentService.createTextOutput(
+          JSON.stringify({ success: true, feed: items })
+        ).setMimeType(ContentService.MimeType.JSON);
+      }
     }
 
     const param = (e.parameter && e.parameter.number) || "";

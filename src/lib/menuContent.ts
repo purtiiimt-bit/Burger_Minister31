@@ -2484,10 +2484,10 @@ export const menuContent: Record<string, ItemContent> = {
   },
   "veg-puff": {
     "slug": "veg-puff",
-    "name": "Veg Puff",
+    "name": "BM Puff",
     "price": 80,
-    "title": "Veg Puff 3 pcs ₹80, Flaky Snack, Burger Minister Sector 58 Noida",
-    "metaDescription": "Three flaky vegetable puffs with spiced filling. ₹80 in Sector 58, Noida. Pure veg, the chai-time classic done right.",
+    "title": "BM Puff 3 pcs ₹80, Flaky Veg Snack, Burger Minister Sector 58",
+    "metaDescription": "Three flaky BM Puffs with spiced veg filling. ₹80 in Sector 58, Noida. Pure veg, the chai-time classic done the Burger Minister way.",
     "image": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1200&q=80",
     "imageAlt": "Three veg puffs with flaky pastry and spiced vegetable filling, baked golden.",
     "eyebrow": "Snacks · Sector 58, Noida",
@@ -2522,7 +2522,7 @@ export const menuContent: Record<string, ItemContent> = {
     "faqs": [
       {
         "q": "Why is it called Veg Puff and not McPuff?",
-        "a": "McDonald's has the McPuff trademark, so we use Veg Puff in our online menu. Our printed menu may say Mc Puff if it was designed before this change. The product is the same."
+        "a": "It is the same flaky vegetable puff classic, rebadged as BM Puff so the name is our own. Three pieces per plate at ₹80. Pure veg, spiced potato and peas filling, baked golden."
       },
       {
         "q": "Are these spicy?",

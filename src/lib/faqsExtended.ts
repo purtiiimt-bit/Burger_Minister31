@@ -153,7 +153,7 @@ export const extendedFaqs: ExtendedFAQ[] = [
   {
     category: "menu",
     q: "How many types of momos do you serve?",
-    a: "13 types of momos: Steam, Fried, Gravy, Malai, Kurkure, and Peri Peri Kurkure, each available in Veg and Paneer fillings. Plus our fusion Pizza Momo. Half and full plates are available for most varieties.",
+    a: "Over 15 momo options. Steam, Fried, Gravy, Malai, Kurkure, Kurkure Cheese, and Peri Peri Kurkure, each available in Veg and Paneer fillings. Plus our fusion Pizza Momos in Veg and Paneer. Half and full plates are available for most varieties, starting from ₹40.",
   },
   {
     category: "menu",

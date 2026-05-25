@@ -17,7 +17,7 @@ export const faqs = [
   },
   {
     q: "What types of momos do you serve?",
-    a: "We serve a wide variety of veg and paneer momos. Steamed, Fried, Gravy, Malai, Kurkure, Peri Peri Kurkure and our special Pizza Momo. Both half and full plates are available, starting from ₹45. The Kurkure Momos are our customer favourite.",
+    a: "We serve a wide variety of veg and paneer momos. Steamed, Fried, Gravy, Malai, Kurkure, Kurkure Cheese, Peri Peri Kurkure, and our fusion Pizza Momos. Both half and full plates are available for most varieties, starting from ₹40. The Kurkure Momos are our customer favourite.",
   },
   {
     q: "How can I pay for my order at Burger Minister?",

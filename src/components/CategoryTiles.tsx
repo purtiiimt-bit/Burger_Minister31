@@ -44,7 +44,7 @@ const categories = [
   {
     num: "N°04",
     name: "Momos",
-    meta: "13+ types",
+    meta: "15+ types",
     href: "/menu#Momos",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
