@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { denyIfNotAdmin } from "@/lib/adminAuth";
 
 type CounterOrderItem = { name: string; quantity: number; price: number };
 
@@ -16,6 +17,8 @@ type CounterOrderPayload = {
 
 // POST /api/admin/orders/new → forwards counter order to Apps Script, returns orderNumber
 export async function POST(request: Request) {
+  const denied = denyIfNotAdmin(request);
+  if (denied) return denied;
   try {
     const order: CounterOrderPayload = await request.json();
     const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;
@@ -45,19 +48,12 @@ export async function POST(request: Request) {
     });
     const data = await res.json().catch(() => null);
 
-    // Fallback orderNumber if Apps Script hasn't been updated yet
+    // Fallback orderNumber if Apps Script hasn't been updated yet.
+    // Uses Date.now() so consecutive orders get unique numbers (no collisions
+    // possible at human counter speed). 4-digit so it's visually distinct
+    // from real sequential counter numbers (#001..#999).
     if (!data || (!data.success && !data.orderNumber)) {
-      const fallback = (() => {
-        const now = new Date();
-        const ist = new Date(
-          now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-        );
-        const minutesIntoDay = ist.getHours() * 60 + ist.getMinutes();
-        const base = (minutesIntoDay % 999) + 1;
-        const tail = Math.floor(Math.random() * 10);
-        const num = ((base * 10 + tail) % 999) + 1;
-        return "#" + String(num).padStart(3, "0");
-      })();
+      const fallback = "#" + String((Date.now() % 9999) + 1).padStart(4, "0");
       return NextResponse.json({ success: true, orderNumber: fallback });
     }
     if (!data.orderNumber) {

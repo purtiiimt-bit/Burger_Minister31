@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import { denyIfNotAdmin } from "@/lib/adminAuth";
 
 // GET /api/admin/orders/045 → fetches order from Apps Script
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ number: string }> }
 ) {
+  const denied = denyIfNotAdmin(_req);
+  if (denied) return denied;
   const { number } = await params;
   const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;
   if (!sheetUrl) {

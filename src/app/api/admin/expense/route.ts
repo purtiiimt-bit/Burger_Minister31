@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { denyIfNotAdmin } from "@/lib/adminAuth";
 
 type ExpensePayload = {
   category: string;
@@ -9,6 +10,8 @@ type ExpensePayload = {
 
 // POST /api/admin/expense — log a new expense to the Expenses sheet
 export async function POST(request: Request) {
+  const denied = denyIfNotAdmin(request);
+  if (denied) return denied;
   try {
     const body = (await request.json()) as ExpensePayload;
     if (!body.category || !body.amount || body.amount <= 0) {
@@ -56,6 +59,8 @@ export async function POST(request: Request) {
 
 // DELETE /api/admin/expense?row=N — soft-delete by row index
 export async function DELETE(request: Request) {
+  const denied = denyIfNotAdmin(request);
+  if (denied) return denied;
   try {
     const url = new URL(request.url);
     const row = url.searchParams.get("row");

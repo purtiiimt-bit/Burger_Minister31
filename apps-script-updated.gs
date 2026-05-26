@@ -359,6 +359,144 @@ function deleteExpense_(rowIndex) {
   return { success: true };
 }
 
+// Bulk-save many expense entries in a single call. The Books UI batches
+// pending entries client-side and then commits them all at once. This
+// drives one Apps Script invocation per save, not one per row.
+function addExpensesBatch_(data) {
+  const items = Array.isArray(data.items) ? data.items : [];
+  if (items.length === 0) {
+    return { success: false, message: "No items to save" };
+  }
+  const expenses = ensureExpensesSheet_();
+  const now = new Date();
+  const rows = [];
+  let totalAmount = 0;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i] || {};
+    const amount = Number(it.amount) || 0;
+    if (amount <= 0) continue;
+    const entryDate = it.date ? new Date(it.date) : now;
+    if (isNaN(entryDate.getTime())) continue;
+    rows.push([
+      Utilities.formatDate(entryDate, TZ, "yyyy-MM-dd"),
+      Utilities.formatDate(entryDate, TZ, "HH:mm:ss"),
+      now,
+      String(it.category || "Misc"),
+      amount,
+      String(it.note || ""),
+      "",
+    ]);
+    totalAmount += amount;
+  }
+  if (rows.length === 0) {
+    return { success: false, message: "No valid entries" };
+  }
+  const startRow = expenses.getLastRow() + 1;
+  expenses.getRange(startRow, 1, rows.length, 7).setValues(rows);
+  return { success: true, count: rows.length, total: totalAmount };
+}
+
+// Returns the last `limit` orders placed by the given phone number.
+// Useful for the admin "customer history" view.
+function listOrdersByPhone_(phone, limit) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  if (!orders) return [];
+
+  const target = String(phone || "").replace(/\D/g, "");
+  if (!target) return [];
+  const cap = Math.min(Math.max(1, Number(limit) || 10), 50);
+
+  const out = [];
+  const rows = orders.getDataRange().getValues();
+  // Bottom-up so latest match wins
+  for (let i = rows.length - 1; i >= 1 && out.length < cap; i--) {
+    const rowPhone = String(rows[i][10] || "").replace(/\D/g, "");
+    if (rowPhone === target) {
+      out.push({
+        orderNumber: rows[i][0],
+        timestamp: rows[i][1],
+        source: rows[i][2] || "WEBSITE",
+        total: Number(rows[i][7]) || 0,
+        paymentMode: rows[i][8] || "UPI",
+        customerName: rows[i][9] || "",
+        customerPhone: rows[i][10] || "",
+        rowIndex: i + 1,
+      });
+    }
+  }
+  return out;
+}
+
+// List all orders for a given date (defaults to today IST).
+// Returns the row index so the client can fetch/edit by it.
+function listOrdersForDate_(dateParam) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  if (!orders) return [];
+
+  let targetDate;
+  if (!dateParam || dateParam === "today") {
+    targetDate = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
+  } else {
+    targetDate = dateParam;
+  }
+  const from = new Date(targetDate + "T00:00:00+05:30");
+  const to = new Date(targetDate + "T23:59:59+05:30");
+
+  const out = [];
+  const rows = orders.getDataRange().getValues();
+  for (let i = rows.length - 1; i >= 1; i--) {
+    const row = rows[i];
+    const ts = row[1];
+    if (!inRange_(ts, from, to)) continue;
+    out.push({
+      orderNumber: row[0],
+      timestamp: ts,
+      source: row[2] || "WEBSITE",
+      total: Number(row[7]) || 0,
+      paymentMode: row[8] || "UPI",
+      customerName: row[9] || "",
+      customerPhone: row[10] || "",
+      rowIndex: i + 1, // 1-based sheet row
+    });
+  }
+  return out;
+}
+
+// Edit a previously placed order. Only safe fields are editable here.
+// data: { rowIndex, customerName, customerPhone, paymentMode, note, orderType, address }
+function editOrder_(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  if (!orders) return { success: false, message: "Orders sheet missing" };
+  const idx = Number(data.rowIndex);
+  if (!idx || idx < 2) {
+    return { success: false, message: "Invalid row index" };
+  }
+  // Cols mapping (1-based in setValue):
+  // 9 Payment Mode, 10 Customer Name, 11 Customer Phone, 12 Order Type, 13 Address, 14 Note
+  if (data.customerName !== undefined) {
+    orders.getRange(idx, 10).setValue(String(data.customerName));
+  }
+  if (data.customerPhone !== undefined) {
+    orders.getRange(idx, 11).setValue(String(data.customerPhone));
+  }
+  if (data.paymentMode !== undefined) {
+    orders.getRange(idx, 9).setValue(String(data.paymentMode));
+  }
+  if (data.orderType !== undefined) {
+    orders.getRange(idx, 12).setValue(String(data.orderType));
+  }
+  if (data.address !== undefined) {
+    orders.getRange(idx, 13).setValue(String(data.address));
+  }
+  if (data.note !== undefined) {
+    orders.getRange(idx, 14).setValue(String(data.note));
+  }
+  return { success: true };
+}
+
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
@@ -372,6 +510,18 @@ function doPost(e) {
     }
     if (data && data._action === "deleteExpense") {
       const result = deleteExpense_(data.rowIndex);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (data && data._action === "addExpensesBatch") {
+      const result = addExpensesBatch_(data);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (data && data._action === "editOrder") {
+      const result = editOrder_(data);
       return ContentService.createTextOutput(
         JSON.stringify(result)
       ).setMimeType(ContentService.MimeType.JSON);
@@ -486,6 +636,25 @@ function doGet(e) {
       }
     }
 
+    // Orders list endpoint: ?orders=today | ?orders=yyyy-MM-dd
+    if (e.parameter && e.parameter.orders) {
+      const list = listOrdersForDate_(String(e.parameter.orders));
+      return ContentService.createTextOutput(
+        JSON.stringify({ success: true, orders: list })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Customer history endpoint: ?phone=9876543210 | optional &limit=10
+    if (e.parameter && e.parameter.phone) {
+      const list = listOrdersByPhone_(
+        e.parameter.phone,
+        e.parameter.limit || 10
+      );
+      return ContentService.createTextOutput(
+        JSON.stringify({ success: true, orders: list, phone: e.parameter.phone })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     const param = (e.parameter && e.parameter.number) || "";
     const target = "#" + String(param).replace(/^#/, "").padStart(3, "0");
 
@@ -511,6 +680,10 @@ function doGet(e) {
           paymentMode: values[i][8] || "UPI",
           customerName: values[i][9] || "",
           customerPhone: values[i][10] || "",
+          orderType: values[i][11] || "",
+          address: values[i][12] || "",
+          note: values[i][13] || "",
+          rowIndex: i + 1,
         };
         return ContentService.createTextOutput(
           JSON.stringify({ success: true, order })

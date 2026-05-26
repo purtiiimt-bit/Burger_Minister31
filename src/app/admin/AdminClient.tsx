@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { flattenMenu, type FlatItem } from "@/lib/menuData";
 import { isPrinterSupported, printOrder } from "@/lib/printer";
-import type { Order, OrderItem } from "@/lib/orderTypes";
+import type { Order, OrderItem, OrderListItem } from "@/lib/orderTypes";
 import BooksTab from "./BooksTab";
 
 const AUTH_KEY = "bm-admin-auth";
@@ -15,7 +15,31 @@ export default function AdminClient() {
   const [authed, setAuthed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setAuthed(localStorage.getItem(AUTH_KEY) === "1");
+    // Source of truth is the HTTP-only cookie set by /api/admin/auth POST.
+    // localStorage flag is just a UX hint to skip the login flash if we
+    // were already signed in. We still confirm with the server.
+    const optimistic = localStorage.getItem(AUTH_KEY) === "1";
+    if (optimistic) setAuthed(true);
+    let alive = true;
+    fetch("/api/admin/auth", { method: "GET", cache: "no-store" })
+      .then((r) => {
+        if (!alive) return;
+        if (r.ok) {
+          setAuthed(true);
+          localStorage.setItem(AUTH_KEY, "1");
+        } else {
+          setAuthed(false);
+          localStorage.removeItem(AUTH_KEY);
+        }
+      })
+      .catch(() => {
+        if (!alive) return;
+        // Network blip: trust the optimistic flag if we had one.
+        if (!optimistic) setAuthed(false);
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   if (authed === null) return null; // hydration guard
@@ -135,7 +159,12 @@ function Panel({ onLogout }: { onLogout: () => void }) {
     return () => clearTimeout(t);
   }, [toast]);
 
-  function logout() {
+  async function logout() {
+    try {
+      await fetch("/api/admin/auth", { method: "DELETE" });
+    } catch {
+      // Even if the network fails, clear local state.
+    }
     localStorage.removeItem(AUTH_KEY);
     onLogout();
   }
@@ -247,24 +276,65 @@ function TabBtn({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Tab A: Search Order
+// Tab A: Search Order, with today's list + edit
 // ─────────────────────────────────────────────────────────────────────────────
 function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
   const [num, setNum] = useState("");
   const [busy, setBusy] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [printing, setPrinting] = useState(false);
+  const [listItems, setListItems] = useState<OrderListItem[]>([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [listTick, setListTick] = useState(0);
+  const [editing, setEditing] = useState(false);
+  // Phone history mode
+  const [phoneHistory, setPhoneHistory] = useState<OrderListItem[] | null>(null);
+  const [phoneHistoryFor, setPhoneHistoryFor] = useState<string>("");
 
-  async function fetchOrder(e?: React.FormEvent) {
-    e?.preventDefault();
-    if (!num.trim()) return;
+  // Edit form state
+  const [edName, setEdName] = useState("");
+  const [edPhone, setEdPhone] = useState("");
+  const [edPayment, setEdPayment] = useState<"UPI" | "CASH">("UPI");
+  const [edNote, setEdNote] = useState("");
+  const [edBusy, setEdBusy] = useState(false);
+
+  const loadList = useCallback(async () => {
+    setListLoading(true);
+    try {
+      const res = await fetch("/api/admin/orders/list?date=today", {
+        cache: "no-store",
+      });
+      const data = await res.json();
+      if (data?.success && Array.isArray(data.orders)) {
+        setListItems(data.orders as OrderListItem[]);
+      }
+    } catch {
+      // silently ignore; banner stays
+    } finally {
+      setListLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadList();
+    const id = setInterval(loadList, 30_000);
+    return () => clearInterval(id);
+  }, [loadList, listTick]);
+
+  async function fetchOrder(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
     setBusy(true);
     setOrder(null);
+    setEditing(false);
+    setPhoneHistory(null);
     try {
-      const res = await fetch(`/api/admin/orders/${encodeURIComponent(num.trim())}`);
+      const res = await fetch(
+        `/api/admin/orders/${encodeURIComponent(trimmed)}`
+      );
       const data = await res.json();
       if (data.success && data.order) {
-        setOrder(data.order);
+        setOrder(data.order as Order);
       } else {
         onToast({ kind: "err", msg: data.message || "Order not found" });
       }
@@ -272,6 +342,106 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
       onToast({ kind: "err", msg: "Network error" });
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function fetchPhoneHistory(phone: string) {
+    const clean = phone.replace(/\D/g, "");
+    if (clean.length < 7) return;
+    setBusy(true);
+    setOrder(null);
+    setEditing(false);
+    setPhoneHistory(null);
+    setPhoneHistoryFor(clean);
+    try {
+      const res = await fetch(
+        `/api/admin/orders/by-phone?phone=${encodeURIComponent(clean)}&limit=10`
+      );
+      const data = await res.json();
+      if (data.success && Array.isArray(data.orders)) {
+        setPhoneHistory(data.orders as OrderListItem[]);
+        if (data.orders.length === 0) {
+          onToast({
+            kind: "info",
+            msg: `No orders found for ${clean}`,
+          });
+        }
+      } else {
+        onToast({ kind: "err", msg: data.message || "Lookup failed" });
+      }
+    } catch {
+      onToast({ kind: "err", msg: "Network error" });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = num.trim();
+    if (!trimmed) return;
+    // Smart detect: 7+ digits treat as phone, else order number
+    if (trimmed.length >= 7) {
+      fetchPhoneHistory(trimmed);
+    } else {
+      fetchOrder(trimmed);
+    }
+  }
+
+  function clearPhoneHistory() {
+    setPhoneHistory(null);
+    setPhoneHistoryFor("");
+  }
+
+  function openEdit(o: Order) {
+    setEdName(o.customerName || "");
+    setEdPhone(o.customerPhone || "");
+    setEdPayment((o.paymentMode === "CASH" ? "CASH" : "UPI") as "UPI" | "CASH");
+    setEdNote(o.note || "");
+    setEditing(true);
+  }
+
+  async function saveEdit() {
+    if (!order?.rowIndex) {
+      onToast({
+        kind: "err",
+        msg: "Cannot edit. This order has no row index (older Apps Script). Re-deploy the script.",
+      });
+      return;
+    }
+    setEdBusy(true);
+    try {
+      const res = await fetch("/api/admin/orders/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rowIndex: order.rowIndex,
+          customerName: edName,
+          customerPhone: edPhone,
+          paymentMode: edPayment,
+          note: edNote,
+        }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        onToast({ kind: "ok", msg: "Order updated" });
+        // Reflect locally
+        setOrder({
+          ...order,
+          customerName: edName,
+          customerPhone: edPhone,
+          paymentMode: edPayment,
+          note: edNote,
+        });
+        setEditing(false);
+        setListTick((x) => x + 1);
+      } else {
+        onToast({ kind: "err", msg: data?.message || "Update failed" });
+      }
+    } catch {
+      onToast({ kind: "err", msg: "Network error" });
+    } finally {
+      setEdBusy(false);
     }
   }
 
@@ -297,24 +467,31 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
         Find <span className="text-primary">Order</span>
       </h2>
 
-      <form onSubmit={fetchOrder} className="mt-5 flex gap-2">
-        <input
-          inputMode="numeric"
-          autoFocus
-          value={num}
-          onChange={(e) => setNum(e.target.value.replace(/\D/g, ""))}
-          placeholder="045"
-          className="flex-1 rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-lg font-bold tracking-wider text-on-surface focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-        />
-        <button
-          type="submit"
-          disabled={busy}
-          className="btn-honeyed rounded-xl px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
-        >
-          {busy ? "…" : "Fetch"}
-        </button>
+      <form onSubmit={handleSubmit} className="mt-5">
+        <div className="flex gap-2">
+          <input
+            inputMode="numeric"
+            autoFocus
+            value={num}
+            onChange={(e) => setNum(e.target.value.replace(/\D/g, ""))}
+            placeholder="045 or 9876543210"
+            className="flex-1 rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-lg font-bold tracking-wider text-on-surface focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-honeyed rounded-xl px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
+          >
+            {busy ? "…" : "Fetch"}
+          </button>
+        </div>
+        <p className="mt-2 text-[11px] text-on-surface/40">
+          Type an order number (3 to 4 digits) for that order, or a phone
+          number (7 to 10 digits) for that customer&apos;s last 10 orders.
+        </p>
       </form>
 
+      {/* Order detail card */}
       {order && (
         <div className="mt-5 rounded-2xl bg-surface-container p-5">
           <div className="flex items-baseline justify-between">
@@ -365,24 +542,245 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
             </div>
           </div>
 
-          {(order.customerName || order.customerPhone) && (
+          {!editing && (order.customerName || order.customerPhone || order.note) && (
             <div className="mt-3 space-y-0.5 text-xs text-on-surface/50">
               {order.customerName && <div>Name: {order.customerName}</div>}
               {order.customerPhone && <div>Phone: {order.customerPhone}</div>}
+              {order.note && <div>Note: {order.note}</div>}
             </div>
           )}
 
-          <button
-            onClick={doPrint}
-            disabled={printing}
-            className="btn-honeyed mt-5 w-full rounded-full py-3 text-sm font-semibold text-on-primary disabled:opacity-50"
-          >
-            {printing ? "Printing…" : "🖨️  Print Kitchen Ticket"}
-          </button>
+          {/* Edit form */}
+          {editing && (
+            <div className="mt-4 space-y-2 border-t border-outline-variant/10 pt-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-primary/70">
+                Edit order
+              </p>
+              <input
+                type="text"
+                value={edName}
+                onChange={(e) => setEdName(e.target.value)}
+                placeholder="Customer name"
+                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+              <input
+                inputMode="numeric"
+                value={edPhone}
+                onChange={(e) => setEdPhone(e.target.value.replace(/\D/g, ""))}
+                placeholder="Phone"
+                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                {(["UPI", "CASH"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setEdPayment(m)}
+                    className={`rounded-xl py-2 text-sm font-bold ${
+                      edPayment === m
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container-low text-on-surface/70"
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <input
+                type="text"
+                value={edNote}
+                onChange={(e) => setEdNote(e.target.value)}
+                placeholder="Note, optional"
+                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className="flex-1 rounded-xl bg-surface-container-low py-2.5 text-sm font-semibold text-on-surface/60"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={saveEdit}
+                  disabled={edBusy}
+                  className="btn-honeyed flex-1 rounded-xl py-2.5 text-sm font-bold text-on-primary disabled:opacity-50"
+                >
+                  {edBusy ? "Saving…" : "Save changes"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!editing && (
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => openEdit(order)}
+                className="rounded-full border border-outline-variant/30 py-3 text-sm font-semibold text-on-surface/80 hover:border-primary hover:text-primary"
+              >
+                ✎  Edit
+              </button>
+              <button
+                onClick={doPrint}
+                disabled={printing}
+                className="btn-honeyed rounded-full py-3 text-sm font-semibold text-on-primary disabled:opacity-50"
+              >
+                {printing ? "Printing…" : "🖨️  Print"}
+              </button>
+            </div>
+          )}
+
           {!isPrinterSupported() && (
             <p className="mt-2 text-center text-[11px] text-on-surface/40">
               Bluetooth print works on Chrome (Android/desktop). Not on iOS Safari.
             </p>
+          )}
+        </div>
+      )}
+
+      {/* Phone history results */}
+      {phoneHistory !== null && (
+        <div className="mt-8">
+          <div className="flex items-baseline justify-between">
+            <h3 className="font-[var(--font-heading)] text-base font-bold">
+              Customer history{" "}
+              <span className="ml-1 text-xs font-medium text-primary">
+                {phoneHistoryFor}
+              </span>
+              {phoneHistory.length > 0 && (
+                <span className="ml-2 text-xs font-medium text-on-surface/50">
+                  (last {phoneHistory.length})
+                </span>
+              )}
+            </h3>
+            <button
+              onClick={clearPhoneHistory}
+              className="text-xs font-medium text-on-surface/50 hover:text-primary"
+            >
+              ← Back to today
+            </button>
+          </div>
+
+          {phoneHistory.length === 0 ? (
+            <div className="mt-3 rounded-xl bg-surface-container-low/40 px-4 py-6 text-center text-xs text-on-surface/40">
+              No previous orders for this number.
+            </div>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {phoneHistory.map((row) => (
+                <button
+                  key={row.rowIndex}
+                  onClick={() => fetchOrder(row.orderNumber)}
+                  className="flex w-full items-center gap-3 rounded-xl bg-surface-container px-4 py-3 text-left transition-colors hover:bg-surface-container-high"
+                >
+                  <div className="shrink-0 font-[var(--font-heading)] text-base font-bold text-primary">
+                    {row.orderNumber}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-on-surface">
+                      {row.customerName || "Walk-in"}
+                    </div>
+                    <div className="text-[11px] text-on-surface/50">
+                      {new Date(row.timestamp).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        day: "numeric",
+                        month: "short",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                      {row.paymentMode && ` · ${row.paymentMode}`}
+                      {row.source === "WEBSITE" && " · web"}
+                      {row.source === "COUNTER" && " · counter"}
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <div className="font-[var(--font-heading)] text-sm font-bold text-on-surface">
+                      ₹{row.total}
+                    </div>
+                  </div>
+                </button>
+              ))}
+              {phoneHistory.length > 0 && (
+                <div className="rounded-xl bg-surface-container-low/40 px-4 py-3 text-center text-[11px] text-on-surface/50">
+                  Total spent across these {phoneHistory.length} order
+                  {phoneHistory.length === 1 ? "" : "s"}:{" "}
+                  <span className="font-bold text-primary">
+                    ₹
+                    {phoneHistory
+                      .reduce((sum, r) => sum + r.total, 0)
+                      .toLocaleString("en-IN")}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Today's orders list — hidden while phone-history is open */}
+      {phoneHistory === null && (
+        <div className="mt-8">
+          <div className="flex items-baseline justify-between">
+            <h3 className="font-[var(--font-heading)] text-base font-bold">
+              Today&apos;s orders
+              {listItems.length > 0 && (
+                <span className="ml-2 text-xs font-medium text-on-surface/50">
+                  ({listItems.length})
+                </span>
+              )}
+            </h3>
+            <button
+              onClick={() => setListTick((x) => x + 1)}
+              className="text-xs font-medium text-on-surface/50 hover:text-primary"
+            >
+              {listLoading ? "Loading…" : "Refresh"}
+            </button>
+          </div>
+
+          {listItems.length === 0 && !listLoading && (
+            <div className="mt-3 rounded-xl bg-surface-container-low/40 px-4 py-6 text-center text-xs text-on-surface/40">
+              No orders logged today yet.
+            </div>
+          )}
+
+          {listItems.length > 0 && (
+            <div className="mt-3 space-y-2">
+              {listItems.map((row) => (
+                <button
+                  key={row.rowIndex}
+                  onClick={() => fetchOrder(row.orderNumber)}
+                  className="flex w-full items-center gap-3 rounded-xl bg-surface-container px-4 py-3 text-left transition-colors hover:bg-surface-container-high"
+                >
+                  <div className="shrink-0 font-[var(--font-heading)] text-base font-bold text-primary">
+                    {row.orderNumber}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-on-surface">
+                      {row.customerName || (row.source === "COUNTER" ? "Counter walk-in" : "Online order")}
+                    </div>
+                    <div className="text-[11px] text-on-surface/50">
+                      {row.customerPhone && row.customerPhone + " · "}
+                      {new Date(row.timestamp).toLocaleTimeString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                      {row.paymentMode && ` · ${row.paymentMode}`}
+                      {row.source === "WEBSITE" && " · web"}
+                      {row.source === "COUNTER" && " · counter"}
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <div className="font-[var(--font-heading)] text-sm font-bold text-on-surface">
+                      ₹{row.total}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           )}
         </div>
       )}

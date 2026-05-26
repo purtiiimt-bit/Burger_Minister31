@@ -89,6 +89,40 @@ export default function BooksTab({
   const [exNote, setExNote] = useState<string>("");
   const [exBusy, setExBusy] = useState(false);
 
+  // Pending entries staged locally before bulk save
+  type PendingExpense = {
+    id: string;
+    category: string;
+    amount: number;
+    note: string;
+  };
+  const PENDING_KEY = "bm-pending-expenses";
+  const [pending, setPending] = useState<PendingExpense[]>([]);
+
+  // Load pending list from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(PENDING_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setPending(parsed);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Persist on change
+  useEffect(() => {
+    try {
+      localStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+    } catch {
+      // ignore
+    }
+  }, [pending]);
+
+  const pendingTotal = pending.reduce((sum, p) => sum + p.amount, 0);
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
@@ -113,7 +147,7 @@ export default function BooksTab({
     return () => clearInterval(id);
   }, [fetchAll, refreshTick]);
 
-  async function submitExpense(e: React.FormEvent) {
+  function addPending(e: React.FormEvent) {
     e.preventDefault();
     const amount = Number(exAmount);
     if (!amount || amount <= 0) {
@@ -126,30 +160,61 @@ export default function BooksTab({
       onToast({ kind: "err", msg: "Type a category name for Other" });
       return;
     }
+    const entry: PendingExpense = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      category: finalCategory,
+      amount,
+      note: exNote.trim(),
+    };
+    setPending((prev) => [...prev, entry]);
+    onToast({
+      kind: "ok",
+      msg: `Added ₹${formatINR(amount)} ${finalCategory} to pending list`,
+    });
+    setExAmount("");
+    setExNote("");
+    setExCustomCategory("");
+    if (isOther) setExCategory("Raw Materials");
+  }
+
+  function removePending(id: string) {
+    setPending((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  function clearPending() {
+    if (pending.length === 0) return;
+    if (
+      !confirm(`Clear ${pending.length} pending entries without saving?`)
+    )
+      return;
+    setPending([]);
+  }
+
+  async function saveAllPending() {
+    if (pending.length === 0) return;
     setExBusy(true);
     try {
-      const res = await fetch("/api/admin/expense", {
+      const res = await fetch("/api/admin/expense/batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          category: finalCategory,
-          amount,
-          note: exNote || undefined,
+          items: pending.map((p) => ({
+            category: p.category,
+            amount: p.amount,
+            note: p.note || undefined,
+          })),
         }),
       });
       const data = await res.json();
       if (data?.success) {
         onToast({
           kind: "ok",
-          msg: `Logged ₹${formatINR(amount)} under ${finalCategory}`,
+          msg: `Saved ${data.count} entries (₹${formatINR(data.total ?? pendingTotal)})`,
         });
-        setExAmount("");
-        setExNote("");
-        setExCustomCategory("");
-        if (isOther) setExCategory("Raw Materials");
+        setPending([]);
         setRefreshTick((x) => x + 1);
       } else {
-        onToast({ kind: "err", msg: data?.message || "Could not save" });
+        onToast({ kind: "err", msg: data?.message || "Save failed" });
       }
     } catch {
       onToast({ kind: "err", msg: "Network error" });
@@ -394,15 +459,95 @@ export default function BooksTab({
         </section>
       )}
 
+      {/* Pending entries (KhataBook-style draft list) */}
+      {pending.length > 0 && (
+        <section className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+          <div className="flex items-baseline justify-between">
+            <h3 className="font-[var(--font-heading)] text-base font-bold text-primary">
+              Pending entries ({pending.length})
+            </h3>
+            <span className="text-xs font-semibold text-on-surface/60">
+              Not saved yet
+            </span>
+          </div>
+
+          <div className="mt-3 space-y-2">
+            {pending.map((p) => (
+              <div
+                key={p.id}
+                className="flex items-center gap-3 rounded-xl bg-surface-container px-3 py-2.5"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-semibold text-on-surface">
+                    {p.category}
+                  </div>
+                  {p.note && (
+                    <div className="text-[11px] text-on-surface/50">{p.note}</div>
+                  )}
+                </div>
+                <div className="font-[var(--font-heading)] text-sm font-bold text-tertiary">
+                  ₹{formatINR(p.amount)}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removePending(p.id)}
+                  aria-label="Remove from list"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-on-surface/40 hover:bg-red-500/10 hover:text-red-400"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 flex items-center justify-between border-t border-primary/15 pt-3 text-sm">
+            <span className="text-on-surface/60">Total to save</span>
+            <span className="font-[var(--font-heading)] text-lg font-bold text-primary">
+              ₹{formatINR(pendingTotal)}
+            </span>
+          </div>
+
+          <div className="mt-3 grid grid-cols-[1fr_2fr] gap-2">
+            <button
+              type="button"
+              onClick={clearPending}
+              className="rounded-xl bg-surface-container py-2.5 text-sm font-semibold text-on-surface/60 transition-colors hover:text-red-400"
+            >
+              Clear list
+            </button>
+            <button
+              type="button"
+              onClick={saveAllPending}
+              disabled={exBusy}
+              className="btn-honeyed rounded-xl py-2.5 text-sm font-bold text-on-primary disabled:opacity-50"
+            >
+              {exBusy ? "Saving…" : `Save all (${pending.length})`}
+            </button>
+          </div>
+
+          <p className="mt-2 text-center text-[10px] text-on-surface/40">
+            All entries save together in one go. One sheet write, one
+            notification.
+          </p>
+        </section>
+      )}
+
       {/* Sticky expense entry form */}
       <form
-        onSubmit={submitExpense}
+        onSubmit={addPending}
         className="fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant/15 bg-surface/95 backdrop-blur"
       >
         <div className="mx-auto max-w-3xl space-y-2 px-4 py-3 sm:px-6">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
-            Log an expense
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
+              Add expense to list
+            </p>
+            {pending.length > 0 && (
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-secondary">
+                {pending.length} pending · ₹{formatINR(pendingTotal)}
+              </span>
+            )}
+          </div>
 
           {/* Category chip row (horizontally scrollable on mobile) */}
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
@@ -455,7 +600,7 @@ export default function BooksTab({
               disabled={exBusy}
               className="btn-honeyed rounded-xl px-5 text-sm font-bold text-on-primary disabled:opacity-50"
             >
-              {exBusy ? "..." : "Save"}
+              + Add
             </button>
           </div>
 

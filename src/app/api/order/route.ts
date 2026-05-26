@@ -48,21 +48,12 @@ Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
 
     let orderNumber = "";
 
-    // Fallback generator: timestamp-based 3-digit number (uniqueness within a day is fine)
-    // Used only if Apps Script doesn't return one (i.e. before script is updated)
-    const fallbackOrderNumber = () => {
-      const now = new Date();
-      // IST minutes since midnight, then mod to 3 digits + a random 0-9 nudge for uniqueness
-      const ist = new Date(
-        now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      );
-      const minutesIntoDay = ist.getHours() * 60 + ist.getMinutes();
-      // base from minutes (0-1439) + random tail so back-to-back orders differ
-      const base = (minutesIntoDay % 999) + 1;
-      const tail = Math.floor(Math.random() * 10);
-      const num = ((base * 10 + tail) % 999) + 1;
-      return "#" + String(num).padStart(3, "0");
-    };
+    // Fallback generator. Used only when Apps Script doesn't return an order number
+    // (i.e. before the updated script is deployed). 4-digit format so it's visually
+    // distinct from real sequential counter numbers (#001..#999) and uniqueness is
+    // guaranteed at human counter speed because it's derived from Date.now().
+    const fallbackOrderNumber = () =>
+      "#" + String((Date.now() % 9999) + 1).padStart(4, "0");
 
     // 1. Send to Google Sheets via Apps Script webhook → returns orderNumber
     const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;

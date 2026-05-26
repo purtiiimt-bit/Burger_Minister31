@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
 
-// GET /api/admin/books?period=today|week|month
-// GET /api/admin/books?feed=today  (returns mixed timeline of sales + expenses for that date)
+// GET /api/admin/orders/by-phone?phone=9876543210&limit=10
 export async function GET(req: Request) {
   const denied = denyIfNotAdmin(req);
   if (denied) return denied;
   const url = new URL(req.url);
-  const period = url.searchParams.get("period");
-  const feed = url.searchParams.get("feed");
+  const phone = url.searchParams.get("phone") || "";
+  const limit = url.searchParams.get("limit") || "10";
+
+  if (!phone.replace(/\D/g, "")) {
+    return NextResponse.json(
+      { success: false, message: "Phone number required" },
+      { status: 400 }
+    );
+  }
 
   const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;
   if (!sheetUrl) {
@@ -19,19 +25,10 @@ export async function GET(req: Request) {
   }
 
   try {
-    let target: string;
-    if (feed) {
-      target = `${sheetUrl}?books=feed&date=${encodeURIComponent(feed)}`;
-    } else if (period && ["today", "week", "month"].includes(period)) {
-      target = `${sheetUrl}?books=${period}`;
-    } else {
-      return NextResponse.json(
-        { success: false, message: "Invalid request, expected ?period or ?feed" },
-        { status: 400 }
-      );
-    }
-
-    const res = await fetch(target, { method: "GET", cache: "no-store" });
+    const res = await fetch(
+      `${sheetUrl}?phone=${encodeURIComponent(phone)}&limit=${encodeURIComponent(limit)}`,
+      { method: "GET", cache: "no-store" }
+    );
     const data = await res.json().catch(() => null);
     if (!data) {
       return NextResponse.json(
@@ -41,7 +38,7 @@ export async function GET(req: Request) {
     }
     return NextResponse.json(data);
   } catch (err) {
-    console.error("Books fetch error:", err);
+    console.error("Phone history error:", err);
     return NextResponse.json(
       { success: false, message: "Failed to reach sheet" },
       { status: 502 }
