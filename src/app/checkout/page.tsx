@@ -17,13 +17,16 @@ export default function CheckoutPage() {
     clearCart,
   } = useCart();
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPayment, setShowPayment] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [formData, setFormData] = useState<Record<string, string> | null>(null);
 
-  const UPI_ID = "paytmqr6j4v4s@ptys";
+  // Controlled fields
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
+  const [address, setAddress] = useState("");
+  const [note, setNote] = useState("");
 
   if (items.length === 0) {
     return (
@@ -44,28 +47,15 @@ export default function CheckoutPage() {
     );
   }
 
-  function handleProceedToPayment(e: FormEvent<HTMLFormElement>) {
+  async function handlePlaceOrder(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    setFormData({
-      name: data.get("name") as string,
-      phone: data.get("phone") as string,
-      address: data.get("address") as string,
-      orderType: data.get("orderType") as string,
-      note: data.get("note") as string,
-    });
-    setShowPayment(true);
-    // Scroll to top on mobile
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  async function handleConfirmOrder() {
-    if (!formData) return;
+    if (orderType === "delivery" && !address.trim()) {
+      setError("Please enter your delivery address.");
+      return;
+    }
     setLoading(true);
     setError("");
 
-    // If free fries earned, append a ₹0 line item so kitchen sees it on the receipt
     const cartItems = items.map((i) => ({
       name: i.name,
       quantity: i.quantity,
@@ -82,7 +72,11 @@ export default function CheckoutPage() {
     }
 
     const orderData = {
-      ...formData,
+      name,
+      phone,
+      address: orderType === "delivery" ? address : "",
+      orderType,
+      note,
       items: cartItems,
       subtotal,
       coupon,
@@ -113,195 +107,6 @@ export default function CheckoutPage() {
     }
   }
 
-  function copyUPI() {
-    navigator.clipboard.writeText(UPI_ID);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  // ─── Payment Modal ───
-  if (showPayment) {
-    return (
-      <div className="pt-16">
-        <section className="py-12">
-          <div className="mx-auto max-w-lg px-4 sm:px-6">
-            {/* Back button */}
-            <button
-              onClick={() => setShowPayment(false)}
-              className="mb-6 flex items-center gap-2 text-sm text-on-surface/50 transition-colors hover:text-primary"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back to Details
-            </button>
-
-            {/* Payment Card */}
-            <div className="overflow-hidden rounded-2xl border border-primary/20 bg-surface-container">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-primary/20 to-tertiary/10 px-6 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
-                    <svg
-                      className="h-5 w-5 text-primary"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h2 className="font-[var(--font-heading)] text-lg font-bold">
-                      Pay via UPI
-                    </h2>
-                    <p className="text-xs text-on-surface/50">
-                      Scan QR or use UPI ID
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-6 py-6">
-                {/* Amount */}
-                <div className="mb-6 text-center">
-                  <p className="text-sm text-on-surface/50">Amount to Pay</p>
-                  <p className="font-[var(--font-heading)] text-3xl font-bold text-primary">
-                    ₹{totalPrice}
-                  </p>
-                </div>
-
-                {/* QR Code */}
-                <div className="mx-auto mb-4 w-52 overflow-hidden rounded-2xl bg-white p-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/qr-code.png"
-                    alt="Scan to Pay via UPI"
-                    className="h-auto w-full rounded-xl"
-                  />
-                </div>
-                <p className="mb-6 text-center text-xs text-on-surface/40">
-                  Paytm. Anand Kumar
-                </p>
-
-                {/* Divider */}
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="h-px flex-1 bg-outline-variant/20" />
-                  <span className="text-xs text-on-surface/30">OR</span>
-                  <div className="h-px flex-1 bg-outline-variant/20" />
-                </div>
-
-                {/* UPI ID */}
-                <div className="mb-6 rounded-xl bg-surface-container-low p-4">
-                  <p className="mb-1.5 text-xs text-on-surface/50">UPI ID</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-sm font-semibold text-primary">
-                      {UPI_ID}
-                    </code>
-                    <button
-                      onClick={copyUPI}
-                      className="rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary/20"
-                    >
-                      {copied ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Order summary mini */}
-                <div className="mb-6 rounded-xl bg-surface-container-low p-4">
-                  <p className="mb-2 text-xs font-medium text-on-surface/50">
-                    Order for {formData?.name}
-                  </p>
-                  <div className="space-y-1.5">
-                    {items.map((item) => (
-                      <div
-                        key={item.name}
-                        className="flex items-center justify-between text-xs text-on-surface/70"
-                      >
-                        <span>
-                          {item.name} x{item.quantity}
-                        </span>
-                        <span>₹{item.price * item.quantity}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Info Note. Highlighted, token mandatory */}
-                <div className="mb-6 rounded-2xl border-2 border-primary/40 bg-primary/10 p-4 shadow-[0_0_24px_rgba(230,196,67,0.15)]">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/20">
-                      <svg
-                        className="h-6 w-6 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.8}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-[var(--font-heading)] text-sm font-bold text-primary">
-                        Please collect your Pickup Token at the counter 🎟️
-                      </p>
-                      <p className="mt-1.5 text-xs leading-relaxed text-on-surface/70">
-                        You can pay here using UPI <span className="text-on-surface/50">or</span> at the counter when you arrive. Either way works. <span className="font-semibold text-secondary">Picking up your token is mandatory</span>. It is your golden pass to collect the order.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Error */}
-                {error && (
-                  <p className="mb-4 rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
-                    {error}
-                  </p>
-                )}
-
-                {/* Confirm Button */}
-                <button
-                  onClick={handleConfirmOrder}
-                  disabled={loading}
-                  className="btn-honeyed w-full rounded-full py-3.5 text-base font-semibold text-on-primary transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  {loading
-                    ? "Confirming..."
-                    : `Confirm Order (₹${totalPrice})`}
-                </button>
-
-                {/* Cash option */}
-                <p className="mt-3 text-center text-xs text-on-surface/30">
-                  Pay here or at the counter. Just don&apos;t forget your token 🎟️
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  // ─── Checkout Form ───
   return (
     <div className="pt-16">
       <section className="py-12">
@@ -312,13 +117,14 @@ export default function CheckoutPage() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-5">
             {/* Form — Left */}
-            <form onSubmit={handleProceedToPayment} className="lg:col-span-3">
+            <form onSubmit={handlePlaceOrder} className="lg:col-span-3">
               <div className="rounded-2xl bg-surface-container p-6">
                 <h2 className="font-[var(--font-heading)] text-lg font-bold">
                   Your Details
                 </h2>
 
                 <div className="mt-4 space-y-4">
+                  {/* Name */}
                   <div>
                     <label
                       htmlFor="name"
@@ -329,12 +135,15 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       id="name"
-                      name="name"
                       required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
                       placeholder="Aapka naam"
                     />
                   </div>
+
+                  {/* Phone */}
                   <div>
                     <label
                       htmlFor="phone"
@@ -345,44 +154,80 @@ export default function CheckoutPage() {
                     <input
                       type="tel"
                       id="phone"
-                      name="phone"
                       required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
                       placeholder="+91 XXXXX XXXXX"
                     />
                   </div>
+
+                  {/* Order Type Toggle */}
                   <div>
-                    <label
-                      htmlFor="orderType"
-                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
-                    >
+                    <p className="mb-2 text-sm font-medium text-on-surface/70">
                       Order Type *
-                    </label>
-                    <select
-                      id="orderType"
-                      name="orderType"
-                      required
-                      className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                    >
-                      <option value="pickup">Pickup from Store</option>
-                      <option value="delivery">Delivery (Noida only)</option>
-                    </select>
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("pickup")}
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all ${
+                          orderType === "pickup"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-outline-variant/30 text-on-surface/50 hover:border-primary/40 hover:text-on-surface"
+                        }`}
+                      >
+                        {/* Store icon */}
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+                        </svg>
+                        Pickup
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("delivery")}
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all ${
+                          orderType === "delivery"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-outline-variant/30 text-on-surface/50 hover:border-primary/40 hover:text-on-surface"
+                        }`}
+                      >
+                        {/* Delivery icon */}
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                        </svg>
+                        Delivery
+                      </button>
+                    </div>
+                    {orderType === "delivery" && (
+                      <p className="mt-1.5 text-xs text-on-surface/40">
+                        Delivery available within Noida only
+                      </p>
+                    )}
                   </div>
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
-                    >
-                      Delivery Address (if delivery)
-                    </label>
-                    <textarea
-                      id="address"
-                      name="address"
-                      rows={2}
-                      className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                      placeholder="Full address with landmark"
-                    />
-                  </div>
+
+                  {/* Address — only for delivery */}
+                  {orderType === "delivery" && (
+                    <div>
+                      <label
+                        htmlFor="address"
+                        className="mb-1.5 block text-sm font-medium text-on-surface/70"
+                      >
+                        Delivery Address *
+                      </label>
+                      <textarea
+                        id="address"
+                        rows={2}
+                        required={orderType === "delivery"}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                        placeholder="Full address with landmark"
+                      />
+                    </div>
+                  )}
+
+                  {/* Special Instructions */}
                   <div>
                     <label
                       htmlFor="note"
@@ -392,20 +237,32 @@ export default function CheckoutPage() {
                     </label>
                     <textarea
                       id="note"
-                      name="note"
                       rows={2}
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
                       className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
                       placeholder="Extra cheese, no onion, etc."
                     />
                   </div>
                 </div>
 
+                {error && (
+                  <p className="mt-4 rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
+                    {error}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="btn-honeyed mt-6 w-full rounded-full py-3 text-base font-semibold text-on-primary transition-all hover:scale-[1.02]"
+                  disabled={loading}
+                  className="btn-honeyed mt-6 w-full rounded-full py-3.5 text-base font-semibold text-on-primary transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
                 >
-                  Proceed to Payment (₹{totalPrice})
+                  {loading ? "Placing Order…" : `Place Order · ₹${totalPrice}`}
                 </button>
+
+                <p className="mt-3 text-center text-xs text-on-surface/30">
+                  You can pay at the counter when you arrive
+                </p>
               </div>
             </form>
 
@@ -459,9 +316,7 @@ export default function CheckoutPage() {
                     </div>
                   )}
                   <div className="mt-3 flex items-center justify-between border-t border-outline-variant/10 pt-3">
-                    <span className="font-medium text-on-surface/70">
-                      Total
-                    </span>
+                    <span className="font-medium text-on-surface/70">Total</span>
                     <span className="font-[var(--font-heading)] text-xl font-bold text-primary">
                       ₹{totalPrice}
                     </span>
