@@ -120,7 +120,7 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main panel
 // ─────────────────────────────────────────────────────────────────────────────
-type Stats = { todayCount: number; lifetimeTotal: number } | null;
+type Stats = { todayCount: number; lifetimeTotal: number; newCustomersToday: number } | null;
 
 function Panel({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>("search");
@@ -139,6 +139,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
           setStats({
             todayCount: data.stats.todayCount || 0,
             lifetimeTotal: data.stats.lifetimeTotal || 0,
+            newCustomersToday: data.stats.newCustomersToday || 0,
           });
         }
       } catch {
@@ -200,6 +201,15 @@ function Panel({ onLogout }: { onLogout: () => void }) {
             </div>
             <div className="font-[var(--font-heading)] text-xl font-bold text-primary">
               {stats?.todayCount ?? "..."}
+            </div>
+          </div>
+          <div className="h-8 w-px bg-outline-variant/15" />
+          <div className="text-center">
+            <div className="text-[10px] uppercase tracking-wider text-on-surface/50">
+              New Customers
+            </div>
+            <div className="font-[var(--font-heading)] text-xl font-bold text-[var(--tertiary,#b5ccff)]">
+              {stats?.newCustomersToday ?? "..."}
             </div>
           </div>
           <div className="h-8 w-px bg-outline-variant/15" />

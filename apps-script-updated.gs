@@ -13,6 +13,7 @@
 const SHEET_NAME = "Orders";
 const COUNTER_SHEET = "Counter";
 const EXPENSES_SHEET = "Expenses";
+const CUSTOMERS_SHEET = "Customers";
 const TZ = "Asia/Kolkata";
 const NOTIFY_EMAIL = "Burgerminister38@gmail.com"; // owner email for new-order alerts
 
@@ -148,11 +149,60 @@ function nextOrderNumber_(counter) {
 function getStats_(counter) {
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
   const lastDate = toDateStr_(counter.getRange("A1").getValue());
-  // If today hasn't been reset yet, today count is 0 (will reset on next order)
   const todayCount =
     lastDate === today ? Number(counter.getRange("B1").getValue() || 0) : 0;
   const lifetime = Number(counter.getRange("C1").getValue() || 0);
-  return { todayCount, lifetimeTotal: lifetime, lastReset: lastDate };
+
+  // Count new customers today (customers whose first order was today)
+  let newCustomersToday = 0;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const custSheet = ss.getSheetByName(CUSTOMERS_SHEET);
+    if (custSheet && custSheet.getLastRow() > 1) {
+      const firstOrderDates = custSheet.getRange(2, 3, custSheet.getLastRow() - 1, 1).getValues();
+      for (let i = 0; i < firstOrderDates.length; i++) {
+        if (toDateStr_(firstOrderDates[i][0]) === today) newCustomersToday++;
+      }
+    }
+  } catch (e) {
+    Logger.log("newCustomersToday error: " + e);
+  }
+
+  return { todayCount, lifetimeTotal: lifetime, lastReset: lastDate, newCustomersToday: newCustomersToday };
+}
+
+// ── Customer CRM ───────────────────────────────────────────────────────────
+// Upserts a customer row in the Customers sheet.
+// Cols: A=Phone, B=Name, C=First Order Date, D=Last Order Date, E=Total Orders
+function upsertCustomer_(name, phone) {
+  if (!phone) return;
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(CUSTOMERS_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(CUSTOMERS_SHEET);
+    sheet.appendRow(["Phone", "Name", "First Order", "Last Order", "Total Orders"]);
+    // Freeze header row
+    sheet.setFrozenRows(1);
+  }
+
+  const now = new Date();
+  const lastRow = sheet.getLastRow();
+
+  if (lastRow > 1) {
+    const phones = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (let i = 0; i < phones.length; i++) {
+      if (String(phones[i][0]) === String(phone)) {
+        const row = i + 2; // 1-based + header offset
+        if (name) sheet.getRange(row, 2).setValue(name);  // update name if provided
+        sheet.getRange(row, 4).setValue(now);              // last order date
+        sheet.getRange(row, 5).setValue(Number(sheet.getRange(row, 5).getValue() || 0) + 1);
+        return;
+      }
+    }
+  }
+
+  // New customer
+  sheet.appendRow([phone, name || "", now, now, 1]);
 }
 
 /**
@@ -216,13 +266,22 @@ function wipeAllData() {
     }
   }
 
+  // Customers sheet — drop all rows except header
+  const customers = ss.getSheetByName(CUSTOMERS_SHEET);
+  if (customers) {
+    const last = customers.getLastRow();
+    if (last > 1) {
+      customers.deleteRows(2, last - 1);
+    }
+  }
+
   // Counter — back to zero (today + lifetime) and clear last reset date
   const counter = ss.getSheetByName(COUNTER_SHEET) || ss.insertSheet(COUNTER_SHEET);
   counter.getRange("A1").setValue("");
   counter.getRange("B1").setValue(0);
   counter.getRange("C1").setValue(0);
 
-  Logger.log("wipeAllData done. Orders + Expenses cleared. Counter reset to 0.");
+  Logger.log("wipeAllData done. Orders + Expenses + Customers cleared. Counter reset to 0.");
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -766,6 +825,16 @@ function doPost(e) {
       data.coupon || "",
       numbers.lifetimeTotal,
     ]);
+
+    // Track customer in Customers sheet (CRM)
+    try {
+      upsertCustomer_(
+        data.customerName || data.name || "",
+        data.customerPhone || data.phone || ""
+      );
+    } catch (custErr) {
+      Logger.log("Customer upsert error: " + custErr);
+    }
 
     // Email notification (kept from original script, with order number prepended)
     try {
