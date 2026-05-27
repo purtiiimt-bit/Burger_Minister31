@@ -1100,23 +1100,37 @@ function NewOrderTab({
   const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [nameHint, setNameHint] = useState<string | null>(null);
+  const [customerInfo, setCustomerInfo] = useState<{
+    orderCount: number;
+    lastTotal: number;
+    lastDate: string;
+  } | null>(null);
 
   // Coupon state
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
   const [couponErr, setCouponErr] = useState("");
 
-  // Auto-fill customer name from history when phone reaches 10 digits
+  // Auto-fill customer name + show history when phone reaches 10 digits
   useEffect(() => {
-    if (phone.length !== 10) { setNameHint(null); return; }
+    if (phone.length !== 10) { setNameHint(null); setCustomerInfo(null); return; }
     let active = true;
-    fetch(`/api/admin/orders/by-phone?phone=${phone}`, { cache: "no-store" })
+    fetch(`/api/admin/orders/by-phone?phone=${phone}&limit=10`, { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (!active) return;
-        const found: string | null = data?.orders?.[0]?.customerName || null;
+        const orders: OrderListItem[] = data?.orders ?? [];
+        const found: string | null = orders[0]?.customerName || null;
         setNameHint(found);
-        if (found) setName((prev) => prev || found); // auto-fill only if empty
+        if (found) setName((prev) => prev || found);
+        if (orders.length > 0) {
+          const lastDate = new Date(orders[0].timestamp).toLocaleDateString("en-IN", {
+            timeZone: "Asia/Kolkata", day: "numeric", month: "short",
+          });
+          setCustomerInfo({ orderCount: orders.length, lastTotal: orders[0].total, lastDate });
+        } else {
+          setCustomerInfo(null);
+        }
       })
       .catch(() => {});
     return () => { active = false; };
@@ -1236,6 +1250,7 @@ function NewOrderTab({
       setName("");
       setPhone("");
       setNameHint(null);
+      setCustomerInfo(null);
       setPaymentMode("UPI");
       setExpanded(false);
       onPlaced?.();
@@ -1428,11 +1443,19 @@ function NewOrderTab({
                       placeholder="Customer name (optional)"
                       className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
                     />
-                    {nameHint && (
-                      <p className="mt-1 truncate text-[11px] font-medium text-primary">
-                        ↩ Returning: {nameHint}
-                      </p>
-                    )}
+                    {customerInfo && (
+                    <div className="mt-1.5 flex items-center gap-2 rounded-lg bg-primary/8 px-2.5 py-1.5">
+                      <span className="text-base">↩</span>
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[11px] font-semibold text-primary">
+                          {nameHint ?? "Returning customer"}
+                        </span>
+                        <span className="ml-1.5 text-[11px] text-on-surface/50">
+                          {customerInfo.orderCount} order{customerInfo.orderCount > 1 ? "s" : ""} · last ₹{customerInfo.lastTotal} · {customerInfo.lastDate}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   </div>
                   <input
                     inputMode="numeric"
