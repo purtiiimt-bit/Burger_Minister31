@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
+import { getSigned } from "@/lib/appsScript";
 
 // GET /api/admin/books?period=today|week|month
 // GET /api/admin/books?feed=today  (returns mixed timeline of sales + expenses for that date)
@@ -19,11 +20,11 @@ export async function GET(req: Request) {
   }
 
   try {
-    let target: string;
+    let params: Record<string, string> = {};
     if (feed) {
-      target = `${sheetUrl}?books=feed&date=${encodeURIComponent(feed)}`;
+      params = { books: "feed", date: feed };
     } else if (period && ["today", "week", "month"].includes(period)) {
-      target = `${sheetUrl}?books=${period}`;
+      params = { books: period };
     } else {
       return NextResponse.json(
         { success: false, message: "Invalid request, expected ?period or ?feed" },
@@ -31,8 +32,7 @@ export async function GET(req: Request) {
       );
     }
 
-    const res = await fetch(target, { method: "GET", cache: "no-store" });
-    const data = await res.json().catch(() => null);
+    const data = await getSigned(sheetUrl, params);
     if (!data) {
       return NextResponse.json(
         { success: false, message: "Empty response from sheet" },

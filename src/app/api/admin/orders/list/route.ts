@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
+import { getSigned } from "@/lib/appsScript";
 
 // GET /api/admin/orders/list?date=today (default) | yyyy-MM-dd
 export async function GET(req: Request) {
@@ -17,11 +18,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const res = await fetch(
-      `${sheetUrl}?orders=${encodeURIComponent(date)}`,
-      { method: "GET", cache: "no-store" }
-    );
-    const data = await res.json().catch(() => null);
+    const data = await getSigned(sheetUrl, { orders: date });
     if (!data) {
       return NextResponse.json(
         { success: false, message: "Empty response from sheet" },

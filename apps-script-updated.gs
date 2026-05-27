@@ -16,6 +16,55 @@ const EXPENSES_SHEET = "Expenses";
 const TZ = "Asia/Kolkata";
 const NOTIFY_EMAIL = "Burgerminister38@gmail.com"; // owner email for new-order alerts
 
+// ─────────────────────────────────────────────────────────────────────────
+// HMAC SIGNATURE VERIFICATION (talks to Next.js /src/lib/appsScript.ts)
+// Replace the empty string below with a long random secret (32+ chars).
+// Set the SAME value as APPS_SCRIPT_SECRET in Vercel env vars.
+// When SCRIPT_SECRET is empty, signature verification is disabled so the
+// script keeps working during the first deployment. Set it as soon as you
+// have also set the matching env var on Vercel.
+// ─────────────────────────────────────────────────────────────────────────
+const SCRIPT_SECRET = ""; // Set this in Apps Script editor — match APPS_SCRIPT_SECRET in Vercel env
+const REPLAY_WINDOW_MS = 60 * 1000; // 60-second clock skew window
+
+function hmacSha256Hex_(message, secret) {
+  const bytes = Utilities.computeHmacSha256Signature(message, secret);
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) {
+    const b = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+    hex += (b < 16 ? "0" : "") + b.toString(16);
+  }
+  return hex;
+}
+
+function constantTimeEqual_(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+// Returns true when no secret is configured (passthrough), or when the
+// supplied timestamp+signature pair is fresh AND valid.
+function verifySignature_(ts, sig) {
+  if (!SCRIPT_SECRET) return true; // signature enforcement disabled
+  const tsNum = Number(ts);
+  if (!ts || !sig || !isFinite(tsNum)) return false;
+  const now = Date.now();
+  if (Math.abs(now - tsNum) > REPLAY_WINDOW_MS) return false;
+  const expected = hmacSha256Hex_(String(tsNum), SCRIPT_SECRET);
+  return constantTimeEqual_(expected, String(sig));
+}
+
+function unauthorisedResponse_() {
+  return ContentService.createTextOutput(
+    JSON.stringify({ success: false, message: "Unauthorised" })
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
 function ensureSheets_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let orders = ss.getSheetByName(SHEET_NAME);
@@ -109,6 +158,51 @@ function resetLifetime() {
   counter.getRange("A1").setValue("");
   counter.getRange("B1").setValue(0);
   counter.getRange("C1").setValue(0);
+}
+
+/**
+ * NUCLEAR: Wipes ALL business data. Keeps header rows, removes every order
+ * and every expense, and resets counters to zero. Use this once to start
+ * fresh on Day 1 of real operations.
+ *
+ * How to run:
+ *   1. Apps Script editor → top dropdown → select `wipeAllData`
+ *   2. Click ▶ Run
+ *   3. Approve any permission popup
+ *   4. Status: "Execution completed"
+ *
+ * Recovery: Google Sheets keeps a Version History under File menu — if you
+ * run this by accident you can restore the previous state from there within
+ * a few days.
+ */
+function wipeAllData() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Orders sheet — drop everything except the header row
+  const orders = ss.getSheetByName(SHEET_NAME);
+  if (orders) {
+    const last = orders.getLastRow();
+    if (last > 1) {
+      orders.deleteRows(2, last - 1);
+    }
+  }
+
+  // Expenses sheet — drop everything except the header row
+  const expenses = ss.getSheetByName(EXPENSES_SHEET);
+  if (expenses) {
+    const last = expenses.getLastRow();
+    if (last > 1) {
+      expenses.deleteRows(2, last - 1);
+    }
+  }
+
+  // Counter — back to zero (today + lifetime) and clear last reset date
+  const counter = ss.getSheetByName(COUNTER_SHEET) || ss.insertSheet(COUNTER_SHEET);
+  counter.getRange("A1").setValue("");
+  counter.getRange("B1").setValue(0);
+  counter.getRange("C1").setValue(0);
+
+  Logger.log("wipeAllData done. Orders + Expenses cleared. Counter reset to 0.");
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -501,6 +595,12 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
 
+    // Signature gate. Next.js signs every request to this webhook so a leaked
+    // URL alone cannot be used to write to the sheet.
+    if (!verifySignature_(data && data._ts, data && data._sig)) {
+      return unauthorisedResponse_();
+    }
+
     // Books actions piggyback on POST. Use _action to route.
     if (data && data._action === "addExpense") {
       const result = addExpense_(data);
@@ -609,6 +709,17 @@ function doPost(e) {
 
 function doGet(e) {
   try {
+    // Signature gate for GETs too. The webhook is publicly callable; this
+    // is the only thing stopping someone with the URL from reading data.
+    if (
+      !verifySignature_(
+        e && e.parameter && e.parameter._ts,
+        e && e.parameter && e.parameter._sig
+      )
+    ) {
+      return unauthorisedResponse_();
+    }
+
     const { orders, counter } = ensureSheets_();
 
     // Stats endpoint: ?stats=1 → returns counts only

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
+import { postSigned } from "@/lib/appsScript";
 
 type ExpensePayload = {
   category: string;
@@ -14,9 +15,11 @@ export async function POST(request: Request) {
   if (denied) return denied;
   try {
     const body = (await request.json()) as ExpensePayload;
-    if (!body.category || !body.amount || body.amount <= 0) {
+    const category = String(body.category || "").trim().slice(0, 60);
+    const amount = Number(body.amount);
+    if (!category || !Number.isFinite(amount) || amount <= 0 || amount > 1_000_000) {
       return NextResponse.json(
-        { success: false, message: "Category and a positive amount are required" },
+        { success: false, message: "Category and a positive amount under ₹10 lakh are required" },
         { status: 400 }
       );
     }
@@ -29,18 +32,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const res = await fetch(sheetUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        _action: "addExpense",
-        category: body.category,
-        amount: body.amount,
-        note: body.note || "",
-        date: body.date || "",
-      }),
+    const data = await postSigned(sheetUrl, {
+      _action: "addExpense",
+      category,
+      amount,
+      note: String(body.note || "").slice(0, 250),
+      date: String(body.date || ""),
     });
-    const data = await res.json().catch(() => null);
     if (!data) {
       return NextResponse.json(
         { success: false, message: "Empty response from sheet" },
@@ -63,10 +61,10 @@ export async function DELETE(request: Request) {
   if (denied) return denied;
   try {
     const url = new URL(request.url);
-    const row = url.searchParams.get("row");
-    if (!row) {
+    const row = Number(url.searchParams.get("row"));
+    if (!row || row < 2) {
       return NextResponse.json(
-        { success: false, message: "Missing row parameter" },
+        { success: false, message: "Invalid row index" },
         { status: 400 }
       );
     }
@@ -79,15 +77,10 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const res = await fetch(sheetUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        _action: "deleteExpense",
-        rowIndex: Number(row),
-      }),
+    const data = await postSigned(sheetUrl, {
+      _action: "deleteExpense",
+      rowIndex: row,
     });
-    const data = await res.json().catch(() => null);
     return NextResponse.json(data || { success: false });
   } catch (err) {
     console.error("Expense delete error:", err);

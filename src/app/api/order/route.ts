@@ -1,134 +1,167 @@
 import { NextResponse } from "next/server";
+import { validateCustomerOrder } from "@/lib/orderValidation";
+import { postSigned } from "@/lib/appsScript";
 
-type OrderItem = {
+// Mirrored from CartContext for the email summary builder. Kept here so this
+// server route never crosses the "use client" boundary.
+const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
+
+type ClientItem = {
   name: string;
   quantity: number;
-  price: number;
-  subtotal: number;
+  price?: number;
+  subtotal?: number;
 };
 
-type OrderData = {
+type ClientOrder = {
   name: string;
   phone: string;
   address: string;
   orderType: string;
   note: string;
-  items: OrderItem[];
+  items: ClientItem[];
   subtotal?: number;
   coupon?: string | null;
   discount?: number;
   freeFries?: boolean;
-  totalPrice: number;
+  totalPrice?: number;
 };
 
 export async function POST(request: Request) {
+  let order: ClientOrder;
   try {
-    const order: OrderData = await request.json();
+    order = (await request.json()) as ClientOrder;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-    const itemsList = order.items
-      .map((i) => `${i.name} x${i.quantity} = ₹${i.subtotal}`)
-      .join("\n");
+  // ── Server-side validation. NEVER trust client prices ──────────────────
+  const validation = validateCustomerOrder({
+    items: order.items,
+    coupon: order.coupon,
+  });
+  if (!validation.ok) {
+    return NextResponse.json(
+      { error: validation.reason, success: false },
+      { status: 400 }
+    );
+  }
+  const safe = validation.order;
 
-    const orderSummary = `
+  // Light sanity on customer details
+  const customerName = String(order.name || "").slice(0, 80).trim();
+  const customerPhone = String(order.phone || "")
+    .replace(/[^0-9+]/g, "")
+    .slice(0, 15);
+  if (!customerName || !customerPhone) {
+    return NextResponse.json(
+      { error: "Name and phone required", success: false },
+      { status: 400 }
+    );
+  }
+  const orderType = String(order.orderType || "pickup").slice(0, 40);
+  const address = String(order.address || "").slice(0, 250);
+  const note = String(order.note || "").slice(0, 250);
+
+  // Items for the email + sheet log (built from validated server-side values)
+  const itemsText = safe.items
+    .map((i) =>
+      i.name === FREE_FRIES_ITEM
+        ? `${i.name} (complimentary)`
+        : `${i.name} x${i.quantity} = ₹${i.subtotal}`
+    )
+    .join("\n");
+
+  const orderSummary = `
 NEW ORDER - Burger Minister
 ============================
-Name: ${order.name}
-Phone: ${order.phone}
-Order Type: ${order.orderType}
-Address: ${order.address || "N/A (Pickup)"}
-Note: ${order.note || "None"}
+Name: ${customerName}
+Phone: ${customerPhone}
+Order Type: ${orderType}
+Address: ${address || "N/A (Pickup)"}
+Note: ${note || "None"}
 
 Items:
-${itemsList}
+${itemsText}
 
-TOTAL: ₹${order.totalPrice}
+Subtotal: ₹${safe.subtotal}
+${safe.discountAmount > 0 ? `Discount (${safe.coupon}): -₹${safe.discountAmount}\n` : ""}${safe.freeFriesEarned ? "Free Fries: YES\n" : ""}TOTAL: ₹${safe.total}
 ============================
 Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
-    `.trim();
+  `.trim();
 
-    let orderNumber = "";
+  // Fallback order number used only if Apps Script is unreachable.
+  const fallbackOrderNumber = () =>
+    "#" + String((Date.now() % 9999) + 1).padStart(4, "0");
 
-    // Fallback generator. Used only when Apps Script doesn't return an order number
-    // (i.e. before the updated script is deployed). 4-digit format so it's visually
-    // distinct from real sequential counter numbers (#001..#999) and uniqueness is
-    // guaranteed at human counter speed because it's derived from Date.now().
-    const fallbackOrderNumber = () =>
-      "#" + String((Date.now() % 9999) + 1).padStart(4, "0");
+  let orderNumber = "";
 
-    // 1. Send to Google Sheets via Apps Script webhook → returns orderNumber
-    const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;
-    if (sheetUrl) {
-      try {
-        const res = await fetch(sheetUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            // ─── New keys (used by updated Apps Script v2) ───
-            source: "WEBSITE",
-            customerName: order.name,
-            customerPhone: order.phone,
-            orderType: order.orderType,
-            address: order.address || "Pickup",
-            note: order.note || "",
-            // Items: legacy script reads this as a plain string for email body
-            items: itemsList,
-            // New script reads itemsArray for structured logging
-            itemsArray: order.items.map((i) => ({
-              name: i.name,
-              quantity: i.quantity,
-              price: i.price,
-            })),
-            subtotal: order.subtotal ?? order.totalPrice,
-            coupon: order.coupon || "",
-            discountAmount: order.discount || 0,
-            freeFries: !!order.freeFries,
-            paymentMode: "UPI",
-            total: order.totalPrice,
-            time: new Date().toLocaleString("en-IN", {
-              timeZone: "Asia/Kolkata",
-            }),
-            // ─── Legacy keys (used by older Apps Script email handler) ───
-            name: order.name,
-            phone: order.phone,
-            type: order.orderType,
-            itemsText: itemsList,
-          }),
-        });
-        const data = await res.json().catch(() => null);
-        if (data?.orderNumber) orderNumber = data.orderNumber;
-      } catch (err) {
-        console.error("Google Sheets error:", err);
-      }
+  const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK;
+  if (sheetUrl) {
+    try {
+      const data = (await postSigned(sheetUrl, {
+        // New-format keys
+        source: "WEBSITE",
+        customerName,
+        customerPhone,
+        orderType,
+        address: address || "Pickup",
+        note,
+        items: itemsText, // legacy script reads this as a string in email body
+        itemsArray: safe.items.map((i) => ({
+          name: i.name,
+          quantity: i.quantity,
+          price: i.price,
+        })),
+        subtotal: safe.subtotal,
+        coupon: safe.coupon || "",
+        discountAmount: safe.discountAmount,
+        discountPercent: safe.discountPercent,
+        freeFries: safe.freeFriesEarned,
+        paymentMode: "UPI",
+        total: safe.total,
+        time: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        // Legacy keys
+        name: customerName,
+        phone: customerPhone,
+        type: orderType,
+        itemsText,
+      })) as { orderNumber?: string } | null;
+      if (data?.orderNumber) orderNumber = data.orderNumber;
+    } catch (err) {
+      console.error("Google Sheets error:", err);
     }
-
-    // Fallback if sheet didn't return one (old Apps Script or webhook unavailable)
-    if (!orderNumber) orderNumber = fallbackOrderNumber();
-
-    // 2. Send email via Web3Forms
-    const web3formsKey = process.env.WEB3FORMS_KEY;
-    if (web3formsKey) {
-      try {
-        await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            access_key: web3formsKey,
-            subject: `🍔 ${orderNumber || "New Order"} (₹${order.totalPrice}) from ${order.name}`,
-            message:
-              (orderNumber ? `Order Number: ${orderNumber}\n\n` : "") +
-              orderSummary,
-            from_name: "Burger Minister Orders",
-          }),
-        });
-      } catch (err) {
-        console.error("Email error:", err);
-      }
-    }
-
-    console.log("\n" + (orderNumber ? `[${orderNumber}] ` : "") + orderSummary + "\n");
-
-    return NextResponse.json({ success: true, orderNumber });
-  } catch {
-    return NextResponse.json({ error: "Invalid order data" }, { status: 400 });
   }
+
+  if (!orderNumber) orderNumber = fallbackOrderNumber();
+
+  // Email via Web3Forms (independent of Apps Script email)
+  const web3formsKey = process.env.WEB3FORMS_KEY;
+  if (web3formsKey) {
+    try {
+      await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: web3formsKey,
+          subject: `🍔 ${orderNumber} (₹${safe.total}) from ${customerName}`,
+          message: `Order Number: ${orderNumber}\n\n${orderSummary}`,
+          from_name: "Burger Minister Orders",
+        }),
+      });
+    } catch (err) {
+      console.error("Email error:", err);
+    }
+  }
+
+  console.log("\n[" + orderNumber + "] " + orderSummary + "\n");
+
+  return NextResponse.json({
+    success: true,
+    orderNumber,
+    total: safe.total,
+    subtotal: safe.subtotal,
+    discountAmount: safe.discountAmount,
+    freeFriesEarned: safe.freeFriesEarned,
+  });
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
+import { getSigned } from "@/lib/appsScript";
 
 // GET /api/admin/orders/045 → fetches order from Apps Script
 export async function GET(
@@ -21,11 +22,9 @@ export async function GET(
   const clean = number.replace(/^#/, "").replace(/^0+/, "") || "0";
 
   try {
-    const res = await fetch(`${sheetUrl}?number=${encodeURIComponent(clean)}`, {
-      method: "GET",
-      cache: "no-store",
-    });
-    const data = await res.json().catch(() => null);
+    const data = (await getSigned(sheetUrl, { number: clean })) as
+      | { success?: boolean }
+      | null;
     if (!data) {
       return NextResponse.json(
         { success: false, message: "Empty response from sheet" },
