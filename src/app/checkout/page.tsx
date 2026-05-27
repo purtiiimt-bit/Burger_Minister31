@@ -28,6 +28,25 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
 
+  // Field-level touched state (show errors only after user has interacted)
+  const [nameTouched, setNameTouched] = useState(false);
+  const [phoneTouched, setPhoneTouched] = useState(false);
+
+  // Validation helpers
+  const NAME_MAX = 50;
+  const nameClean = name.trim();
+  const nameError =
+    nameTouched && nameClean.length < 2
+      ? "Name must be at least 2 characters"
+      : nameTouched && !/^[a-zA-Zऀ-ॿ\s]+$/.test(nameClean)
+      ? "Name should only contain letters"
+      : null;
+
+  const phoneError =
+    phoneTouched && phone.length > 0 && phone.length < 10
+      ? "Enter a valid 10-digit mobile number"
+      : null;
+
   if (items.length === 0) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center pt-16">
@@ -49,6 +68,14 @@ export default function CheckoutPage() {
 
   async function handlePlaceOrder(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Mark all fields touched so errors show
+    setNameTouched(true);
+    setPhoneTouched(true);
+
+    // Guard: validate before submitting
+    if (nameClean.length < 2) { setError("Please enter your full name."); return; }
+    if (!/^[a-zA-Zऀ-ॿ\s]+$/.test(nameClean)) { setError("Name should only contain letters."); return; }
+    if (phone.length !== 10) { setError("Please enter a valid 10-digit mobile number."); return; }
     if (orderType === "delivery" && !address.trim()) {
       setError("Please enter your delivery address.");
       return;
@@ -126,40 +153,75 @@ export default function CheckoutPage() {
                 <div className="mt-4 space-y-4">
                   {/* Name */}
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
-                    >
-                      Full Name *
-                    </label>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <label
+                        htmlFor="name"
+                        className="text-sm font-medium text-on-surface/70"
+                      >
+                        Full Name *
+                      </label>
+                      <span className={`text-xs ${name.length >= NAME_MAX - 10 ? "text-red-400" : "text-on-surface/30"}`}>
+                        {name.length}/{NAME_MAX}
+                      </span>
+                    </div>
                     <input
                       type="text"
                       id="name"
                       required
+                      maxLength={NAME_MAX}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                      onBlur={() => setNameTouched(true)}
+                      className={`ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:outline-none focus:ring-1 ${
+                        nameError
+                          ? "border-red-500/60 focus:border-red-500/60 focus:ring-red-500/30"
+                          : "focus:border-primary/40 focus:ring-primary/40"
+                      }`}
                       placeholder="Aapka naam"
                     />
+                    {nameError && (
+                      <p className="mt-1 text-xs text-red-400">{nameError}</p>
+                    )}
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label
-                      htmlFor="phone"
-                      className="mb-1.5 block text-sm font-medium text-on-surface/70"
-                    >
-                      Phone Number *
-                    </label>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <label
+                        htmlFor="phone"
+                        className="text-sm font-medium text-on-surface/70"
+                      >
+                        Phone Number *
+                      </label>
+                      <span className={`text-xs ${phone.length === 10 ? "text-secondary" : "text-on-surface/30"}`}>
+                        {phone.length}/10
+                      </span>
+                    </div>
                     <input
                       type="tel"
                       id="phone"
                       required
+                      inputMode="numeric"
+                      maxLength={10}
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                      placeholder="+91 XXXXX XXXXX"
+                      onChange={(e) => {
+                        // Strip everything except digits, cap at 10
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        setPhone(digits);
+                      }}
+                      onBlur={() => setPhoneTouched(true)}
+                      className={`ghost-border w-full rounded-xl bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface/30 focus:outline-none focus:ring-1 ${
+                        phoneError
+                          ? "border-red-500/60 focus:border-red-500/60 focus:ring-red-500/30"
+                          : phone.length === 10
+                          ? "border-secondary/40 focus:border-secondary/40 focus:ring-secondary/30"
+                          : "focus:border-primary/40 focus:ring-primary/40"
+                      }`}
+                      placeholder="10-digit mobile number"
                     />
+                    {phoneError && (
+                      <p className="mt-1 text-xs text-red-400">{phoneError}</p>
+                    )}
                   </div>
 
                   {/* Order Type Toggle */}
