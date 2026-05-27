@@ -1089,6 +1089,23 @@ function NewOrderTab({
   const [paymentMode, setPaymentMode] = useState<"UPI" | "CASH">("UPI");
   const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [nameHint, setNameHint] = useState<string | null>(null);
+
+  // Auto-fill customer name from history when phone reaches 10 digits
+  useEffect(() => {
+    if (phone.length !== 10) { setNameHint(null); return; }
+    let active = true;
+    fetch(`/api/admin/orders/by-phone?phone=${phone}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!active) return;
+        const found: string | null = data?.orders?.[0]?.customerName || null;
+        setNameHint(found);
+        if (found) setName((prev) => prev || found); // auto-fill only if empty
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [phone]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const subtotal = cart.reduce((s, c) => s + c.price * c.quantity, 0);
   const discountPercent = discount ? 10 : 0;
@@ -1186,6 +1203,7 @@ function NewOrderTab({
       setFreeFries(false);
       setName("");
       setPhone("");
+      setNameHint(null);
       setPaymentMode("UPI");
       setExpanded(false);
       onPlaced?.();
@@ -1348,13 +1366,20 @@ function NewOrderTab({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Customer name (optional)"
-                    className="rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Customer name (optional)"
+                      className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                    />
+                    {nameHint && (
+                      <p className="mt-1 truncate text-[11px] font-medium text-primary">
+                        ↩ Returning: {nameHint}
+                      </p>
+                    )}
+                  </div>
                   <input
                     inputMode="numeric"
                     value={phone}
