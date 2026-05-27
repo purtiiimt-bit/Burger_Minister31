@@ -102,21 +102,41 @@ function ensureSheets_() {
   return { orders, counter };
 }
 
+// Safely convert whatever getValue() returns for A1 into a "yyyy-MM-dd" string.
+// Google Sheets auto-converts "2026-05-27" stored as a string back to a Date
+// object on the next read, which breaks a simple === comparison with today's
+// formatted string.  Always go through Utilities.formatDate so the type doesn't matter.
+function toDateStr_(value) {
+  if (!value) return "";
+  try {
+    return Utilities.formatDate(
+      value instanceof Date ? value : new Date(value),
+      TZ,
+      "yyyy-MM-dd"
+    );
+  } catch (e) {
+    return "";
+  }
+}
+
 // Increments BOTH today's counter (daily reset) and lifetime counter (never resets)
 function nextOrderNumber_(counter) {
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
-  const lastDate = counter.getRange("A1").getValue();
+  const lastDate = toDateStr_(counter.getRange("A1").getValue());
   let n = Number(counter.getRange("B1").getValue() || 0);
   let lifetime = Number(counter.getRange("C1").getValue() || 0);
 
   if (lastDate !== today) {
     n = 0;
+    // Store as plain text to avoid Sheets auto-parsing the value as a Date
     counter.getRange("A1").setValue(today);
+    SpreadsheetApp.flush();
   }
   n += 1;
   lifetime += 1;
   counter.getRange("B1").setValue(n);
   counter.getRange("C1").setValue(lifetime);
+  SpreadsheetApp.flush();
 
   return {
     orderNumber: "#" + String(n).padStart(3, "0"),
@@ -127,7 +147,7 @@ function nextOrderNumber_(counter) {
 
 function getStats_(counter) {
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
-  const lastDate = counter.getRange("A1").getValue();
+  const lastDate = toDateStr_(counter.getRange("A1").getValue());
   // If today hasn't been reset yet, today count is 0 (will reset on next order)
   const todayCount =
     lastDate === today ? Number(counter.getRange("B1").getValue() || 0) : 0;
