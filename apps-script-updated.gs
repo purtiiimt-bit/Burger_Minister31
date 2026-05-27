@@ -632,17 +632,17 @@ function editOrder_(data) {
     const orderNumber = orders.getRange(idx, 1).getValue() || ("Row " + idx);
     try {
       const itemLines = data.updatedItems.map(function(i) {
-        return i.name + " ×" + i.quantity + " = ₹" + ((Number(i.price) || 0) * (Number(i.quantity) || 0));
+        return i.name + " x" + i.quantity + " = Rs " + ((Number(i.price) || 0) * (Number(i.quantity) || 0));
       }).join("\n");
       MailApp.sendEmail({
         to: NOTIFY_EMAIL,
-        subject: "✏️ " + orderNumber + " edited — total ₹" + newTotal,
-        body: "ORDER EDITED — " + orderNumber + "\n" +
+        subject: "[EDITED] " + orderNumber + " - total Rs " + newTotal,
+        body: "ORDER EDITED - " + orderNumber + "\n" +
               "============================\n" +
               "Updated items:\n" + itemLines + "\n\n" +
-              "Subtotal: ₹" + newSubtotal + "\n" +
-              (newDiscountAmount > 0 ? "Discount: -₹" + newDiscountAmount + "\n" : "") +
-              "NEW TOTAL: ₹" + newTotal + "\n" +
+              "Subtotal: Rs " + newSubtotal + "\n" +
+              (newDiscountAmount > 0 ? "Discount: -Rs " + newDiscountAmount + "\n" : "") +
+              "NEW TOTAL: Rs " + newTotal + "\n" +
               "============================\n" +
               "Time: " + Utilities.formatDate(new Date(), TZ, "dd MMM yyyy, hh:mm a"),
       });
@@ -681,12 +681,12 @@ function cancelOrder_(data) {
   try {
     MailApp.sendEmail({
       to: NOTIFY_EMAIL,
-      subject: "❌ " + currentNum + " CANCELLED (was ₹" + originalTotal + ")",
+      subject: "[CANCELLED] " + currentNum + " (was Rs " + originalTotal + ")",
       body: "ORDER CANCELLED\n" +
             "============================\n" +
             "Order: " + currentNum + "\n" +
-            "Original total: ₹" + originalTotal + "\n" +
-            "New total: ₹0\n" +
+            "Original total: Rs " + originalTotal + "\n" +
+            "New total: Rs 0\n" +
             "============================\n" +
             "Time: " + Utilities.formatDate(new Date(), TZ, "dd MMM yyyy, hh:mm a"),
     });
