@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
+import { validateCounterOrder } from "@/lib/orderValidation";
 import { postSigned } from "@/lib/appsScript";
 
 type EditPayload = {
@@ -10,9 +11,12 @@ type EditPayload = {
   orderType?: string;
   address?: string;
   note?: string;
+  additionalItems?: { name: string; quantity: number }[];
 };
 
-// POST /api/admin/orders/edit — update editable fields on an existing order row
+// POST /api/admin/orders/edit — update editable fields on an existing order row.
+// If additionalItems is provided, they are validated server-side and merged into
+// the existing order by the Apps Script (items JSON + totals updated).
 export async function POST(request: Request) {
   const denied = denyIfNotAdmin(request);
   if (denied) return denied;
@@ -58,6 +62,29 @@ export async function POST(request: Request) {
     }
     if (body.note !== undefined) {
       payload.note = String(body.note).slice(0, 250);
+    }
+
+    // Validate additional items server-side (never trust client prices)
+    if (body.additionalItems && body.additionalItems.length > 0) {
+      if (body.additionalItems.length > 50) {
+        return NextResponse.json(
+          { success: false, message: "Too many items" },
+          { status: 400 }
+        );
+      }
+      const addValidation = validateCounterOrder({ items: body.additionalItems });
+      if (!addValidation.ok) {
+        return NextResponse.json(
+          { success: false, message: addValidation.reason },
+          { status: 400 }
+        );
+      }
+      payload.additionalItems = addValidation.order.items.map((i) => ({
+        name: i.name,
+        quantity: i.quantity,
+        price: i.price,
+      }));
+      payload.additionalSubtotal = addValidation.order.subtotal;
     }
 
     const data = await postSigned(sheetUrl, payload);

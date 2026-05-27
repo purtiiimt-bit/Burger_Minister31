@@ -298,6 +298,29 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
   const [edNote, setEdNote] = useState("");
   const [edBusy, setEdBusy] = useState(false);
 
+  // Add-items state (for appending to an existing order)
+  const addFlat = useMemo(() => flattenMenu(), []);
+  const addCategories = useMemo(() => Object.keys(addFlat), [addFlat]);
+  const [addActiveCat, setAddActiveCat] = useState(addCategories[0] ?? "");
+  const [addCart, setAddCart] = useState<CartLine[]>([]);
+  const [showAddPicker, setShowAddPicker] = useState(false);
+
+  const addSubtotal = addCart.reduce((s, c) => s + c.price * c.quantity, 0);
+
+  function addItemToCart(item: FlatItem) {
+    setAddCart((prev) => {
+      const ex = prev.find((c) => c.name === item.name);
+      if (ex) return prev.map((c) => c.name === item.name ? { ...c, quantity: c.quantity + 1 } : c);
+      return [...prev, { name: item.name, price: item.price, quantity: 1 }];
+    });
+  }
+  function setAddQty(name: string, qty: number) {
+    setAddCart((prev) => qty <= 0 ? prev.filter((c) => c.name !== name) : prev.map((c) => c.name === name ? { ...c, quantity: qty } : c));
+  }
+  function getAddQty(name: string) {
+    return addCart.find((c) => c.name === name)?.quantity ?? 0;
+  }
+
   const loadList = useCallback(async () => {
     setListLoading(true);
     try {
@@ -398,6 +421,9 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
     setEdPhone(o.customerPhone || "");
     setEdPayment((o.paymentMode === "CASH" ? "CASH" : "UPI") as "UPI" | "CASH");
     setEdNote(o.note || "");
+    setAddCart([]);
+    setShowAddPicker(false);
+    setAddActiveCat(addCategories[0] ?? "");
     setEditing(true);
   }
 
@@ -420,19 +446,39 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
           customerPhone: edPhone,
           paymentMode: edPayment,
           note: edNote,
+          ...(addCart.length > 0 && {
+            additionalItems: addCart.map((c) => ({ name: c.name, quantity: c.quantity })),
+          }),
         }),
       });
       const data = await res.json();
       if (data?.success) {
-        onToast({ kind: "ok", msg: "Order updated" });
-        // Reflect locally
-        setOrder({
+        onToast({ kind: "ok", msg: addCart.length > 0 ? `Order updated — +₹${addSubtotal} added` : "Order updated" });
+        // Merge items locally using server-returned values when available
+        const updatedOrder: Order = {
           ...order,
           customerName: edName,
           customerPhone: edPhone,
           paymentMode: edPayment,
           note: edNote,
-        });
+        };
+        if (addCart.length > 0 && data.newTotal !== undefined) {
+          updatedOrder.subtotal = data.newSubtotal ?? updatedOrder.subtotal;
+          updatedOrder.discountAmount = data.newDiscountAmount ?? updatedOrder.discountAmount;
+          updatedOrder.total = data.newTotal;
+          // Merge items locally for immediate display
+          const itemMap = new Map<string, { name: string; price: number; quantity: number }>();
+          for (const it of order.items) itemMap.set(it.name, { ...it });
+          for (const add of addCart) {
+            const ex = itemMap.get(add.name);
+            if (ex) itemMap.set(add.name, { ...ex, quantity: ex.quantity + add.quantity });
+            else itemMap.set(add.name, { name: add.name, price: add.price, quantity: add.quantity });
+          }
+          updatedOrder.items = Array.from(itemMap.values());
+        }
+        setOrder(updatedOrder);
+        setAddCart([]);
+        setShowAddPicker(false);
         setEditing(false);
         setListTick((x) => x + 1);
       } else {
@@ -593,6 +639,92 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
                 placeholder="Note, optional"
                 className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
+
+              {/* ── Add more items ── */}
+              <div className="border-t border-outline-variant/10 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddPicker((x) => !x)}
+                  className="flex w-full items-center justify-between rounded-xl bg-surface-container px-3 py-2.5 text-sm font-semibold text-on-surface/80"
+                >
+                  <span>+ Add items to order</span>
+                  <svg className={`h-4 w-4 transition-transform ${showAddPicker ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {showAddPicker && (
+                  <div className="mt-2">
+                    {/* Category strip */}
+                    <div className="-mx-1 overflow-x-auto">
+                      <div className="flex gap-1.5 px-1 pb-1">
+                        {addCategories.map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setAddActiveCat(c)}
+                            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${
+                              addActiveCat === c
+                                ? "bg-primary text-on-primary"
+                                : "bg-surface-container text-on-surface/60"
+                            }`}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Item grid */}
+                    <div className="mt-2 space-y-1.5">
+                      {addFlat[addActiveCat]?.map((item) => {
+                        const qty = getAddQty(item.name);
+                        return (
+                          <div key={item.name} className="flex items-center justify-between gap-2 rounded-xl bg-surface-container p-2.5">
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-xs font-semibold">{item.name}</div>
+                              <div className="text-[11px] text-primary">₹{item.price}</div>
+                            </div>
+                            {qty === 0 ? (
+                              <button
+                                type="button"
+                                onClick={() => addItemToCart(item)}
+                                className="rounded-lg bg-primary/15 px-2.5 py-1 text-xs font-bold text-primary"
+                              >
+                                + Add
+                              </button>
+                            ) : (
+                              <div className="flex items-center overflow-hidden rounded-lg bg-primary/15 ring-1 ring-primary/40">
+                                <button type="button" onClick={() => setAddQty(item.name, qty - 1)} className="flex h-7 w-7 items-center justify-center text-primary text-sm">−</button>
+                                <span className="w-5 text-center text-xs font-bold text-primary">{qty}</span>
+                                <button type="button" onClick={() => addItemToCart(item)} className="flex h-7 w-7 items-center justify-center text-primary text-sm">+</button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Items to add summary */}
+                {addCart.length > 0 && (
+                  <div className="mt-2 rounded-xl bg-primary/10 p-3">
+                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary">Adding to order</p>
+                    {addCart.map((c) => (
+                      <div key={c.name} className="flex justify-between text-xs">
+                        <span className="text-on-surface/80">{c.name} ×{c.quantity}</span>
+                        <span className="text-primary font-semibold">+₹{c.price * c.quantity}</span>
+                      </div>
+                    ))}
+                    <div className="mt-2 flex justify-between border-t border-primary/20 pt-1.5 text-sm font-bold text-primary">
+                      <span>New total</span>
+                      <span>₹{(order?.total ?? 0) + addSubtotal}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -607,7 +739,7 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
                   disabled={edBusy}
                   className="btn-honeyed flex-1 rounded-xl py-2.5 text-sm font-bold text-on-primary disabled:opacity-50"
                 >
-                  {edBusy ? "Saving…" : "Save changes"}
+                  {edBusy ? "Saving…" : addCart.length > 0 ? `Save (+₹${addSubtotal})` : "Save changes"}
                 </button>
               </div>
             </div>

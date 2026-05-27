@@ -588,7 +588,9 @@ function editOrder_(data) {
   if (!idx || idx < 2) {
     return { success: false, message: "Invalid row index" };
   }
-  // Cols mapping (1-based in setValue):
+
+  // Cols mapping (1-based):
+  // 4 Items (JSON), 5 Subtotal, 6 Discount %, 7 Discount ₹, 8 Total
   // 9 Payment Mode, 10 Customer Name, 11 Customer Phone, 12 Order Type, 13 Address, 14 Note
   if (data.customerName !== undefined) {
     orders.getRange(idx, 10).setValue(String(data.customerName));
@@ -608,6 +610,59 @@ function editOrder_(data) {
   if (data.note !== undefined) {
     orders.getRange(idx, 14).setValue(String(data.note));
   }
+
+  // ── Merge additional items into the order ──────────────────────────────────
+  if (data.additionalItems && Array.isArray(data.additionalItems) && data.additionalItems.length > 0) {
+    // Read existing items JSON
+    const existingRaw = orders.getRange(idx, 4).getValue();
+    let existingItems = [];
+    try {
+      const parsed = JSON.parse(String(existingRaw));
+      if (Array.isArray(parsed)) existingItems = parsed;
+    } catch (e) {
+      // Legacy string format — cannot merge
+      return {
+        success: false,
+        message: "This order uses a legacy items format and cannot have items added. Re-enter as new order.",
+      };
+    }
+
+    // Merge by name (combine quantities for matching items)
+    const itemMap = {};
+    for (const it of existingItems) {
+      if (it && it.name) itemMap[it.name] = { name: it.name, quantity: Number(it.quantity) || 0, price: Number(it.price) || 0 };
+    }
+    for (const add of data.additionalItems) {
+      if (!add || !add.name) continue;
+      if (itemMap[add.name]) {
+        itemMap[add.name].quantity += Number(add.quantity) || 0;
+      } else {
+        itemMap[add.name] = { name: add.name, quantity: Number(add.quantity) || 0, price: Number(add.price) || 0 };
+      }
+    }
+    const mergedItems = Object.values(itemMap);
+
+    // Recalculate totals (preserve existing discount %)
+    const newSubtotal = mergedItems.reduce(function(s, i) { return s + (i.price * i.quantity); }, 0);
+    const discountPct = Number(orders.getRange(idx, 6).getValue() || 0);
+    const newDiscountAmount = Math.round((newSubtotal * discountPct) / 100);
+    const newTotal = Math.max(0, newSubtotal - newDiscountAmount);
+
+    // Write back
+    orders.getRange(idx, 4).setValue(JSON.stringify(mergedItems));
+    orders.getRange(idx, 5).setValue(newSubtotal);
+    orders.getRange(idx, 7).setValue(newDiscountAmount);
+    orders.getRange(idx, 8).setValue(newTotal);
+    SpreadsheetApp.flush();
+
+    return {
+      success: true,
+      newSubtotal: newSubtotal,
+      newDiscountAmount: newDiscountAmount,
+      newTotal: newTotal,
+    };
+  }
+
   return { success: true };
 }
 
