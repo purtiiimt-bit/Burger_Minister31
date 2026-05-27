@@ -40,8 +40,8 @@ type CartContextType = {
 };
 
 // Coupons that are mutually exclusive with the Free Fries offer.
-// Customer can pick one or the other — not both. Admin overrides this on /admin.
-const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
+// Any active coupon blocks free fries — customer picks one benefit, not both.
+const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 

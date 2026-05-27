@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { flattenMenu, type FlatItem } from "@/lib/menuData";
 import { isPrinterSupported, printOrder } from "@/lib/printer";
 import type { Order, OrderItem, OrderListItem } from "@/lib/orderTypes";
+import { COUPONS } from "@/context/CartContext";
 import BooksTab from "./BooksTab";
 
 const AUTH_KEY = "bm-admin-auth";
@@ -1092,7 +1093,6 @@ function NewOrderTab({
   const categories = useMemo(() => Object.keys(flat), [flat]);
   const [activeCat, setActiveCat] = useState(categories[0]);
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [discount, setDiscount] = useState(false);
   const [freeFries, setFreeFries] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -1100,6 +1100,11 @@ function NewOrderTab({
   const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [nameHint, setNameHint] = useState<string | null>(null);
+
+  // Coupon state
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const [couponErr, setCouponErr] = useState("");
 
   // Auto-fill customer name from history when phone reaches 10 digits
   useEffect(() => {
@@ -1118,10 +1123,25 @@ function NewOrderTab({
   }, [phone]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const subtotal = cart.reduce((s, c) => s + c.price * c.quantity, 0);
-  const discountPercent = discount ? 10 : 0;
+  const discountPercent = appliedCoupon?.percent ?? 0;
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
   const total = subtotal - discountAmount;
   const totalQty = cart.reduce((s, c) => s + c.quantity, 0);
+
+  function applyCoupon() {
+    const key = couponInput.trim().toUpperCase();
+    if (!key) { setCouponErr("Enter a coupon code"); return; }
+    if (!COUPONS[key]) { setCouponErr("Invalid code"); return; }
+    setAppliedCoupon({ code: key, percent: COUPONS[key].percent });
+    setCouponInput("");
+    setCouponErr("");
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponErr("");
+  }
 
   function addItem(item: FlatItem) {
     setCart((prev) => {
@@ -1209,7 +1229,9 @@ function NewOrderTab({
 
       // Reset
       setCart([]);
-      setDiscount(false);
+      setAppliedCoupon(null);
+      setCouponInput("");
+      setCouponErr("");
       setFreeFries(false);
       setName("");
       setPhone("");
@@ -1340,22 +1362,47 @@ function NewOrderTab({
                 </div>
 
                 <div className="space-y-2 rounded-xl bg-surface-container-low p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">10% Discount</span>
-                    <button
-                      onClick={() => setDiscount((d) => !d)}
-                      className={`relative h-6 w-11 rounded-full transition ${
-                        discount ? "bg-secondary" : "bg-surface-variant"
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${
-                          discount ? "left-5" : "left-0.5"
-                        }`}
-                      />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  {/* Coupon code input */}
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between rounded-lg bg-secondary/10 px-3 py-2">
+                      <span className="text-sm font-semibold text-secondary">
+                        {appliedCoupon.code} — {appliedCoupon.percent}% off
+                      </span>
+                      <button
+                        type="button"
+                        onClick={removeCoupon}
+                        className="ml-2 rounded-full bg-secondary/20 px-2 py-0.5 text-xs font-bold text-secondary hover:bg-secondary/30"
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponErr(""); }}
+                          onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+                          placeholder="Coupon code"
+                          className="flex-1 rounded-xl border border-outline-variant/20 bg-surface-container px-3 py-2 text-sm uppercase tracking-wider text-on-surface placeholder:normal-case placeholder:tracking-normal focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                        />
+                        <button
+                          type="button"
+                          onClick={applyCoupon}
+                          className="rounded-xl bg-primary/15 px-4 text-sm font-bold text-primary hover:bg-primary/25"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                      {couponErr && (
+                        <p className="mt-1 text-xs text-red-400">{couponErr}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Free Fries toggle */}
+                  <div className="flex items-center justify-between pt-1">
                     <span className="text-sm">🍟 Free Fries</span>
                     <button
                       onClick={() => setFreeFries((f) => !f)}
@@ -1370,9 +1417,6 @@ function NewOrderTab({
                       />
                     </button>
                   </div>
-                  <p className="text-[10px] text-on-surface/40">
-                    Admin can apply both. Customer side they are mutually exclusive.
-                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -1419,7 +1463,7 @@ function NewOrderTab({
                   <Row label="Subtotal" value={`₹${subtotal}`} />
                   {discountAmount > 0 && (
                     <Row
-                      label="Discount (10%)"
+                      label={`Discount (${discountPercent}%) ${appliedCoupon ? `· ${appliedCoupon.code}` : ""}`}
                       value={`-₹${discountAmount}`}
                       tone="secondary"
                     />

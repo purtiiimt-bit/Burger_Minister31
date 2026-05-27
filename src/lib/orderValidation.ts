@@ -37,7 +37,7 @@ for (const items of Object.values(menuData)) {
 // and only when the rest of the cart hits the threshold (see below).
 ITEM_PRICES[FREE_FRIES_ITEM] = 0;
 
-const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
+const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
 
 export type ClientOrderItem = {
   name: string;
@@ -208,7 +208,11 @@ export function validateCounterOrder(
 
   const subtotal = items.reduce((sum, i) => sum + i.subtotal, 0);
 
-  const discountPercent = input.discountPercent === 10 ? 10 : 0;
+  // Admin can apply any valid coupon percent: 0, 5, 10, 30, 50
+  const VALID_ADMIN_PERCENTS = new Set([0, 5, 10, 30, 50]);
+  const discountPercent = VALID_ADMIN_PERCENTS.has(input.discountPercent ?? 0)
+    ? (input.discountPercent ?? 0)
+    : 0;
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
   const total = Math.max(0, subtotal - discountAmount);
 
