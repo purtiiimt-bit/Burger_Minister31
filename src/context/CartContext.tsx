@@ -13,8 +13,7 @@ export const COUPONS: Record<string, { percent: number }> = {
   MINISTER05:  { percent: 5  },
   MINISTER10:  { percent: 10 },
   MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
-  COUPLE30:    { percent: 30 }, // hidden — shared directly with couples
-  INSTAGRAM50: { percent: 50 }, // hidden — Instagram promo code
+  // COUPLE30 and INSTAGRAM50 are admin-only — not exposed to customers
 };
 
 // Free-fries threshold offer

@@ -11,9 +11,13 @@ const COUPONS: Record<string, { percent: number }> = {
   MINISTER05:  { percent: 5  },
   MINISTER10:  { percent: 10 },
   MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
-  COUPLE30:    { percent: 30 }, // hidden — shared directly with couples
-  INSTAGRAM50: { percent: 50 }, // hidden — Instagram promo code
+  COUPLE30:    { percent: 30 }, // admin-only — shared directly with couples
+  INSTAGRAM50: { percent: 50 }, // admin-only — Instagram promo code
 };
+
+// These codes can only be applied by admin (counter orders).
+// Customer-facing /api/order will reject them.
+const ADMIN_ONLY_COUPONS = new Set(["COUPLE30", "INSTAGRAM50"]);
 const FREE_FRIES_THRESHOLD = 299;
 const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
 
@@ -116,6 +120,9 @@ export function validateCustomerOrder(input: {
   let coupon: string | null = null;
   let discountPercent = 0;
   if (couponKey && couponKey in COUPONS) {
+    if (ADMIN_ONLY_COUPONS.has(couponKey)) {
+      return { ok: false, reason: "Invalid coupon code" }; // same msg as unknown — don't reveal it exists
+    }
     coupon = couponKey;
     discountPercent = COUPONS[couponKey].percent;
   } else if (couponKey) {
