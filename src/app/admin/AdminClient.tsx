@@ -298,14 +298,29 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
   const [edNote, setEdNote] = useState("");
   const [edBusy, setEdBusy] = useState(false);
 
-  // Add-items state (for appending to an existing order)
+  // Edit-items state (mutable copy of existing order items — supports qty reduce/remove)
+  const [edItems, setEdItems] = useState<CartLine[]>([]);
+  // Add-items state (new items from menu picker)
   const addFlat = useMemo(() => flattenMenu(), []);
   const addCategories = useMemo(() => Object.keys(addFlat), [addFlat]);
   const [addActiveCat, setAddActiveCat] = useState(addCategories[0] ?? "");
   const [addCart, setAddCart] = useState<CartLine[]>([]);
   const [showAddPicker, setShowAddPicker] = useState(false);
+  // Cancel-order confirmation state
+  const [cancelConfirm, setCancelConfirm] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
 
   const addSubtotal = addCart.reduce((s, c) => s + c.price * c.quantity, 0);
+  const edSubtotal  = edItems.reduce((s, c) => s + c.price * c.quantity, 0);
+  const finalNewSubtotal = edSubtotal + addSubtotal;
+  const finalNewDiscountAmt = Math.round(finalNewSubtotal * ((order?.discountPercent ?? 0) / 100));
+  const finalNewTotal = Math.max(0, finalNewSubtotal - finalNewDiscountAmt);
+
+  function setEdItemQty(name: string, qty: number) {
+    setEdItems((prev) =>
+      qty <= 0 ? prev.filter((c) => c.name !== name) : prev.map((c) => c.name === name ? { ...c, quantity: qty } : c)
+    );
+  }
 
   function addItemToCart(item: FlatItem) {
     setAddCart((prev) => {
@@ -421,9 +436,11 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
     setEdPhone(o.customerPhone || "");
     setEdPayment((o.paymentMode === "CASH" ? "CASH" : "UPI") as "UPI" | "CASH");
     setEdNote(o.note || "");
+    setEdItems(o.items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity })));
     setAddCart([]);
     setShowAddPicker(false);
     setAddActiveCat(addCategories[0] ?? "");
+    setCancelConfirm(false);
     setEditing(true);
   }
 
@@ -437,6 +454,21 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
     }
     setEdBusy(true);
     try {
+      // Build final merged items list (edItems reduced/removed + addCart new items)
+      const finalMap = new Map<string, CartLine>();
+      for (const it of edItems) { if (it.quantity > 0) finalMap.set(it.name, { ...it }); }
+      for (const add of addCart) {
+        const ex = finalMap.get(add.name);
+        if (ex) finalMap.set(add.name, { ...ex, quantity: ex.quantity + add.quantity });
+        else finalMap.set(add.name, { name: add.name, price: add.price, quantity: add.quantity });
+      }
+      const finalItems = Array.from(finalMap.values());
+      if (finalItems.length === 0) {
+        onToast({ kind: "err", msg: "Cannot save — order must have at least one item. Cancel the order instead." });
+        setEdBusy(false);
+        return;
+      }
+
       const res = await fetch("/api/admin/orders/edit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -446,37 +478,26 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
           customerPhone: edPhone,
           paymentMode: edPayment,
           note: edNote,
-          ...(addCart.length > 0 && {
-            additionalItems: addCart.map((c) => ({ name: c.name, quantity: c.quantity })),
-          }),
+          updatedItems: finalItems.map((c) => ({ name: c.name, quantity: c.quantity })),
         }),
       });
       const data = await res.json();
       if (data?.success) {
-        onToast({ kind: "ok", msg: addCart.length > 0 ? `Order updated — +₹${addSubtotal} added` : "Order updated" });
-        // Merge items locally using server-returned values when available
-        const updatedOrder: Order = {
+        const itemsChanged = JSON.stringify(finalItems.map(i => i.name + i.quantity)) !==
+          JSON.stringify(order.items.map(i => i.name + i.quantity));
+        onToast({ kind: "ok", msg: itemsChanged ? `Order updated — new total ₹${data.newTotal ?? finalNewTotal}` : "Order updated" });
+        setOrder({
           ...order,
           customerName: edName,
           customerPhone: edPhone,
           paymentMode: edPayment,
           note: edNote,
-        };
-        if (addCart.length > 0 && data.newTotal !== undefined) {
-          updatedOrder.subtotal = data.newSubtotal ?? updatedOrder.subtotal;
-          updatedOrder.discountAmount = data.newDiscountAmount ?? updatedOrder.discountAmount;
-          updatedOrder.total = data.newTotal;
-          // Merge items locally for immediate display
-          const itemMap = new Map<string, { name: string; price: number; quantity: number }>();
-          for (const it of order.items) itemMap.set(it.name, { ...it });
-          for (const add of addCart) {
-            const ex = itemMap.get(add.name);
-            if (ex) itemMap.set(add.name, { ...ex, quantity: ex.quantity + add.quantity });
-            else itemMap.set(add.name, { name: add.name, price: add.price, quantity: add.quantity });
-          }
-          updatedOrder.items = Array.from(itemMap.values());
-        }
-        setOrder(updatedOrder);
+          items: finalItems,
+          subtotal: data.newSubtotal ?? finalNewSubtotal,
+          discountAmount: data.newDiscountAmount ?? finalNewDiscountAmt,
+          total: data.newTotal ?? finalNewTotal,
+        });
+        setEdItems([]);
         setAddCart([]);
         setShowAddPicker(false);
         setEditing(false);
@@ -488,6 +509,34 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
       onToast({ kind: "err", msg: "Network error" });
     } finally {
       setEdBusy(false);
+    }
+  }
+
+  async function doCancelOrder() {
+    if (!order?.rowIndex) {
+      onToast({ kind: "err", msg: "Cannot cancel: order has no row index" });
+      return;
+    }
+    setCancelBusy(true);
+    try {
+      const res = await fetch("/api/admin/orders/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rowIndex: order.rowIndex }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        onToast({ kind: "ok", msg: `Order ${order.orderNumber} cancelled` });
+        setOrder({ ...order, orderNumber: "❌ " + order.orderNumber, total: 0 });
+        setCancelConfirm(false);
+        setListTick((x) => x + 1);
+      } else {
+        onToast({ kind: "err", msg: data?.message || "Cancel failed" });
+      }
+    } catch {
+      onToast({ kind: "err", msg: "Network error" });
+    } finally {
+      setCancelBusy(false);
     }
   }
 
@@ -602,6 +651,29 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
               <p className="text-[11px] font-semibold uppercase tracking-wider text-primary/70">
                 Edit order
               </p>
+
+              {/* Existing items — reduce or remove */}
+              <div className="rounded-xl bg-surface-container p-3 space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-on-surface/50">Items</p>
+                {edItems.length === 0 && (
+                  <p className="text-xs text-on-surface/40">All items removed — add at least one below</p>
+                )}
+                {edItems.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-xs font-semibold">{item.name}</div>
+                      <div className="text-[11px] text-primary">₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}</div>
+                    </div>
+                    <div className="flex items-center overflow-hidden rounded-lg bg-surface-container-high ring-1 ring-outline-variant/30">
+                      <button type="button" onClick={() => setEdItemQty(item.name, item.quantity - 1)}
+                        className="flex h-7 w-7 items-center justify-center text-sm font-bold text-[var(--error)]">−</button>
+                      <span className="w-5 text-center text-xs font-bold">{item.quantity}</span>
+                      <button type="button" onClick={() => setEdItemQty(item.name, item.quantity + 1)}
+                        className="flex h-7 w-7 items-center justify-center text-sm font-bold text-primary">+</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <input
                 type="text"
                 value={edName}
@@ -710,17 +782,20 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
                 {/* Items to add summary */}
                 {addCart.length > 0 && (
                   <div className="mt-2 rounded-xl bg-primary/10 p-3">
-                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary">Adding to order</p>
+                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary">Adding</p>
                     {addCart.map((c) => (
                       <div key={c.name} className="flex justify-between text-xs">
                         <span className="text-on-surface/80">{c.name} ×{c.quantity}</span>
                         <span className="text-primary font-semibold">+₹{c.price * c.quantity}</span>
                       </div>
                     ))}
-                    <div className="mt-2 flex justify-between border-t border-primary/20 pt-1.5 text-sm font-bold text-primary">
-                      <span>New total</span>
-                      <span>₹{(order?.total ?? 0) + addSubtotal}</span>
-                    </div>
+                  </div>
+                )}
+                {/* Show updated total whenever items differ from original */}
+                {(addCart.length > 0 || edSubtotal !== (order?.subtotal ?? 0)) && (
+                  <div className="mt-2 flex justify-between rounded-xl bg-surface-container px-3 py-2 text-sm font-bold">
+                    <span className="text-on-surface/70">New total</span>
+                    <span className="text-primary">₹{finalNewTotal}</span>
                   </div>
                 )}
               </div>
@@ -739,27 +814,57 @@ function SearchTab({ onToast }: { onToast: (t: Toast) => void }) {
                   disabled={edBusy}
                   className="btn-honeyed flex-1 rounded-xl py-2.5 text-sm font-bold text-on-primary disabled:opacity-50"
                 >
-                  {edBusy ? "Saving…" : addCart.length > 0 ? `Save (+₹${addSubtotal})` : "Save changes"}
+                  {edBusy ? "Saving…" : (addCart.length > 0 || edSubtotal !== (order?.subtotal ?? 0)) ? `Save — ₹${finalNewTotal}` : "Save changes"}
                 </button>
               </div>
             </div>
           )}
 
           {!editing && (
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              <button
-                onClick={() => openEdit(order)}
-                className="rounded-full border border-outline-variant/30 py-3 text-sm font-semibold text-on-surface/80 hover:border-primary hover:text-primary"
-              >
-                ✎  Edit
-              </button>
-              <button
-                onClick={doPrint}
-                disabled={printing}
-                className="btn-honeyed rounded-full py-3 text-sm font-semibold text-on-primary disabled:opacity-50"
-              >
-                {printing ? "Printing…" : "🖨️  Print"}
-              </button>
+            <div className="mt-5 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => { setCancelConfirm(false); openEdit(order); }}
+                  className="rounded-full border border-outline-variant/30 py-3 text-sm font-semibold text-on-surface/80 hover:border-primary hover:text-primary"
+                >
+                  ✎  Edit
+                </button>
+                <button
+                  onClick={doPrint}
+                  disabled={printing}
+                  className="btn-honeyed rounded-full py-3 text-sm font-semibold text-on-primary disabled:opacity-50"
+                >
+                  {printing ? "Printing…" : "🖨️  Print"}
+                </button>
+              </div>
+
+              {/* Cancel order */}
+              {!order.orderNumber.startsWith("❌") && (
+                cancelConfirm ? (
+                  <div className="rounded-xl border border-[var(--error)]/30 bg-[var(--error)]/5 p-3">
+                    <p className="text-sm font-semibold text-[var(--error)]">Cancel {order.orderNumber}?</p>
+                    <p className="mt-0.5 text-xs text-on-surface/50">Stays in sheet, marked cancelled. Cannot undo.</p>
+                    <div className="mt-3 flex gap-2">
+                      <button type="button" onClick={() => setCancelConfirm(false)}
+                        className="flex-1 rounded-xl bg-surface-container-low py-2 text-sm font-semibold text-on-surface/60">
+                        Keep
+                      </button>
+                      <button type="button" onClick={doCancelOrder} disabled={cancelBusy}
+                        className="flex-1 rounded-xl bg-[var(--error)] py-2 text-sm font-bold text-[var(--on-error,#000)] disabled:opacity-50">
+                        {cancelBusy ? "Cancelling…" : "Yes, Cancel"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setCancelConfirm(true)}
+                    className="w-full rounded-full border border-[var(--error)]/30 py-2.5 text-sm font-semibold text-[var(--error)]/70 hover:border-[var(--error)] hover:text-[var(--error)]"
+                  >
+                    ✕  Cancel Order
+                  </button>
+                )
+              )}
             </div>
           )}
 

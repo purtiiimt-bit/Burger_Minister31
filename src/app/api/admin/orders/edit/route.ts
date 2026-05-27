@@ -11,12 +11,12 @@ type EditPayload = {
   orderType?: string;
   address?: string;
   note?: string;
-  additionalItems?: { name: string; quantity: number }[];
+  updatedItems?: { name: string; quantity: number }[];
 };
 
 // POST /api/admin/orders/edit — update editable fields on an existing order row.
-// If additionalItems is provided, they are validated server-side and merged into
-// the existing order by the Apps Script (items JSON + totals updated).
+// If updatedItems is provided it is the FULL new items list (replaces existing).
+// Validated server-side; Apps Script recalculates totals.
 export async function POST(request: Request) {
   const denied = denyIfNotAdmin(request);
   if (denied) return denied;
@@ -38,53 +38,43 @@ export async function POST(request: Request) {
       );
     }
 
-    // Normalize and cap field sizes before forwarding
     const payload: Record<string, unknown> = {
       _action: "editOrder",
       rowIndex,
     };
-    if (body.customerName !== undefined) {
+    if (body.customerName !== undefined)
       payload.customerName = String(body.customerName).slice(0, 80);
-    }
-    if (body.customerPhone !== undefined) {
-      payload.customerPhone = String(body.customerPhone)
-        .replace(/[^0-9+]/g, "")
-        .slice(0, 15);
-    }
-    if (body.paymentMode !== undefined) {
+    if (body.customerPhone !== undefined)
+      payload.customerPhone = String(body.customerPhone).replace(/[^0-9+]/g, "").slice(0, 15);
+    if (body.paymentMode !== undefined)
       payload.paymentMode = body.paymentMode === "CASH" ? "CASH" : "UPI";
-    }
-    if (body.orderType !== undefined) {
+    if (body.orderType !== undefined)
       payload.orderType = String(body.orderType).slice(0, 40);
-    }
-    if (body.address !== undefined) {
+    if (body.address !== undefined)
       payload.address = String(body.address).slice(0, 250);
-    }
-    if (body.note !== undefined) {
+    if (body.note !== undefined)
       payload.note = String(body.note).slice(0, 250);
-    }
 
-    // Validate additional items server-side (never trust client prices)
-    if (body.additionalItems && body.additionalItems.length > 0) {
-      if (body.additionalItems.length > 50) {
+    // Validate full items list server-side (never trust client prices)
+    if (body.updatedItems && body.updatedItems.length > 0) {
+      if (body.updatedItems.length > 50) {
         return NextResponse.json(
           { success: false, message: "Too many items" },
           { status: 400 }
         );
       }
-      const addValidation = validateCounterOrder({ items: body.additionalItems });
-      if (!addValidation.ok) {
+      const validation = validateCounterOrder({ items: body.updatedItems });
+      if (!validation.ok) {
         return NextResponse.json(
-          { success: false, message: addValidation.reason },
+          { success: false, message: validation.reason },
           { status: 400 }
         );
       }
-      payload.additionalItems = addValidation.order.items.map((i) => ({
+      payload.updatedItems = validation.order.items.map((i) => ({
         name: i.name,
         quantity: i.quantity,
         price: i.price,
       }));
-      payload.additionalSubtotal = addValidation.order.subtotal;
     }
 
     const data = await postSigned(sheetUrl, payload);

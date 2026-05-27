@@ -611,56 +611,87 @@ function editOrder_(data) {
     orders.getRange(idx, 14).setValue(String(data.note));
   }
 
-  // ── Merge additional items into the order ──────────────────────────────────
-  if (data.additionalItems && Array.isArray(data.additionalItems) && data.additionalItems.length > 0) {
-    // Read existing items JSON
-    const existingRaw = orders.getRange(idx, 4).getValue();
-    let existingItems = [];
-    try {
-      const parsed = JSON.parse(String(existingRaw));
-      if (Array.isArray(parsed)) existingItems = parsed;
-    } catch (e) {
-      // Legacy string format — cannot merge
-      return {
-        success: false,
-        message: "This order uses a legacy items format and cannot have items added. Re-enter as new order.",
-      };
-    }
-
-    // Merge by name (combine quantities for matching items)
-    const itemMap = {};
-    for (const it of existingItems) {
-      if (it && it.name) itemMap[it.name] = { name: it.name, quantity: Number(it.quantity) || 0, price: Number(it.price) || 0 };
-    }
-    for (const add of data.additionalItems) {
-      if (!add || !add.name) continue;
-      if (itemMap[add.name]) {
-        itemMap[add.name].quantity += Number(add.quantity) || 0;
-      } else {
-        itemMap[add.name] = { name: add.name, quantity: Number(add.quantity) || 0, price: Number(add.price) || 0 };
-      }
-    }
-    const mergedItems = Object.values(itemMap);
-
-    // Recalculate totals (preserve existing discount %)
-    const newSubtotal = mergedItems.reduce(function(s, i) { return s + (i.price * i.quantity); }, 0);
+  // ── Replace items list (full update — supports add, reduce, remove) ─────────
+  if (data.updatedItems && Array.isArray(data.updatedItems) && data.updatedItems.length > 0) {
+    // Recalculate totals from the validated items (prices come from server)
+    const newSubtotal = data.updatedItems.reduce(function(s, i) {
+      return s + (Number(i.price) || 0) * (Number(i.quantity) || 0);
+    }, 0);
     const discountPct = Number(orders.getRange(idx, 6).getValue() || 0);
     const newDiscountAmount = Math.round((newSubtotal * discountPct) / 100);
     const newTotal = Math.max(0, newSubtotal - newDiscountAmount);
 
     // Write back
-    orders.getRange(idx, 4).setValue(JSON.stringify(mergedItems));
+    orders.getRange(idx, 4).setValue(JSON.stringify(data.updatedItems));
     orders.getRange(idx, 5).setValue(newSubtotal);
     orders.getRange(idx, 7).setValue(newDiscountAmount);
     orders.getRange(idx, 8).setValue(newTotal);
     SpreadsheetApp.flush();
 
-    return {
-      success: true,
-      newSubtotal: newSubtotal,
-      newDiscountAmount: newDiscountAmount,
-      newTotal: newTotal,
-    };
+    // Email notification
+    const orderNumber = orders.getRange(idx, 1).getValue() || ("Row " + idx);
+    try {
+      const itemLines = data.updatedItems.map(function(i) {
+        return i.name + " ×" + i.quantity + " = ₹" + ((Number(i.price) || 0) * (Number(i.quantity) || 0));
+      }).join("\n");
+      MailApp.sendEmail({
+        to: NOTIFY_EMAIL,
+        subject: "✏️ " + orderNumber + " edited — total ₹" + newTotal,
+        body: "ORDER EDITED — " + orderNumber + "\n" +
+              "============================\n" +
+              "Updated items:\n" + itemLines + "\n\n" +
+              "Subtotal: ₹" + newSubtotal + "\n" +
+              (newDiscountAmount > 0 ? "Discount: -₹" + newDiscountAmount + "\n" : "") +
+              "NEW TOTAL: ₹" + newTotal + "\n" +
+              "============================\n" +
+              "Time: " + Utilities.formatDate(new Date(), TZ, "dd MMM yyyy, hh:mm a"),
+      });
+    } catch (mailErr) {
+      Logger.log("Mail error on edit: " + mailErr);
+    }
+
+    return { success: true, newSubtotal: newSubtotal, newDiscountAmount: newDiscountAmount, newTotal: newTotal };
+  }
+
+  return { success: true };
+}
+
+// Soft-cancel an order: prefix order# with ❌, zero the total, send email.
+// Row is kept for audit trail — never deleted.
+function cancelOrder_(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orders = ss.getSheetByName(SHEET_NAME);
+  if (!orders) return { success: false, message: "Orders sheet missing" };
+  const idx = Number(data.rowIndex);
+  if (!idx || idx < 2) return { success: false, message: "Invalid row index" };
+
+  const currentNum = String(orders.getRange(idx, 1).getValue() || "");
+  if (currentNum.indexOf("❌") === 0) {
+    return { success: false, message: "Order already cancelled" };
+  }
+
+  const cancelledNum = "❌ " + currentNum;
+  const originalTotal = Number(orders.getRange(idx, 8).getValue() || 0);
+
+  orders.getRange(idx, 1).setValue(cancelledNum);  // Order # col
+  orders.getRange(idx, 8).setValue(0);              // Total col → 0
+  SpreadsheetApp.flush();
+
+  // Email notification
+  try {
+    MailApp.sendEmail({
+      to: NOTIFY_EMAIL,
+      subject: "❌ " + currentNum + " CANCELLED (was ₹" + originalTotal + ")",
+      body: "ORDER CANCELLED\n" +
+            "============================\n" +
+            "Order: " + currentNum + "\n" +
+            "Original total: ₹" + originalTotal + "\n" +
+            "New total: ₹0\n" +
+            "============================\n" +
+            "Time: " + Utilities.formatDate(new Date(), TZ, "dd MMM yyyy, hh:mm a"),
+    });
+  } catch (mailErr) {
+    Logger.log("Mail error on cancel: " + mailErr);
   }
 
   return { success: true };
@@ -697,6 +728,12 @@ function doPost(e) {
     }
     if (data && data._action === "editOrder") {
       const result = editOrder_(data);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (data && data._action === "cancelOrder") {
+      const result = cancelOrder_(data);
       return ContentService.createTextOutput(
         JSON.stringify(result)
       ).setMimeType(ContentService.MimeType.JSON);
