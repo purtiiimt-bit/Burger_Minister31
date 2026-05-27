@@ -10,9 +10,11 @@ export type CartItem = {
 };
 
 export const COUPONS: Record<string, { percent: number }> = {
-  MINISTER05: { percent: 5 },
-  MINISTER10: { percent: 10 },
-  MINISTER38: { percent: 10 }, // legacy verbal-only alias for MINISTER10
+  MINISTER05:  { percent: 5  },
+  MINISTER10:  { percent: 10 },
+  MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
+  COUPLE30:    { percent: 30 }, // hidden — shared directly with couples
+  INSTAGRAM50: { percent: 50 }, // hidden — Instagram promo code
 };
 
 // Free-fries threshold offer
@@ -39,7 +41,7 @@ type CartContextType = {
 
 // Coupons that are mutually exclusive with the Free Fries offer.
 // Customer can pick one or the other — not both. Admin overrides this on /admin.
-const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38"]);
+const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 

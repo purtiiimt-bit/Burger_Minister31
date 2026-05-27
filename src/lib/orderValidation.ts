@@ -8,9 +8,11 @@ import { menuData } from "./menuData";
 // this server-only module never imports from a "use client" file (which
 // caused undefined values to leak into the lookup table).
 const COUPONS: Record<string, { percent: number }> = {
-  MINISTER05: { percent: 5 },
-  MINISTER10: { percent: 10 },
-  MINISTER38: { percent: 10 },
+  MINISTER05:  { percent: 5  },
+  MINISTER10:  { percent: 10 },
+  MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
+  COUPLE30:    { percent: 30 }, // hidden — shared directly with couples
+  INSTAGRAM50: { percent: 50 }, // hidden — Instagram promo code
 };
 const FREE_FRIES_THRESHOLD = 299;
 const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
@@ -35,7 +37,7 @@ for (const items of Object.values(menuData)) {
 // and only when the rest of the cart hits the threshold (see below).
 ITEM_PRICES[FREE_FRIES_ITEM] = 0;
 
-const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38"]);
+const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
 
 export type ClientOrderItem = {
   name: string;
