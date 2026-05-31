@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Epilogue, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import LayoutChrome from "@/components/LayoutChrome";
+import PWARegister from "@/components/PWARegister";
 import { CartProvider } from "@/context/CartContext";
 import {
   LocalBusinessSchema,
@@ -159,6 +160,7 @@ export default function RootLayout({
       className={`${epilogue.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
+        <PWARegister />
         <OrganizationSchema />
         <WebSiteSchema />
         <LocalBusinessSchema />
