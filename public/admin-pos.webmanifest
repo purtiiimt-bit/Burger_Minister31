@@ -1,15 +1,16 @@
 {
-  "name": "Burger Minister",
-  "short_name": "BM",
-  "description": "Burger Minister - Crowned with Flavour, Served with Pride. 100% pure-veg burgers, momos, fries & shakes in Sector 58, Noida.",
-  "start_url": "/",
+  "name": "Burger Minister POS",
+  "short_name": "BM POS",
+  "description": "Private counter POS for Burger Minister staff billing and printing.",
+  "start_url": "/admin/pos",
+  "scope": "/admin/",
   "display": "standalone",
   "background_color": "#16130b",
   "theme_color": "#e6c443",
   "orientation": "portrait",
   "lang": "en-IN",
   "dir": "ltr",
-  "categories": ["food", "lifestyle", "restaurants"],
+  "categories": ["food", "business", "productivity"],
   "icons": [
     {
       "src": "/icon.svg",
@@ -38,19 +39,16 @@
   ],
   "shortcuts": [
     {
-      "name": "View Menu",
-      "url": "/menu",
-      "description": "Browse our full vegetarian menu"
+      "name": "Open POS",
+      "short_name": "POS",
+      "url": "/admin/pos",
+      "description": "Open fast counter billing"
     },
     {
-      "name": "Order Now",
-      "url": "/menu",
-      "description": "Place an order"
-    },
-    {
-      "name": "Catering",
-      "url": "/catering",
-      "description": "Catering packages for events"
+      "name": "Full Admin",
+      "short_name": "Admin",
+      "url": "/admin",
+      "description": "Open complete admin portal"
     }
   ]
 }

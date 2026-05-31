@@ -49,6 +49,8 @@ export default function POSClient() {
     return localStorage.getItem(AUTH_KEY) === "1" ? true : null;
   });
 
+  useAdminPOSManifest();
+
   useEffect(() => {
     const optimistic = localStorage.getItem(AUTH_KEY) === "1";
     let alive = true;
@@ -75,6 +77,31 @@ export default function POSClient() {
   if (authed === null) return null;
   if (!authed) return <Login onSuccess={() => setAuthed(true)} />;
   return <POSPanel onLogout={() => setAuthed(false)} />;
+}
+
+function useAdminPOSManifest() {
+  useEffect(() => {
+    let manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    const previousHref = manifest?.getAttribute("href") || null;
+    const created = !manifest;
+
+    if (!manifest) {
+      manifest = document.createElement("link");
+      manifest.rel = "manifest";
+      document.head.appendChild(manifest);
+    }
+
+    manifest.href = "/admin-pos.webmanifest";
+
+    return () => {
+      if (!manifest) return;
+      if (created) {
+        manifest.remove();
+        return;
+      }
+      if (previousHref) manifest.href = previousHref;
+    };
+  }, []);
 }
 
 function Login({ onSuccess }: { onSuccess: () => void }) {
