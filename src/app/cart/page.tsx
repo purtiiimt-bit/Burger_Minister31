@@ -173,7 +173,7 @@ export default function CartPage() {
               </h3>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {/* Free Fries */}
               <div
                 className={`rounded-xl border p-3 transition-all ${
@@ -195,7 +195,7 @@ export default function CartPage() {
                   </span>
                 </div>
                 <p className="mt-1 text-[11px] text-on-surface/60">
-                  On orders ₹299+
+                  On orders ₹200+
                 </p>
                 {freeFriesActive ? (
                   <p className="mt-1.5 text-[11px] font-semibold text-secondary">
@@ -211,35 +211,6 @@ export default function CartPage() {
                   </p>
                 )}
               </div>
-
-              {/* MINISTER10 */}
-              <button
-                disabled={coupon === "MINISTER10"}
-                onClick={() => quickApply("MINISTER10")}
-                className={`rounded-xl border p-3 text-left transition-all ${
-                  coupon === "MINISTER10"
-                    ? "border-primary/50 bg-primary/15"
-                    : "border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10"
-                }`}
-              >
-                <div className="font-[var(--font-heading)] text-xs font-bold text-primary">
-                  MINISTER10
-                </div>
-                <p className="mt-1 text-[11px] text-on-surface/60">10% off</p>
-                <p
-                  className={`mt-1.5 text-[11px] font-semibold ${
-                    coupon === "MINISTER10"
-                      ? "text-primary"
-                      : "text-on-surface/40"
-                  }`}
-                >
-                  {coupon === "MINISTER10"
-                    ? "✓ Applied"
-                    : freeFriesActive
-                      ? "Tap to swap"
-                      : "Tap to apply"}
-                </p>
-              </button>
 
               {/* MINISTER05 */}
               <button

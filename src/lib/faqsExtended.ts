@@ -238,12 +238,12 @@ export const extendedFaqs: ExtendedFAQ[] = [
   {
     category: "offers",
     q: "What discount codes are available?",
-    a: "Two public codes: MINISTER10 for 10% off, and MINISTER05 for 5% off. Apply either at the cart page. Only one code can be applied per order on the customer side.",
+    a: "One public code: MINISTER05 for 5% off, which works on any order with no minimum. Apply it at the cart page. Only one code can be applied per order on the customer side.",
   },
   {
     category: "offers",
     q: "Do you offer a free fries deal?",
-    a: "Yes. Orders over ₹299 automatically unlock a free half plate of Classic Salted Fries at the cart page. The free fries offer is mutually exclusive with MINISTER10 on the customer side, so you pick whichever saves you more.",
+    a: "Yes. Orders over ₹200 automatically unlock a free half plate of Peri Peri Fries at the cart page. The free fries offer is mutually exclusive with the MINISTER05 coupon, so you pick whichever saves you more — 5% off or the free fries.",
   },
   {
     category: "offers",

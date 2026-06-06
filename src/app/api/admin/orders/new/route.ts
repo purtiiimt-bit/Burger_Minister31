@@ -14,6 +14,21 @@ type CounterPayload = {
   customerPhone?: string;
 };
 
+let fallbackDate = "";
+let fallbackCount = 0;
+
+function fallbackOrderNumber() {
+  const today = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  });
+  if (fallbackDate !== today) {
+    fallbackDate = today;
+    fallbackCount = 0;
+  }
+  fallbackCount += 1;
+  return "#" + String(fallbackCount).padStart(2, "0");
+}
+
 // POST /api/admin/orders/new → forwards counter order to Apps Script, returns orderNumber
 export async function POST(request: Request) {
   const denied = denyIfNotAdmin(request);
@@ -60,6 +75,7 @@ export async function POST(request: Request) {
   type SheetResp = {
     success?: boolean;
     orderNumber?: string;
+    rowIndex?: number;
     message?: string;
   };
   let data: SheetResp | null = null;
@@ -92,10 +108,9 @@ export async function POST(request: Request) {
 
   // Fallback order number when Apps Script is unreachable or not yet updated.
   if (!data || (!data.success && !data.orderNumber)) {
-    const fallback = "#" + String((Date.now() % 9999) + 1).padStart(4, "0");
     return NextResponse.json({
       success: true,
-      orderNumber: fallback,
+      orderNumber: fallbackOrderNumber(),
       total: safe.total,
       subtotal: safe.subtotal,
       discountAmount: safe.discountAmount,

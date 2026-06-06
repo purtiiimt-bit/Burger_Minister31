@@ -91,7 +91,7 @@ export default function CheckoutPage() {
     }));
     if (freeFriesActive) {
       cartItems.push({
-        name: "Classic Salted Fries (Half), FREE",
+        name: "Peri Peri Fries (Half), FREE",
         quantity: 1,
         price: 0,
         subtotal: 0,

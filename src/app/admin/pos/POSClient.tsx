@@ -12,6 +12,8 @@ type PaymentMode = "UPI" | "CASH";
 type OrderMode = "DINE_IN" | "TAKE_AWAY" | "DELIVERY";
 type Toast = { kind: "ok" | "err" | "info"; msg: string } | null;
 
+const FREE_FRIES_ITEM = "Peri Peri Fries (Half), FREE";
+
 const FAVORITES = [
   "Classic Burger",
   "Cheesy Burger",
@@ -195,6 +197,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
   const [printerReady, setPrinterReady] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     if (!toast) return;
@@ -247,6 +250,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
     setFreeFries(false);
     setCustomerName("");
     setCustomerPhone("");
+    setEditingOrder(null);
     setBillOpen(false);
   }
 
@@ -275,8 +279,18 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
     }
   }
 
+  function printItems() {
+    return freeFries
+      ? [...cart, { name: FREE_FRIES_ITEM, price: 0, quantity: 1 }]
+      : cart;
+  }
+
+  function sheetItems() {
+    return printItems().map((line) => ({ name: line.name, quantity: line.quantity }));
+  }
+
   async function placeOrder() {
-    if (cart.length === 0 && !freeFries) {
+    if (cart.length === 0) {
       show("err", "Cart empty");
       return;
     }
@@ -298,6 +312,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
       const data = (await res.json()) as {
         success?: boolean;
         orderNumber?: string;
+        rowIndex?: number;
         message?: string;
       };
       if (!res.ok || !data.success || !data.orderNumber) {
@@ -305,13 +320,10 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
         return;
       }
 
-      const printItems = freeFries
-        ? [...cart, { name: "Classic Salted Fries (Half), FREE", price: 0, quantity: 1 }]
-        : cart;
       const order: Order = {
         orderNumber: data.orderNumber,
         timestamp: new Date().toISOString(),
-        items: printItems,
+        items: printItems(),
         subtotal,
         discountPercent,
         discountAmount,
@@ -321,6 +333,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
         customerPhone: customerPhone.trim() || undefined,
         orderType: orderMode,
         source: "COUNTER",
+        rowIndex: data.rowIndex,
       };
       setLastOrder(order);
 
@@ -335,6 +348,80 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
         }
       } else {
         show("info", `${data.orderNumber} saved. Printer not connected`);
+      }
+      resetBill();
+    } catch {
+      show("err", "Network error");
+    } finally {
+      setPlacing(false);
+    }
+  }
+
+  async function updateOrder() {
+    if (!editingOrder?.rowIndex) {
+      show("err", "Last order row missing. Deploy updated Apps Script first");
+      return;
+    }
+    if (cart.length === 0) {
+      show("err", "Cart empty");
+      return;
+    }
+
+    setPlacing(true);
+    try {
+      const res = await fetch("/api/admin/orders/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rowIndex: editingOrder.rowIndex,
+          updatedItems: sheetItems(),
+          discountPercent,
+          freeFries,
+          paymentMode,
+          customerName: customerName.trim() || undefined,
+          customerPhone: customerPhone.trim() || undefined,
+          orderType: orderMode,
+        }),
+      });
+      const data = (await res.json()) as {
+        success?: boolean;
+        message?: string;
+        newSubtotal?: number;
+        newDiscountAmount?: number;
+        newTotal?: number;
+      };
+      if (!res.ok || !data.success) {
+        show("err", data.message || "Update failed");
+        return;
+      }
+
+      const order: Order = {
+        ...editingOrder,
+        timestamp: new Date().toISOString(),
+        items: printItems(),
+        subtotal: data.newSubtotal ?? subtotal,
+        discountPercent,
+        discountAmount: data.newDiscountAmount ?? discountAmount,
+        total: data.newTotal ?? total,
+        paymentMode,
+        customerName: customerName.trim() || undefined,
+        customerPhone: customerPhone.trim() || undefined,
+        orderType: orderMode,
+        source: "COUNTER",
+      };
+      setLastOrder(order);
+
+      if (printerReady) {
+        try {
+          await printOrder(order);
+          show("ok", `${order.orderNumber} updated and printed`);
+        } catch (err) {
+          setPrinterReady(false);
+          show("info", `${order.orderNumber} updated. Print failed`);
+          console.error(err);
+        }
+      } else {
+        show("info", `${order.orderNumber} updated. Printer not connected`);
       }
       resetBill();
     } catch {
@@ -364,6 +451,23 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
     setCustomerName(lastOrder.customerName || "");
     setCustomerPhone(lastOrder.customerPhone || "");
     setFreeFries(lastOrder.items.some((item) => item.name.includes("FREE")));
+    setEditingOrder(null);
+    setBillOpen(true);
+  }
+
+  function editLast() {
+    if (!lastOrder) return;
+    if (!lastOrder.rowIndex) {
+      show("err", "Edit needs updated Apps Script rowIndex");
+      return;
+    }
+    setCart(lastOrder.items.filter((item) => item.price > 0).map((item) => ({ ...item })));
+    setDiscountPercent(lastOrder.discountPercent);
+    setPaymentMode(lastOrder.paymentMode);
+    setCustomerName(lastOrder.customerName || "");
+    setCustomerPhone(lastOrder.customerPhone || "");
+    setFreeFries(lastOrder.items.some((item) => item.name.includes("FREE")));
+    setEditingOrder(lastOrder);
     setBillOpen(true);
   }
 
@@ -499,13 +603,13 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
       </section>
 
       <aside
-        className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-[0_-16px_34px_rgba(0,0,0,0.2)] transition-all md:static md:row-span-2 md:row-start-2 md:grid md:h-auto md:grid-rows-[auto_minmax(0,1fr)_auto] md:border-l md:border-black/10 md:shadow-none ${
+        className={`fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white shadow-[0_-16px_34px_rgba(0,0,0,0.2)] transition-all md:static md:row-span-2 md:row-start-2 md:grid md:h-auto md:grid-rows-[auto_minmax(0,1fr)_auto] md:border-l md:border-black/10 md:shadow-none ${
           billOpen ? "h-[min(470px,72vh)]" : "h-[74px]"
         }`}
       >
         <button
           onClick={() => setBillOpen((open) => !open)}
-          className="grid h-[74px] w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 border-t border-black/10 px-3 text-left md:hidden"
+          className="grid h-[74px] w-full shrink-0 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 border-t border-black/10 px-3 text-left md:hidden"
         >
           <span className="min-w-0">
             <span className="block text-[11px] font-black uppercase tracking-wider text-black/45">
@@ -521,9 +625,11 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
           </span>
         </button>
 
-        <div className={`${billOpen ? "block" : "hidden"} border-b border-black/10 p-3 md:block`}>
+        <div className={`${billOpen ? "block" : "hidden"} shrink-0 border-b border-black/10 p-3 md:block`}>
           <div className="flex items-center justify-between gap-2">
-            <h2 className="font-[var(--font-heading)] text-2xl font-black">Bill</h2>
+            <h2 className="font-[var(--font-heading)] text-2xl font-black">
+              {editingOrder ? `Edit ${editingOrder.orderNumber}` : "Bill"}
+            </h2>
             <div className="flex gap-2">
               <button onClick={() => setBillOpen(false)} className="rounded-lg border border-black/15 px-3 py-2 text-xs font-black md:hidden">
                 Hide
@@ -550,7 +656,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
           </div>
         </div>
 
-        <div className={`${billOpen ? "block" : "hidden"} min-h-[96px] overflow-y-auto p-3 md:block`}>
+        <div className={`${billOpen ? "block" : "hidden"} min-h-0 flex-1 overflow-y-auto p-3 md:block`}>
           {cart.length === 0 && !freeFries ? (
             <div className="grid min-h-24 place-items-center text-center text-sm font-bold text-black/35">
               Add items, bill stays here.
@@ -583,14 +689,14 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
               ))}
               {freeFries && (
                 <div className="rounded-lg bg-secondary/10 p-3 text-sm font-black text-green-700">
-                  1 x Classic Salted Fries (Half), FREE
+                  1 x Peri Peri Fries (Half), FREE
                 </div>
               )}
             </div>
           )}
         </div>
 
-        <div className={`${billOpen ? "block" : "hidden"} border-t border-black/10 p-3 md:block`}>
+        <div className={`${billOpen ? "block" : "hidden"} shrink-0 border-t border-black/10 p-3 md:block`}>
           <div className="grid grid-cols-3 gap-2">
             {[0, 5, 10, 30].map((percent) => (
               <button
@@ -618,16 +724,24 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
                 {mode === "CASH" ? "Cash" : "UPI"}
               </button>
             ))}
-            <button
-              onClick={() => setFreeFries((v) => !v)}
-              className={`h-11 rounded-lg border text-xs font-black ${
-                freeFries
-                  ? "border-secondary bg-secondary/15 text-green-700"
-                  : "border-black/15 bg-[#f7f2e8] text-black/60"
-              }`}
-            >
-              Free Fries
-            </button>
+            {[
+              { value: false, label: "No Offer" },
+              { value: true, label: "Free Fries" },
+            ].map((offer) => (
+              <button
+                key={offer.label}
+                onClick={() => setFreeFries(offer.value)}
+                className={`h-11 rounded-lg border text-xs font-black ${
+                  freeFries === offer.value
+                    ? offer.value
+                      ? "border-secondary bg-secondary/15 text-green-700"
+                      : "border-primary bg-primary/10 text-primary"
+                    : "border-black/15 bg-[#f7f2e8] text-black/60"
+                }`}
+              >
+                {offer.label}
+              </button>
+            ))}
           </div>
 
           <div className="mt-3 rounded-lg bg-[#faf7f0] p-3">
@@ -644,11 +758,29 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
 
           <button
             disabled={placing}
-            onClick={placeOrder}
+            onClick={editingOrder ? updateOrder : placeOrder}
             className="mt-3 h-14 w-full rounded-lg bg-[#1f5fbf] text-base font-black text-white disabled:opacity-60"
           >
-            {placing ? "Placing..." : printerReady ? "PLACE + PRINT" : "PLACE ORDER"}
+            {placing
+              ? editingOrder
+                ? "Updating..."
+                : "Placing..."
+              : editingOrder
+                ? printerReady
+                  ? "UPDATE + PRINT"
+                  : "UPDATE ORDER"
+                : printerReady
+                  ? "PLACE + PRINT"
+                  : "PLACE ORDER"}
           </button>
+          {editingOrder && (
+            <button
+              onClick={resetBill}
+              className="mt-2 h-10 w-full rounded-lg border border-black/15 bg-white text-xs font-black text-black/60"
+            >
+              Cancel Edit
+            </button>
+          )}
 
           {lastOrder && (
             <div className="mt-3 rounded-lg border border-secondary/25 bg-secondary/10 p-2">
@@ -656,9 +788,12 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
                 <span>{lastOrder.orderNumber} - {money(lastOrder.total)} - {lastOrder.paymentMode}</span>
                 <span>{printerReady ? "Printer ready" : "No printer"}</span>
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-3 gap-2">
                 <button onClick={reprintLast} className="rounded-lg bg-white px-3 py-2 text-xs font-black text-green-800">
                   Reprint
+                </button>
+                <button onClick={editLast} className="rounded-lg bg-white px-3 py-2 text-xs font-black text-green-800">
+                  Edit
                 </button>
                 <button onClick={repeatLast} className="rounded-lg bg-white px-3 py-2 text-xs font-black text-green-800">
                   Repeat

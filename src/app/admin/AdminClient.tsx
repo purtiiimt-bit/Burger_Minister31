@@ -1211,7 +1211,7 @@ function NewOrderTab({
 
       // Append free fries as ₹0 line so kitchen sees it on the printed ticket
       const printItems = freeFries
-        ? [...cart, { name: "Classic Salted Fries (Half), FREE", price: 0, quantity: 1 }]
+        ? [...cart, { name: "Peri Peri Fries (Half), FREE", price: 0, quantity: 1 }]
         : cart;
 
       const order: Order = {

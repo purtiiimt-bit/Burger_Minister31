@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { denyIfNotAdmin } from "@/lib/adminAuth";
 import { getSigned } from "@/lib/appsScript";
 
-// GET /api/admin/orders/045 → fetches order from Apps Script
+// GET /api/admin/orders/05 → fetches order from Apps Script
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ number: string }> }

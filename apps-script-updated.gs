@@ -140,7 +140,7 @@ function nextOrderNumber_(counter) {
   SpreadsheetApp.flush();
 
   return {
-    orderNumber: "#" + String(n).padStart(3, "0"),
+    orderNumber: "#" + String(n).padStart(2, "0"),
     todayCount: n,
     lifetimeTotal: lifetime,
   };
@@ -669,6 +669,9 @@ function editOrder_(data) {
   if (data.note !== undefined) {
     orders.getRange(idx, 14).setValue(String(data.note));
   }
+  if (data.discountPercent !== undefined) {
+    orders.getRange(idx, 6).setValue(Number(data.discountPercent) || 0);
+  }
 
   // ── Replace items list (full update — supports add, reduce, remove) ─────────
   if (data.updatedItems && Array.isArray(data.updatedItems) && data.updatedItems.length > 0) {
@@ -676,7 +679,9 @@ function editOrder_(data) {
     const newSubtotal = data.updatedItems.reduce(function(s, i) {
       return s + (Number(i.price) || 0) * (Number(i.quantity) || 0);
     }, 0);
-    const discountPct = Number(orders.getRange(idx, 6).getValue() || 0);
+    const discountPct = data.discountPercent !== undefined
+      ? Number(data.discountPercent) || 0
+      : Number(orders.getRange(idx, 6).getValue() || 0);
     const newDiscountAmount = Math.round((newSubtotal * discountPct) / 100);
     const newTotal = Math.max(0, newSubtotal - newDiscountAmount);
 
@@ -825,6 +830,7 @@ function doPost(e) {
       data.coupon || "",
       numbers.lifetimeTotal,
     ]);
+    const rowIndex = orders.getLastRow();
 
     // Track customer in Customers sheet (CRM)
     try {
@@ -877,6 +883,7 @@ function doPost(e) {
       JSON.stringify({
         success: true,
         orderNumber: orderNumber,
+        rowIndex: rowIndex,
         todayCount: numbers.todayCount,
         lifetimeTotal: numbers.lifetimeTotal,
       })
@@ -948,12 +955,14 @@ function doGet(e) {
     }
 
     const param = (e.parameter && e.parameter.number) || "";
-    const target = "#" + String(param).replace(/^#/, "").padStart(3, "0");
+    const cleanNumber = String(param).replace(/^#/, "");
+    const target = "#" + cleanNumber.padStart(2, "0");
+    const legacyTarget = "#" + cleanNumber.padStart(3, "0");
 
     const values = orders.getDataRange().getValues();
     // Search bottom-up so latest match wins (today's reset takes priority)
     for (let i = values.length - 1; i >= 1; i--) {
-      if (values[i][0] === target) {
+      if (values[i][0] === target || values[i][0] === legacyTarget) {
         let items = [];
         try {
           items = JSON.parse(values[i][3] || "[]");

@@ -8,6 +8,8 @@ type EditPayload = {
   customerName?: string;
   customerPhone?: string;
   paymentMode?: "UPI" | "CASH";
+  discountPercent?: number;
+  freeFries?: boolean;
   orderType?: string;
   address?: string;
   note?: string;
@@ -54,6 +56,10 @@ export async function POST(request: Request) {
       payload.address = String(body.address).slice(0, 250);
     if (body.note !== undefined)
       payload.note = String(body.note).slice(0, 250);
+    if (body.discountPercent !== undefined)
+      payload.discountPercent = body.discountPercent;
+    if (body.freeFries !== undefined)
+      payload.freeFries = !!body.freeFries;
 
     // Validate full items list server-side (never trust client prices)
     if (body.updatedItems && body.updatedItems.length > 0) {
@@ -63,7 +69,11 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      const validation = validateCounterOrder({ items: body.updatedItems });
+      const validation = validateCounterOrder({
+        items: body.updatedItems,
+        discountPercent: body.discountPercent,
+        freeFries: body.freeFries,
+      });
       if (!validation.ok) {
         return NextResponse.json(
           { success: false, message: validation.reason },
@@ -75,6 +85,11 @@ export async function POST(request: Request) {
         quantity: i.quantity,
         price: i.price,
       }));
+      payload.discountPercent = validation.order.discountPercent;
+      payload.discountAmount = validation.order.discountAmount;
+      payload.subtotal = validation.order.subtotal;
+      payload.total = validation.order.total;
+      payload.freeFries = validation.order.freeFries;
     }
 
     const data = await postSigned(sheetUrl, payload);

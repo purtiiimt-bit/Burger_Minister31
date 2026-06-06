@@ -4,7 +4,7 @@ import { postSigned } from "@/lib/appsScript";
 
 // Mirrored from CartContext for the email summary builder. Kept here so this
 // server route never crosses the "use client" boundary.
-const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
+const FREE_FRIES_ITEM = "Peri Peri Fries (Half), FREE";
 
 type ClientItem = {
   name: string;

@@ -9,8 +9,6 @@ import { menuData } from "./menuData";
 // caused undefined values to leak into the lookup table).
 const COUPONS: Record<string, { percent: number }> = {
   MINISTER05:  { percent: 5  },
-  MINISTER10:  { percent: 10 },
-  MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
   COUPLE30:    { percent: 30 }, // admin-only — shared directly with couples
   INSTAGRAM50: { percent: 50 }, // admin-only — Instagram promo code
 };
@@ -18,8 +16,8 @@ const COUPONS: Record<string, { percent: number }> = {
 // These codes can only be applied by admin (counter orders).
 // Customer-facing /api/order will reject them.
 const ADMIN_ONLY_COUPONS = new Set(["COUPLE30", "INSTAGRAM50"]);
-const FREE_FRIES_THRESHOLD = 299;
-const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
+const FREE_FRIES_THRESHOLD = 200;
+const FREE_FRIES_ITEM = "Peri Peri Fries (Half), FREE";
 
 // Build a flat lookup of canonical {displayName -> price} from the live menu.
 // Variant items expand to "Item Name (Half)" etc, matching the strings the
@@ -41,7 +39,7 @@ for (const items of Object.values(menuData)) {
 // and only when the rest of the cart hits the threshold (see below).
 ITEM_PRICES[FREE_FRIES_ITEM] = 0;
 
-const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
+const COUPONS_MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "COUPLE30", "INSTAGRAM50"]);
 
 export type ClientOrderItem = {
   name: string;
@@ -74,7 +72,7 @@ export type ValidationOutcome =
 //   - Every item exists in the canonical menu at its listed price.
 //   - Quantities are positive integers.
 //   - Free fries line can only appear when (subtotal ex-fries) >= threshold
-//     AND no MINISTER10/MINISTER38 coupon is applied (mutex rule).
+//     AND no coupon is applied (mutex rule — customer picks one benefit).
 //   - Coupon is a known code; discount is recomputed from the % we store.
 //   - Total is recomputed from subtotal - discount, never trusted from client.
 export function validateCustomerOrder(input: {

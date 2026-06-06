@@ -11,14 +11,12 @@ export type CartItem = {
 
 export const COUPONS: Record<string, { percent: number }> = {
   MINISTER05:  { percent: 5  },
-  MINISTER10:  { percent: 10 },
-  MINISTER38:  { percent: 10 }, // verbal alias for MINISTER10
   // COUPLE30 and INSTAGRAM50 are admin-only — not exposed to customers
 };
 
 // Free-fries threshold offer
-export const FREE_FRIES_THRESHOLD = 299;
-export const FREE_FRIES_ITEM = "Classic Salted Fries (Half), FREE";
+export const FREE_FRIES_THRESHOLD = 200;
+export const FREE_FRIES_ITEM = "Peri Peri Fries (Half), FREE";
 
 type CartContextType = {
   items: CartItem[];
@@ -34,13 +32,13 @@ type CartContextType = {
   applyCoupon: (code: string) => { ok: boolean; message: string };
   removeCoupon: () => void;
   freeFriesEarned: boolean;       // earned by threshold
-  freeFriesActive: boolean;       // actually applied (mutex with 10%)
+  freeFriesActive: boolean;       // actually applied (mutex with coupon)
   freeFriesShortfall: number;
 };
 
 // Coupons that are mutually exclusive with the Free Fries offer.
 // Any active coupon blocks free fries — customer picks one benefit, not both.
-const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "MINISTER10", "MINISTER38", "COUPLE30", "INSTAGRAM50"]);
+const MUTEX_WITH_FREE_FRIES = new Set(["MINISTER05", "COUPLE30", "INSTAGRAM50"]);
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
