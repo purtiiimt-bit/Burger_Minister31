@@ -6,6 +6,7 @@ const footerLinks = [
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
   { href: "/catering", label: "Catering" },
+  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQs" },
 ];
 

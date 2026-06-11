@@ -56,7 +56,6 @@ export const metadata: Metadata = {
     "late night food noida",
     "late night veg food noida",
     "late night delivery sector 58",
-    "open till 3 am noida",
     // Sectors within ~3km of Sector 58
     "food delivery sector 58 noida",
     "burger delivery sector 58",

@@ -79,13 +79,6 @@ function ItemSchemas({ item }: { item: ItemContent }) {
       availability: "https://schema.org/InStock",
       seller: { "@type": "Restaurant", name: "Burger Minister", "@id": `${SITE_URL}/#restaurant` },
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: String(item.reviews.length * 30 + 12),
-      bestRating: "5",
-      worstRating: "1",
-    },
     review: item.reviews.map((r) => ({
       "@type": "Review",
       author: { "@type": "Person", name: r.author },
