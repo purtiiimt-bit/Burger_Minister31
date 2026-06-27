@@ -139,16 +139,23 @@ Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
   const web3formsKey = process.env.WEB3FORMS_KEY;
   if (web3formsKey) {
     try {
-      await fetch("https://api.web3forms.com/submit", {
+      const emailRes = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_key: web3formsKey,
-          subject: `🍔 ${orderNumber} (₹${safe.total}) from ${customerName}`,
+          subject: `[Order ${orderNumber}] Rs.${safe.total} from ${customerName}`,
           message: `Order Number: ${orderNumber}\n\n${orderSummary}`,
           from_name: "Burger Minister Orders",
+          botcheck: "",
         }),
       });
+      const emailData = await emailRes.json().catch(() => null);
+      if (!emailRes.ok || emailData?.success === false) {
+        console.error("Web3Forms error:", emailRes.status, emailData);
+      } else {
+        console.log("Email sent via Web3Forms:", emailData?.message);
+      }
     } catch (err) {
       console.error("Email error:", err);
     }

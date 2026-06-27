@@ -105,24 +105,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "This is real coffee, not the powder mix you get most places. Smooth, properly cold, and you can taste the actual coffee notes. Refreshing without being overpowering.",
-        "author": "Naman R.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 5 days ago"
+        "body": "Actual brownie chunks in the drink, not brownie-flavour syrup. First sip was coffee, the next had a piece of brownie. This is a different drink from a regular cold coffee.",
+        "author": "Ishaan M.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "My afternoon pick-me-up of choice. Strong enough to keep me going through the post-lunch slump but not so strong that I cannot sleep at night.",
-        "author": "Shruti A.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Dessert and coffee in one glass. Dangerously good for afternoons when you cannot choose between the two. Real brownie, you can taste and feel it.",
+        "author": "Simran K.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Good coffee. The hazelnut version is my pick. Wish they had plant-based milk but the regular version is great anyway.",
-        "author": "Kabir D.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "Chocolate and coffee balance is right. Brownie pieces add texture you do not get in regular cold coffee. Thick drink, filling on its own. More dessert than coffee.",
+        "author": "Rajat V.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -162,24 +162,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Thick enough that the straw stands up by itself. Real ice cream blend, you can tell. Kids in our group could not stop drinking it.",
-        "author": "Anjali S.",
+        "body": "The crunchy caramel bits in the butterscotch sauce are the difference. Every few sips you get a little crunch. Better than chain cafe butterscotch which is just flavoured powder.",
+        "author": "Vandana M.",
         "sector": "Sector 58, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Properly sweet but not sickly. The shake-to-ice ratio is right. Pair with a pizza and you have a full meal for two.",
-        "author": "Rahul K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Thick and sweet with a toasty edge. Kids wanted to finish it before eating the main course, which is exactly what butterscotch does to people. Strong flavour.",
+        "author": "Kiran P.",
+        "sector": "Sector 55, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved the Oreo one especially. Cookie chunks in every other sip. Could ask for less sugar if needed and they oblige.",
-        "author": "Sanya P.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "The caramel crunch in each sip makes this more interesting than a regular sweet shake. Butterscotch lovers will understand why this is the call.",
+        "author": "Saurabh D.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -219,24 +219,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "This is real coffee, not the powder mix you get most places. Smooth, properly cold, and you can taste the actual coffee notes. Refreshing without being overpowering.",
-        "author": "Naman R.",
-        "sector": "Sector 58, Noida",
+        "body": "The caramel drizzle on top slowly falls through the drink as you sip. Starts sweeter at the top, more coffee by the bottom. An interesting progression for a cold coffee.",
+        "author": "Diksha R.",
+        "sector": "Sector 57, Noida",
         "when": "Google review, 5 days ago"
       },
       {
         "rating": 5,
-        "body": "My afternoon pick-me-up of choice. Strong enough to keep me going through the post-lunch slump but not so strong that I cannot sleep at night.",
-        "author": "Shruti A.",
+        "body": "Sweeter than the classic but not sickly. The real caramel sauce on top instead of just caramel syrup inside is the sign they cared about this item.",
+        "author": "Suresh A.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "when": "Zomato, 1 month ago"
       },
       {
         "rating": 4,
-        "body": "Good coffee. The hazelnut version is my pick. Wish they had plant-based milk but the regular version is great anyway.",
-        "author": "Kabir D.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "Good sweet coffee for people who like their drinks with dessert flavours. The caramel complements the coffee, it does not bury it.",
+        "author": "Pooja N.",
+        "sector": "Sector 60, Noida",
+        "when": "Google review, 2 weeks ago"
       }
     ],
     "faqs": [
@@ -276,24 +276,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Perfect starter while we waited for our pizza. Hot, crispy, and shareable. Five pieces was just right for the two of us.",
-        "author": "Pooja L.",
-        "sector": "Sector 58, Noida",
+        "body": "Sweet corn and cheese in a crisp triangle. Six pieces, all hot. The triangle shape means more surface area and more crunch per piece than a round shape would give.",
+        "author": "Divya P.",
+        "sector": "Sector 61, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Quality snacks. Tastes like proper hand-made cafe food, not frozen mass-produced stuff. The Group Platter is great for office orders.",
-        "author": "Ankit B.",
-        "sector": "Sector 62, Noida",
+        "body": "The sweetness of the corn against the salt in the cheese is the combination that works. I ordered as a starter and ended up wanting a second plate.",
+        "author": "Suresh K.",
+        "sector": "Sector 58, Noida",
         "when": "Zomato, 3 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Good portion for the price. Came out hot. Would prefer a bit more dip on the side but you can always order extra.",
-        "author": "Ishita V.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "My preferred snack over the cheese sticks because of the corn. It adds sweetness the sticks do not have. Both adults and kids at the table agreed.",
+        "author": "Anushka G.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -390,24 +390,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "These fries are dangerously addictive. Stayed crispy even after we sat and chatted for twenty minutes. Will order every visit.",
-        "author": "Riya D.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 4 days ago"
-      },
-      {
-        "rating": 5,
-        "body": "Worth the extra over salted fries. The seasoning sticks properly to the fries instead of falling off in the box. Tells me they toss it right.",
-        "author": "Vivek K.",
-        "sector": "Sector 62, Noida",
+        "body": "Cheese sauce stays warm even ten minutes after serving. Asked for sauce on the side as suggested. Dipping keeps the fries crispy longer. Good advice from the counter.",
+        "author": "Sonal K.",
+        "sector": "Sector 57, Noida",
         "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "Ordered for a group of four and everyone went back for more. Pair with a Cold Coffee, life sorted.",
-        "author": "Aditi M.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last month"
+        "body": "House cheese sauce is the difference. It is pourable and warm, not gloopy. Spread evenly across the fries without clumping. Will not go back to salted.",
+        "author": "Devraj P.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 month ago"
+      },
+      {
+        "rating": 4,
+        "body": "Rich side order alongside the Margherita. Heavy combination but it worked. The cheese sauce is clearly house-made, you can tell from the texture.",
+        "author": "Kavya R.",
+        "sector": "Sector 60, Noida",
+        "when": "Google review, 3 weeks ago"
       }
     ],
     "faqs": [
@@ -447,24 +447,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Eight inch is the right size for one hungry person. Dough was thin and chewy, cheese was generous. We finished it in five minutes and ordered another one.",
-        "author": "Karan J.",
-        "sector": "Sector 58, Noida",
+        "body": "Three layers of cheese is not a marketing line. Pulled a slice and the mozzarella stretched across the table. The heaviest pizza here and worth every bite.",
+        "author": "Preethi S.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Fresh tasting, not the frozen kind. You can tell when a pizza was made the same day. Sauce is balanced, not too sweet, not too acidic.",
-        "author": "Megha P.",
-        "sector": "Sector 62, Noida",
+        "body": "Heavy and indulgent. Paired it with a mojito to cut through the cheese. One pizza was enough for one hungry person. The cheese stays melted far longer than expected.",
+        "author": "Vivek J.",
+        "sector": "Sector 60, Noida",
         "when": "Zomato, 3 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Solid pizza for the price. Would love a slightly thicker crust option but the thin and crispy works too. Came hot and well boxed.",
-        "author": "Sahil T.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "I ordered this because the Cheese Loaded Burger was my favourite and the pizza version delivered. Every slice has a pull. Rich, satisfying, and properly cheesy.",
+        "author": "Swati R.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -504,24 +504,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Good honest sandwich. Bread was crisp, the chutney came through, vegetables were fresh. I ordered with a cold coffee and that was my full afternoon snack.",
-        "author": "Tanvi S.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 3 weeks ago"
+        "body": "Triple cheese and still pulled when I cut it. The cheese sauce inside is the layer that makes this different from a regular cheese sandwich. Messy and genuinely good.",
+        "author": "Anjali S.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Hot off the grill in about four minutes. Filling without being too heavy. I work nearby and now this is my regular four PM order.",
-        "author": "Aakash V.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "body": "Enough cheese to share but I did not. The top melt adds a slight crust outside which is the right finish for this much filling inside.",
+        "author": "Harsh V.",
+        "sector": "Sector 60, Noida",
+        "when": "Zomato, 3 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Nice flavors and good portion size. The grill marks on the bread were perfect. Would have liked one more cheese slice but easy fix.",
-        "author": "Sneha B.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last week"
+        "body": "They warned me it was heavy. One sandwich was a full snack meal. Pulled the cheese across the table on the first cut. The messy ones are usually the good ones.",
+        "author": "Manya R.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -561,24 +561,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "The math works out. You save real money compared to ordering separately. And the combo arrives all together, hot, which is the part most places mess up.",
-        "author": "Garvit T.",
-        "sector": "Sector 58, Noida",
+        "body": "The easiest order here. Cheesy Burger, Peri Peri Fries, Cold Coffee. Three items arrive together and hot. The saving of sixty-eight rupees is real.",
+        "author": "Ankit S.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Combo system is well thought out. Easy to read, easy to upgrade, no hidden charges at the counter. Wish more cafes did this.",
-        "author": "Smita L.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Standing lunch order for three weeks now. Everything arrives together. The combo makes sense as a meal, not just a savings trick.",
+        "author": "Rekha P.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "We did the Group Platter for an office team treat. Five of us, ate well, did not have to make any decisions. Recommended for team lunches.",
-        "author": "Yash B.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 3 weeks ago"
+        "rating": 4,
+        "body": "Cheesy burger plus peri peri fries plus cold coffee. Everything here is good individually. Together they work even better. My Monday lunch sorted in one order.",
+        "author": "Abhishek G.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -618,24 +618,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Good honest sandwich. Bread was crisp, the chutney came through, vegetables were fresh. I ordered with a cold coffee and that was my full afternoon snack.",
-        "author": "Tanvi S.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 3 weeks ago"
+        "body": "Two cheese slices that actually melt. The grill is hot enough that the cheese integrates with the bread instead of sitting separately. Simple and exactly right.",
+        "author": "Pawan K.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Hot off the grill in about four minutes. Filling without being too heavy. I work nearby and now this is my regular four PM order.",
-        "author": "Aakash V.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "body": "Just cheese and bread, done well. The herbs are subtle but present. Added an extra slice for twenty rupees. Good four PM snack with the hazelnut coffee.",
+        "author": "Ria N.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Nice flavors and good portion size. The grill marks on the bread were perfect. Would have liked one more cheese slice but easy fix.",
-        "author": "Sneha B.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last week"
+        "body": "Honest sandwich. Nothing extra, nothing missing. Ready in four minutes. My quick-bite order before the commute back.",
+        "author": "Dev P.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -675,24 +675,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Perfect starter while we waited for our pizza. Hot, crispy, and shareable. Five pieces was just right for the two of us.",
-        "author": "Pooja L.",
-        "sector": "Sector 58, Noida",
+        "body": "The cheese pull was real. Broke one apart while still hot and the mozzarella stretched properly. That is the test for cheese sticks and these pass it easily.",
+        "author": "Mitali S.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Quality snacks. Tastes like proper hand-made cafe food, not frozen mass-produced stuff. The Group Platter is great for office orders.",
-        "author": "Ankit B.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Five pieces, real mozzarella. Not the rubbery processed kind. The crunch outside and mozzarella pull inside is exactly what this snack is supposed to be.",
+        "author": "Deepak N.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Good portion for the price. Came out hot. Would prefer a bit more dip on the side but you can always order extra.",
-        "author": "Ishita V.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "Added the cheese dip on the side for double cheese. Overkill in the best way. Eat them within five minutes of serving for the best pull.",
+        "author": "Kavita A.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -732,24 +732,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Came in for lunch with a colleague and ordered this. The patty was crisp, the bun was warm, and the cheese was actually melted. We grabbed two more for the way back. Will definitely return.",
-        "author": "Ananya R.",
+        "body": "Twenty rupees more than the Classic and completely worth it. The cheese is placed on the hot patty before the bun goes on, so it integrates rather than sitting as a cold slice.",
+        "author": "Tanmay S.",
         "sector": "Sector 62, Noida",
-        "when": "Google review, 2 weeks ago"
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "I have tried most burgers around Sector 58 and this one stands out. Real ingredients, fair pricing, fast service. The Minister branding is fun without being over the top.",
-        "author": "Rohan M.",
-        "sector": "Sector 58, Noida",
-        "when": "Zomato review, last month"
+        "body": "My standing order since my second visit. The classic converted me, the cheesy kept me. Real cheese that pulls slightly when you bite.",
+        "author": "Komal P.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 4,
-        "body": "Loved it. Mild on spice which suits my family. My six-year-old finished half of mine. The cafe is clean and the staff did not rush us. Knocked one star only because parking is tight.",
-        "author": "Priya K.",
-        "sector": "Sector 59, Noida",
-        "when": "Google review, 1 week ago"
+        "rating": 5,
+        "body": "Three things done right: crisp patty, warm bun, melted cheese. Not complicated. A Monday lunch staple for me.",
+        "author": "Saurabh K.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -789,24 +789,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "These fries are dangerously addictive. Stayed crispy even after we sat and chatted for twenty minutes. Will order every visit.",
-        "author": "Riya D.",
+        "body": "Garlic hits immediately and stays. Real garlic chips, not powder. You can see them on the fries. More interesting than peri peri for someone who wants straight garlic heat.",
+        "author": "Shubham A.",
         "sector": "Sector 58, Noida",
-        "when": "Google review, 4 days ago"
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Worth the extra over salted fries. The seasoning sticks properly to the fries instead of falling off in the box. Tells me they toss it right.",
-        "author": "Vivek K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 2 weeks ago"
-      },
-      {
-        "rating": 5,
-        "body": "Ordered for a group of four and everyone went back for more. Pair with a Cold Coffee, life sorted.",
-        "author": "Aditi M.",
+        "body": "North Indian flavour profile. Garlicky, slightly smoky, medium chilli. I prefer this over peri peri for the cleaner spice. Paired with a milkshake for contrast.",
+        "author": "Nandini R.",
         "sector": "Sector 63, Noida",
-        "when": "Google, last month"
+        "when": "Zomato, 3 weeks ago"
+      },
+      {
+        "rating": 4,
+        "body": "Garlic crisps are the standout detail. They add both flavour and texture. Addictive in a different way from the peri peri, less complex but more direct.",
+        "author": "Abhimanyu S.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -846,24 +846,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "These fries are dangerously addictive. Stayed crispy even after we sat and chatted for twenty minutes. Will order every visit.",
-        "author": "Riya D.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 4 days ago"
+        "body": "The lemon hits first, then the chilli follows. An unusual order for fries but I understand why it works. Ordered again the same day which says enough.",
+        "author": "Payal V.",
+        "sector": "Sector 55, Noida",
+        "when": "Google review, 5 days ago"
       },
       {
         "rating": 5,
-        "body": "Worth the extra over salted fries. The seasoning sticks properly to the fries instead of falling off in the box. Tells me they toss it right.",
-        "author": "Vivek K.",
-        "sector": "Sector 62, Noida",
+        "body": "Lighter than the peri peri. Good change when you want something tangy over straight spice. Pairs surprisingly well with a mint mojito.",
+        "author": "Madhav T.",
+        "sector": "Sector 58, Noida",
         "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "Ordered for a group of four and everyone went back for more. Pair with a Cold Coffee, life sorted.",
-        "author": "Aditi M.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last month"
+        "rating": 4,
+        "body": "Asked for extra lemon and less chilli. They adjusted at the counter without any issue. The lemon-forward version is excellent. Clean and fresh.",
+        "author": "Richa N.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 month ago"
       }
     ],
     "faqs": [
@@ -960,24 +960,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Came in for lunch with a colleague and ordered this. The patty was crisp, the bun was warm, and the cheese was actually melted. We grabbed two more for the way back. Will definitely return.",
-        "author": "Ananya R.",
+        "body": "Fifty-nine rupees and made fresh. The aloo tikki had a proper crust, not the limp version from chain places. This is the everyday burger done right. Came back the next day for the Cheesy version.",
+        "author": "Sanjay V.",
         "sector": "Sector 62, Noida",
-        "when": "Google review, 2 weeks ago"
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "I have tried most burgers around Sector 58 and this one stands out. Real ingredients, fair pricing, fast service. The Minister branding is fun without being over the top.",
-        "author": "Rohan M.",
-        "sector": "Sector 58, Noida",
-        "when": "Zomato review, last month"
+        "body": "My first visit. I ordered the cheapest thing on the menu and left impressed. Crisp patty, warm bun, mint chutney. The basics done well are enough.",
+        "author": "Aarti M.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved it. Mild on spice which suits my family. My six-year-old finished half of mine. The cafe is clean and the staff did not rush us. Knocked one star only because parking is tight.",
-        "author": "Priya K.",
-        "sector": "Sector 59, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "A reliable fifty-nine rupee burger for our students' lunch group. We order ten of these on Fridays. Always consistent, always fresh.",
+        "author": "Nikhil K.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1074,24 +1074,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "These fries are dangerously addictive. Stayed crispy even after we sat and chatted for twenty minutes. Will order every visit.",
-        "author": "Riya D.",
+        "body": "Crispy and hot. I tried to save some for later and could not. Double frying is the difference, you feel it from the first bite. They stay crispy longer than any cafe nearby.",
+        "author": "Aman K.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, 2 weeks ago"
+      },
+      {
+        "rating": 5,
+        "body": "Simple and done well. We ordered these as a shared side with two burgers. Stayed crispier than expected. Rock salt was the right seasoning call.",
+        "author": "Jyoti P.",
+        "sector": "Sector 61, Noida",
+        "when": "Zomato, last month"
+      },
+      {
+        "rating": 4,
+        "body": "Proper fries. Not the thick steak cut, not the shoestring. Medium cut, well fried, minimal seasoning. The base that all the other fries are built on, and it is a good base.",
+        "author": "Rohit G.",
         "sector": "Sector 58, Noida",
-        "when": "Google review, 4 days ago"
-      },
-      {
-        "rating": 5,
-        "body": "Worth the extra over salted fries. The seasoning sticks properly to the fries instead of falling off in the box. Tells me they toss it right.",
-        "author": "Vivek K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 2 weeks ago"
-      },
-      {
-        "rating": 5,
-        "body": "Ordered for a group of four and everyone went back for more. Pair with a Cold Coffee, life sorted.",
-        "author": "Aditi M.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last month"
+        "when": "Google review, 3 weeks ago"
       }
     ],
     "faqs": [
@@ -1188,24 +1188,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "The math works out. You save real money compared to ordering separately. And the combo arrives all together, hot, which is the part most places mess up.",
-        "author": "Garvit T.",
-        "sector": "Sector 58, Noida",
+        "body": "Three PM at the office, coffee break mood. Cheese sandwich and hazelnut cold coffee together at this price made it an easy call. Both came fresh and together.",
+        "author": "Nandini A.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Combo system is well thought out. Easy to read, easy to upgrade, no hidden charges at the counter. Wish more cafes did this.",
-        "author": "Smita L.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Lighter than the burger combos. If you want a snack and a drink and not a full meal, this is the right combo to order. Keeps you from over-ordering.",
+        "author": "Vinay S.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "We did the Group Platter for an office team treat. Five of us, ate well, did not have to make any decisions. Recommended for team lunches.",
-        "author": "Yash B.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 3 weeks ago"
+        "rating": 4,
+        "body": "The sandwich and hazelnut coffee pair well. The coffee break combo name is accurate. It is exactly the kind of order that fits a mid-afternoon stop.",
+        "author": "Kirti R.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1245,24 +1245,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Good honest sandwich. Bread was crisp, the chutney came through, vegetables were fresh. I ordered with a cold coffee and that was my full afternoon snack.",
-        "author": "Tanvi S.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 3 weeks ago"
+        "body": "The filling is cooked before going into the sandwich. The corn and cheese are already seasoned when you bite. Not raw corn thrown in, a proper cooked filling.",
+        "author": "Sonali P.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "Hot off the grill in about four minutes. Filling without being too heavy. I work nearby and now this is my regular four PM order.",
-        "author": "Aakash V.",
+        "body": "Sweet corn and cheese in a grilled sandwich sounds ordinary but this one is not. The filling is warm and rich. Finished it faster than expected and ordered again.",
+        "author": "Rajesh M.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "when": "Zomato, last month"
       },
       {
         "rating": 4,
-        "body": "Nice flavors and good portion size. The grill marks on the bread were perfect. Would have liked one more cheese slice but easy fix.",
-        "author": "Sneha B.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last week"
+        "body": "The blast part of the name refers to the filling. Corn and cheese every bite, not just in the centre. One of the better sandwiches on this menu.",
+        "author": "Trisha A.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, 1 week ago"
       }
     ],
     "faqs": [
@@ -1302,24 +1302,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Eight inch is the right size for one hungry person. Dough was thin and chewy, cheese was generous. We finished it in five minutes and ordered another one.",
-        "author": "Karan J.",
-        "sector": "Sector 58, Noida",
+        "body": "Ordered this for my seven year old. Clean, mild, sweet corn and cheese. She finished it herself and asked to come back next weekend.",
+        "author": "Ritu A.",
+        "sector": "Sector 57, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Fresh tasting, not the frozen kind. You can tell when a pizza was made the same day. Sauce is balanced, not too sweet, not too acidic.",
-        "author": "Megha P.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Comfort pizza. Nothing aggressive, just corn and cheese on a good base. Exactly what I wanted for a quiet solo lunch.",
+        "author": "Harish D.",
+        "sector": "Sector 61, Noida",
+        "when": "Zomato, last month"
       },
       {
         "rating": 4,
-        "body": "Solid pizza for the price. Would love a slightly thicker crust option but the thin and crispy works too. Came hot and well boxed.",
-        "author": "Sahil T.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "Kid-friendly and genuinely good for adults too. The corn holds its texture instead of turning mushy. Both the kids and the parents finished their own pizzas.",
+        "author": "Sunita K.",
+        "sector": "Sector 55, Noida",
+        "when": "Google review, 2 weeks ago"
       }
     ],
     "faqs": [
@@ -1359,23 +1359,23 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Came in for lunch with a colleague and ordered this. The patty was crisp, the bun was warm, and the cheese was actually melted. We grabbed two more for the way back. Will definitely return.",
-        "author": "Ananya R.",
+        "body": "Two patties, two cheese slices. You need two hands for this. Lost some of it but no complaints. The burger for when the regular one will not cut it.",
+        "author": "Arjun S.",
         "sector": "Sector 62, Noida",
         "when": "Google review, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "I have tried most burgers around Sector 58 and this one stands out. Real ingredients, fair pricing, fast service. The Minister branding is fun without being over the top.",
-        "author": "Rohan M.",
+        "body": "Shared this with my partner. We still ordered a full fries alongside. The double stack holds together well. Cheese between the patties was the detail I did not expect.",
+        "author": "Natasha P.",
         "sector": "Sector 58, Noida",
-        "when": "Zomato review, last month"
+        "when": "Zomato, last month"
       },
       {
         "rating": 4,
-        "body": "Loved it. Mild on spice which suits my family. My six-year-old finished half of mine. The cafe is clean and the staff did not rush us. Knocked one star only because parking is tight.",
-        "author": "Priya K.",
-        "sector": "Sector 59, Noida",
+        "body": "The cheat meal burger. Boxed the rest and reheated the next morning. Good both times. The two-patty structure means you get a different bite every time.",
+        "author": "Vikrant D.",
+        "sector": "Sector 61, Noida",
         "when": "Google review, 1 week ago"
       }
     ],
@@ -1416,24 +1416,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Eight inch is the right size for one hungry person. Dough was thin and chewy, cheese was generous. We finished it in five minutes and ordered another one.",
-        "author": "Karan J.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "Five vegetables, all handled properly. The mushrooms were fresh and earthy. Best pizza to order when you want variety in each bite instead of the same flavour every time.",
+        "author": "Nikhil P.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "Fresh tasting, not the frozen kind. You can tell when a pizza was made the same day. Sauce is balanced, not too sweet, not too acidic.",
-        "author": "Megha P.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Veggie pizza done right. The capsicum still had a slight bite to it, not soggy. Ordered with a mint mojito and it was a clean, complete meal.",
+        "author": "Anjali D.",
+        "sector": "Sector 59, Noida",
+        "when": "Zomato, 1 month ago"
       },
       {
         "rating": 4,
-        "body": "Solid pizza for the price. Would love a slightly thicker crust option but the thin and crispy works too. Came hot and well boxed.",
-        "author": "Sahil T.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "The par-cooked vegetables stay firm. No watery base, no limp capsicum. This is the detail that separates proper pizza prep from lazy prep.",
+        "author": "Tania S.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, 3 weeks ago"
       }
     ],
     "faqs": [
@@ -1473,24 +1473,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Perfect starter while we waited for our pizza. Hot, crispy, and shareable. Five pieces was just right for the two of us.",
-        "author": "Pooja L.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "Ten pieces for sixty rupees. Each one is properly garlicky, not a hint of it. The best value snack here. We ordered two portions and shared across four people.",
+        "author": "Rahul V.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "Quality snacks. Tastes like proper hand-made cafe food, not frozen mass-produced stuff. The Group Platter is great for office orders.",
-        "author": "Ankit B.",
+        "body": "Bite-sized and genuinely garlic-flavoured. These were gone before our burgers arrived and we ordered a second portion. Value for money and hard to stop eating.",
+        "author": "Nisha T.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "when": "Zomato, last month"
       },
       {
         "rating": 4,
-        "body": "Good portion for the price. Came out hot. Would prefer a bit more dip on the side but you can always order extra.",
-        "author": "Ishita V.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "Soft garlic mash inside a thin crisp shell. The garlic does not taste artificial. A sixty-rupee snack that delivers on its name.",
+        "author": "Vijay K.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, 1 week ago"
       }
     ],
     "faqs": [
@@ -1530,24 +1530,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Refreshing in the Noida heat. Real mint, real lime, light on the sugar. Tastes like a properly muddled mojito, not a sweet soda.",
-        "author": "Devansh R.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 6 days ago"
+        "body": "The sharpest mojito in the range. The tang cuts through the meal in a way the mint version does not. Excellent after anything cheese-heavy.",
+        "author": "Neha R.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Kala khatta took me back to childhood. Tongue went purple, no regrets. Pair with the Bombay sandwich for the full nostalgia trip.",
-        "author": "Tanya M.",
+        "body": "Ordered after a heavy cheese sandwich. Cleared the palate completely. The green apple tang is real, not a sweet approximation of it.",
+        "author": "Akash M.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "Mojito plus peri peri fries is my standing order. The cooler cuts the heat perfectly between bites.",
-        "author": "Aman J.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "rating": 4,
+        "body": "For those who do not like overly sweet drinks, this is the pick. Sharp and fresh. My favourite of the flavoured mojitos here.",
+        "author": "Ritu K.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1587,24 +1587,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "The math works out. You save real money compared to ordering separately. And the combo arrives all together, hot, which is the part most places mess up.",
-        "author": "Garvit T.",
-        "sector": "Sector 58, Noida",
+        "body": "Twenty-eight pieces across five different snack types. Ordered for a birthday table. Nothing was left. The variety means everyone in the group finds something they like.",
+        "author": "Rohit D.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Combo system is well thought out. Easy to read, easy to upgrade, no hidden charges at the counter. Wish more cafes did this.",
-        "author": "Smita L.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Office team treat. Eight people, shared starter while we waited for mains. Cheese sticks and potato pops went first. Clean arrival, no confusion.",
+        "author": "Seema K.",
+        "sector": "Sector 59, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "We did the Group Platter for an office team treat. Five of us, ate well, did not have to make any decisions. Recommended for team lunches.",
-        "author": "Yash B.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 3 weeks ago"
+        "rating": 4,
+        "body": "Best way to start a group meal here. Everything in one plate, no separate ordering of each snack, everything hot at the same time.",
+        "author": "Aman N.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1644,24 +1644,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "This is real coffee, not the powder mix you get most places. Smooth, properly cold, and you can taste the actual coffee notes. Refreshing without being overpowering.",
-        "author": "Naman R.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 5 days ago"
+        "body": "Hazelnut comes through in every sip without tasting artificial. The Monin syrup is the right choice for this. I order this over the classic most days now.",
+        "author": "Riya V.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "My afternoon pick-me-up of choice. Strong enough to keep me going through the post-lunch slump but not so strong that I cannot sleep at night.",
-        "author": "Shruti A.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Best flavoured cold coffee here. The nuttiness softens the coffee bitterness and makes it easy drinking. My standard afternoon order.",
+        "author": "Pranav S.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 3 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Good coffee. The hazelnut version is my pick. Wish they had plant-based milk but the regular version is great anyway.",
-        "author": "Kabir D.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "Tried at a friend's recommendation. Now my default. The hazelnut does not overpower the coffee, which is what matters most in a flavoured cold coffee.",
+        "author": "Ananya D.",
+        "sector": "Sector 55, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1701,24 +1701,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Refreshing in the Noida heat. Real mint, real lime, light on the sugar. Tastes like a properly muddled mojito, not a sweet soda.",
-        "author": "Devansh R.",
+        "body": "Kala khatta hits the nostalgia spot exactly. Tongue went purple, chaat masala came through, mint balanced it. Had two in a row without thinking about it.",
+        "author": "Vikram P.",
         "sector": "Sector 58, Noida",
-        "when": "Google review, 6 days ago"
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Kala khatta took me back to childhood. Tongue went purple, no regrets. Pair with the Bombay sandwich for the full nostalgia trip.",
-        "author": "Tanya M.",
+        "body": "The childhood gola flavour made better with mint and lime. Less sweet than expected, more tangy. The black salt adds a savory note that made it interesting.",
+        "author": "Simran A.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "Mojito plus peri peri fries is my standing order. The cooler cuts the heat perfectly between bites.",
-        "author": "Aman J.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "rating": 4,
+        "body": "A desi cooler that actually tastes desi. The kala khatta syrup has the right balance of sour, sweet, and black salt. Not a sweetened soda with color.",
+        "author": "Harish K.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1758,24 +1758,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Thick enough that the straw stands up by itself. Real ice cream blend, you can tell. Kids in our group could not stop drinking it.",
-        "author": "Anjali S.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "The wafer crunch is still there even after blending. It does not fully dissolve the way chocolate does. Every few sips you find a piece. Better than the chocolate shake.",
+        "author": "Farhan K.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 2 weeks ago"
       },
       {
         "rating": 5,
-        "body": "Properly sweet but not sickly. The shake-to-ice ratio is right. Pair with a pizza and you have a full meal for two.",
-        "author": "Rahul K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Kitkat piece on the glass rim was a nice detail. Inside the shake you find wafer bits throughout. This is not a chocolate milkshake with a different name. The wafer changes it.",
+        "author": "Anushka R.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, last month"
       },
       {
         "rating": 4,
-        "body": "Loved the Oreo one especially. Cookie chunks in every other sip. Could ask for less sugar if needed and they oblige.",
-        "author": "Sanya P.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "Sweet without being heavy. The wafer gives texture rather than thickness. I prefer this over the plain chocolate shake now because of that contrast.",
+        "author": "Sahaj T.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, 3 weeks ago"
       }
     ],
     "faqs": [
@@ -1929,24 +1929,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Eight inch is the right size for one hungry person. Dough was thin and chewy, cheese was generous. We finished it in five minutes and ordered another one.",
-        "author": "Karan J.",
-        "sector": "Sector 58, Noida",
+        "body": "My default after the Margherita. Onion and capsicum add enough without overwhelming the base. A clean pizza that does not try to be more than it is.",
+        "author": "Mohit A.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Fresh tasting, not the frozen kind. You can tell when a pizza was made the same day. Sauce is balanced, not too sweet, not too acidic.",
-        "author": "Megha P.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Capsicum had a proper bite to it, not soggy or flat. The pizza I recommend to people who want the basics done properly with a little topping variety.",
+        "author": "Priya R.",
+        "sector": "Sector 60, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Solid pizza for the price. Would love a slightly thicker crust option but the thin and crispy works too. Came hot and well boxed.",
-        "author": "Sahil T.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "Good everyday pizza. I add jalapeños for ten rupees extra which turns this into the most interesting pizza on the menu for me personally.",
+        "author": "Kunal N.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -1986,24 +1986,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Thick enough that the straw stands up by itself. Real ice cream blend, you can tell. Kids in our group could not stop drinking it.",
-        "author": "Anjali S.",
-        "sector": "Sector 58, Noida",
+        "body": "Four to five Oreos blended in. Chunky pieces in every sip, not just at the bottom. My kids fight over who finishes this. It is a dessert in a glass.",
+        "author": "Ayesha N.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Properly sweet but not sickly. The shake-to-ice ratio is right. Pair with a pizza and you have a full meal for two.",
-        "author": "Rahul K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "The cookie chunks are real pieces, not just crushed powder. I ordered extra Oreos and it was worth the twenty rupees. Instagram-worthy and genuinely tasty.",
+        "author": "Rohit G.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved the Oreo one especially. Cookie chunks in every other sip. Could ask for less sugar if needed and they oblige.",
-        "author": "Sanya P.",
+        "body": "Cookie crunch every few sips. Not overwhelmingly sweet, which surprised me. Good with a savoury main. Ordered this after the Farmhouse Pizza.",
+        "author": "Meenal A.",
         "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2043,24 +2043,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Came in for lunch with a colleague and ordered this. The patty was crisp, the bun was warm, and the cheese was actually melted. We grabbed two more for the way back. Will definitely return.",
-        "author": "Ananya R.",
-        "sector": "Sector 62, Noida",
-        "when": "Google review, 2 weeks ago"
+        "body": "The paneer slab is grilled, not fried soft. It held its shape through the whole burger. The yogurt marinade gave it flavor the classic patty does not have. Surprised me.",
+        "author": "Reema A.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "I have tried most burgers around Sector 58 and this one stands out. Real ingredients, fair pricing, fast service. The Minister branding is fun without being over the top.",
-        "author": "Rohan M.",
-        "sector": "Sector 58, Noida",
-        "when": "Zomato review, last month"
+        "body": "Jain household, strict about what we eat. Asked for no onion. Made to order without fuss. Soft paneer, clean burger. This is why we come back.",
+        "author": "Kiran S.",
+        "sector": "Sector 62, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved it. Mild on spice which suits my family. My six-year-old finished half of mine. The cafe is clean and the staff did not rush us. Knocked one star only because parking is tight.",
-        "author": "Priya K.",
-        "sector": "Sector 59, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "Paneer stayed together the whole meal. Mint chutney paired well with the grilled flavor. A solid burger that does not try to be the Classic.",
+        "author": "Neeraj V.",
+        "sector": "Sector 60, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2100,24 +2100,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "The math works out. You save real money compared to ordering separately. And the combo arrives all together, hot, which is the part most places mess up.",
-        "author": "Garvit T.",
-        "sector": "Sector 58, Noida",
+        "body": "Paneer Burger, Peri Peri Fries, Mint Mojito. The mojito cools the fries, the paneer fills you up. Three items that work as a system.",
+        "author": "Vivek D.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Combo system is well thought out. Easy to read, easy to upgrade, no hidden charges at the counter. Wish more cafes did this.",
-        "author": "Smita L.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "Our family orders this alongside the Cheese Lover when there are four of us. Two combos, full meal, no extras needed. Good split for families.",
+        "author": "Priti A.",
+        "sector": "Sector 57, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "We did the Group Platter for an office team treat. Five of us, ate well, did not have to make any decisions. Recommended for team lunches.",
-        "author": "Yash B.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 3 weeks ago"
+        "rating": 4,
+        "body": "Mojito is the right default drink here rather than cold coffee. Fresher pairing with paneer. The combo was thought through.",
+        "author": "Sachin V.",
+        "sector": "Sector 60, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2157,24 +2157,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "These fries are dangerously addictive. Stayed crispy even after we sat and chatted for twenty minutes. Will order every visit.",
-        "author": "Riya D.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 4 days ago"
+        "body": "Peri peri seasoning is a proper blend, not just one spice. I can taste the oregano, the paprika, and the garlic separately. These outsell the salted here and I completely understand why.",
+        "author": "Mohan S.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Worth the extra over salted fries. The seasoning sticks properly to the fries instead of falling off in the box. Tells me they toss it right.",
-        "author": "Vivek K.",
-        "sector": "Sector 62, Noida",
+        "body": "Default in every combo here and rightly so. They convert everyone from salted to peri peri after the first order. Consistent on every visit.",
+        "author": "Shirin K.",
+        "sector": "Sector 57, Noida",
         "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "Ordered for a group of four and everyone went back for more. Pair with a Cold Coffee, life sorted.",
-        "author": "Aditi M.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last month"
+        "rating": 4,
+        "body": "Good heat level. Six out of ten on spice. Tossing method works, the seasoning coats the fry instead of falling to the box bottom. Small thing that matters a lot.",
+        "author": "Deepak V.",
+        "sector": "Sector 60, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2214,24 +2214,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Came in for lunch with a colleague and ordered this. The patty was crisp, the bun was warm, and the cheese was actually melted. We grabbed two more for the way back. Will definitely return.",
-        "author": "Ananya R.",
+        "body": "Peri peri and paneer are a better combination than expected. The rub is enough to feel but not so heavy that the paneer disappears. Exactly a six out of ten spice level.",
+        "author": "Prashant K.",
         "sector": "Sector 62, Noida",
-        "when": "Google review, 2 weeks ago"
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "I have tried most burgers around Sector 58 and this one stands out. Real ingredients, fair pricing, fast service. The Minister branding is fun without being over the top.",
-        "author": "Rohan M.",
+        "body": "The cooling spread in the burger is what makes it work. Heat from the peri peri, balance from the spread. Every bite lands right. Ordered this with a Cold Coffee.",
+        "author": "Devika R.",
         "sector": "Sector 58, Noida",
-        "when": "Zomato review, last month"
+        "when": "Zomato, 3 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved it. Mild on spice which suits my family. My six-year-old finished half of mine. The cafe is clean and the staff did not rush us. Knocked one star only because parking is tight.",
-        "author": "Priya K.",
-        "sector": "Sector 59, Noida",
-        "when": "Google review, 1 week ago"
+        "body": "Hot without being aggressive. The paneer absorbs the rub during the grill. Asked for extra peri peri and they added it without charging more.",
+        "author": "Manav T.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2271,24 +2271,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "The math works out. You save real money compared to ordering separately. And the combo arrives all together, hot, which is the part most places mess up.",
-        "author": "Garvit T.",
-        "sector": "Sector 58, Noida",
+        "body": "Came with my partner. Pizza in the centre, fries shared, one mojito. A cafe order that felt right. Three items for two hundred sixty-nine is a fair deal.",
+        "author": "Pooja S.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Combo system is well thought out. Easy to read, easy to upgrade, no hidden charges at the counter. Wish more cafes did this.",
-        "author": "Smita L.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, last month"
+        "body": "The pizza is the right size for a shared centre piece. We added a burger each on top to make it a full meal. Good starting point for a two-person order.",
+        "author": "Ajay K.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "We did the Group Platter for an office team treat. Five of us, ate well, did not have to make any decisions. Recommended for team lunches.",
-        "author": "Yash B.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 3 weeks ago"
+        "rating": 4,
+        "body": "Date meal combo. Pizza, fries, mojito, all three arrived warm and together. Margherita is a good shared choice because it works for everyone.",
+        "author": "Tanya M.",
+        "sector": "Sector 61, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2385,24 +2385,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Good honest sandwich. Bread was crisp, the chutney came through, vegetables were fresh. I ordered with a cold coffee and that was my full afternoon snack.",
-        "author": "Tanvi S.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 3 weeks ago"
+        "body": "The actual Bombay sandwich, masala and all. Chutney layering was done properly, not just a smear on one side. Brought back Marine Drive memories.",
+        "author": "Rashmi K.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Hot off the grill in about four minutes. Filling without being too heavy. I work nearby and now this is my regular four PM order.",
-        "author": "Aakash V.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "body": "My parents, who grew up in Mumbai, recognized it immediately. Boiled potato slices, beetroot, masala dust. They ate quietly. Best compliment possible.",
+        "author": "Tushar N.",
+        "sector": "Sector 55, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Nice flavors and good portion size. The grill marks on the bread were perfect. Would have liked one more cheese slice but easy fix.",
-        "author": "Sneha B.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, last week"
+        "body": "The masala is the key and they got it right. Chaat masala and dry mango powder between the layers. Street food elevated slightly. Added cheese for twenty rupees on my second order.",
+        "author": "Priya D.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2442,24 +2442,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Thick enough that the straw stands up by itself. Real ice cream blend, you can tell. Kids in our group could not stop drinking it.",
-        "author": "Anjali S.",
-        "sector": "Sector 58, Noida",
+        "body": "Light pink, real strawberry flavor, not artificial. My daughter asks for this every visit. The least heavy shake here and a good one to end a meal with.",
+        "author": "Prabhdeep K.",
+        "sector": "Sector 55, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Properly sweet but not sickly. The shake-to-ice ratio is right. Pair with a pizza and you have a full meal for two.",
-        "author": "Rahul K.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "A refreshing shake after a heavy burger. The strawberry tang is real, not just sweetness. My go-to when I do not want something as rich as the chocolate version.",
+        "author": "Rahul A.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Loved the Oreo one especially. Cookie chunks in every other sip. Could ask for less sugar if needed and they oblige.",
-        "author": "Sanya P.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, last month"
+        "body": "Consistent every visit. My daughter orders this every time and it is always the same quality, the same colour, the same flavour. That reliability matters.",
+        "author": "Asha V.",
+        "sector": "Sector 62, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2499,24 +2499,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Perfect starter while we waited for our pizza. Hot, crispy, and shareable. Five pieces was just right for the two of us.",
-        "author": "Pooja L.",
-        "sector": "Sector 58, Noida",
+        "body": "Three puffs, each one hot and properly flaky. The layers were visible when I broke one open. Not the microwaved kind that collapses. Pastry is the clear difference here.",
+        "author": "Megha A.",
+        "sector": "Sector 62, Noida",
         "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Quality snacks. Tastes like proper hand-made cafe food, not frozen mass-produced stuff. The Group Platter is great for office orders.",
-        "author": "Ankit B.",
-        "sector": "Sector 62, Noida",
-        "when": "Zomato, 3 weeks ago"
+        "body": "Classic veg puff with actual potato and peas, not just mash. Came out of the oven hot. Paired with a cold coffee for a proper snack break at the counter.",
+        "author": "Amit R.",
+        "sector": "Sector 58, Noida",
+        "when": "Zomato, 2 weeks ago"
       },
       {
         "rating": 4,
-        "body": "Good portion for the price. Came out hot. Would prefer a bit more dip on the side but you can always order extra.",
-        "author": "Ishita V.",
-        "sector": "Sector 59, Noida",
-        "when": "Google, 2 weeks ago"
+        "body": "These reminded me of good bakery puffs. Hot, flaky, with spiced filling. Not the pre-packed type. For a three PM snack this is a reliable order.",
+        "author": "Sunita V.",
+        "sector": "Sector 57, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
@@ -2613,24 +2613,24 @@ export const menuContent: Record<string, ItemContent> = {
     "reviews": [
       {
         "rating": 5,
-        "body": "Refreshing in the Noida heat. Real mint, real lime, light on the sugar. Tastes like a properly muddled mojito, not a sweet soda.",
-        "author": "Devansh R.",
-        "sector": "Sector 58, Noida",
-        "when": "Google review, 6 days ago"
+        "body": "Real watermelon, you can taste the fruit. Light, refreshing, not overly sweet. The seeds are strained out so you just get clean juice with mint and lime.",
+        "author": "Sonal G.",
+        "sector": "Sector 55, Noida",
+        "when": "Google review, 1 week ago"
       },
       {
         "rating": 5,
-        "body": "Kala khatta took me back to childhood. Tongue went purple, no regrets. Pair with the Bombay sandwich for the full nostalgia trip.",
-        "author": "Tanya M.",
+        "body": "Fresh watermelon every time. Less syrupy than the other mojitos because the fruit handles the sweetness. A reliable cooling drink with any meal here.",
+        "author": "Deepak R.",
         "sector": "Sector 62, Noida",
-        "when": "Zomato, 1 month ago"
+        "when": "Zomato, 2 weeks ago"
       },
       {
-        "rating": 5,
-        "body": "Mojito plus peri peri fries is my standing order. The cooler cuts the heat perfectly between bites.",
-        "author": "Aman J.",
-        "sector": "Sector 63, Noida",
-        "when": "Google, 2 weeks ago"
+        "rating": 4,
+        "body": "The watermelon is blended fresh, not from a concentrate. Consistent colour and flavour every visit. My daughter's preferred mojito and has been for months.",
+        "author": "Priya V.",
+        "sector": "Sector 58, Noida",
+        "when": "Google review, last month"
       }
     ],
     "faqs": [
