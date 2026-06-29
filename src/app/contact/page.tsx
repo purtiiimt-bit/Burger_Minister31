@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { BreadcrumbSchema } from "@/components/Schema";
+import { realPhotos } from "@/lib/images";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -150,19 +152,23 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Storefront — what to look for */}
       <section className="px-4 pb-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl bg-surface-container">
-          <div className="flex h-72 items-center justify-center text-on-surface/20 sm:h-96">
-            <div className="text-center">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
-              </svg>
-              <p className="mt-3 font-[var(--font-heading)] text-lg font-semibold">
-                Sector 58, Noida
+          <div className="relative h-72 sm:h-96">
+            <Image
+              src={realPhotos.storefrontDay}
+              alt="Burger Minister storefront and signboard at D13 Bhaiji Market, Sector 58 Noida"
+              fill
+              sizes="(min-width:1280px) 1216px, 100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 sm:p-8">
+              <p className="font-[var(--font-heading)] text-lg font-bold text-white">
+                Look for the Burger Minister sign
               </p>
-              <p className="mt-1 text-sm">
-                Near C Block Market
+              <p className="mt-1 text-sm text-white/80">
+                D13, Bhaiji Market, Sector 58, Noida. Ground floor, D Block side.
               </p>
             </div>
           </div>

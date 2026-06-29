@@ -57,3 +57,23 @@ export const images = {
   birthdayParty: u("1530103862676-de8c9debad1d", 800),
   bulkOrder: u("1555396273-367ea4eb4db5", 800),
 };
+
+// Real photos of the actual outlet (D13 Bhaiji Market, Sector 58 Noida).
+// Local, optimized WebP under /public/photos. Used on About + Contact pages
+// where authentic, on-location imagery beats stock (trust / local E-E-A-T).
+const p = (file: string) => `/photos/${file}`;
+
+export const realPhotos = {
+  owner: p("burger-minister-owner-sector-58-noida.webp"),
+  welcome: p("burger-minister-pure-veg-cafe-welcome-noida.webp"),
+  happyCustomers: p("burger-minister-happy-customers-noida.webp"),
+  tableService: p("burger-minister-table-service-sector-58.webp"),
+  interiorBusy: p("burger-minister-cafe-interior-sector-58-noida.webp"),
+  interiorSeating: p("burger-minister-dine-in-seating-noida.webp"),
+  interiorAmbience: p("burger-minister-cafe-ambience-noida.webp"),
+  storefrontNight: p("burger-minister-storefront-night-bhaiji-market.webp"),
+  storefrontDay: p("burger-minister-storefront-sector-58-noida.webp"),
+  vegPizza: p("burger-minister-veg-pizza-noida.webp"),
+  freshPizza: p("burger-minister-fresh-pizza-sector-58.webp"),
+  periPeriCheeseFries: p("burger-minister-peri-peri-cheese-fries-noida.webp"),
+};

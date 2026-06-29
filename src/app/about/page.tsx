@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { images } from "@/lib/images";
+import { realPhotos } from "@/lib/images";
 import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/Schema";
 
@@ -120,8 +120,8 @@ export default function AboutPage() {
             </div>
             <div className="relative h-80 overflow-hidden rounded-2xl lg:h-[500px]">
               <Image
-                src={images.kitchen}
-                alt="Burger Minister kitchen at D13 Bhaiji Market Sector 58 Noida"
+                src={realPhotos.storefrontNight}
+                alt="Burger Minister storefront at night, D13 Bhaiji Market, Sector 58 Noida"
                 fill
                 sizes="(min-width:1024px) 50vw, 100vw"
                 className="object-cover"
@@ -137,8 +137,8 @@ export default function AboutPage() {
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="order-2 lg:order-1 relative h-72 overflow-hidden rounded-2xl lg:h-96">
               <Image
-                src={images.heroBg}
-                alt="Pure vegetarian burgers and food at Burger Minister Sector 58 Noida"
+                src={realPhotos.vegPizza}
+                alt="Fresh 100% vegetarian pizza with onion and capsicum at Burger Minister Sector 58 Noida"
                 fill
                 sizes="(min-width:1024px) 50vw, 100vw"
                 className="object-cover"
@@ -239,6 +239,103 @@ export default function AboutPage() {
                 <p className="mt-2 text-sm leading-relaxed text-on-surface/60">
                   {v.description}
                 </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The People Behind It */}
+      <section className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-center font-[var(--font-heading)] text-3xl font-bold">
+            The People <span className="text-primary">Behind It</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-on-surface/60">
+            No call centre, no faceless chain. A small team that cooks, serves, and
+            shows up at D13 Bhaiji Market every day from 11 AM to 11 PM.
+          </p>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                src: realPhotos.owner,
+                alt: "Owner of Burger Minister at the counter, Sector 58 Noida",
+                caption: "The Minister himself, at the counter most evenings.",
+              },
+              {
+                src: realPhotos.welcome,
+                alt: "Burger Minister staff welcoming guests to the pure veg cafe, Sector 58 Noida",
+                caption: "100% pure veg, and you are always welcome.",
+              },
+              {
+                src: realPhotos.tableService,
+                alt: "Food served fresh to a table at Burger Minister, Sector 58 Noida",
+                caption: "Made to order, brought to your table.",
+              },
+              {
+                src: realPhotos.happyCustomers,
+                alt: "Happy customers at Burger Minister, Sector 58 Noida",
+                caption: "Students, families and office crews. Our regulars.",
+              },
+            ].map((person) => (
+              <figure
+                key={person.src}
+                className="overflow-hidden rounded-2xl bg-surface-container"
+              >
+                <div className="relative aspect-[3/4]">
+                  <Image
+                    src={person.src}
+                    alt={person.alt}
+                    fill
+                    sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <figcaption className="p-4 text-sm leading-relaxed text-on-surface/70">
+                  {person.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Inside the Cafe */}
+      <section className="border-y border-outline-variant/10 bg-surface-container-low/40 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-center font-[var(--font-heading)] text-3xl font-bold">
+            Inside the <span className="text-primary">Cafe</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-on-surface/60">
+            Pure veg, fully air-cooled, and built for hanging out, whether it is a
+            quick solo lunch or a full table of friends after work.
+          </p>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                src: realPhotos.interiorBusy,
+                alt: "Busy dine-in seating at Burger Minister pure veg cafe, Sector 58 Noida",
+              },
+              {
+                src: realPhotos.interiorAmbience,
+                alt: "Green wall seating and cafe ambience at Burger Minister, Sector 58 Noida",
+              },
+              {
+                src: realPhotos.interiorSeating,
+                alt: "Clean dine-in seating area at Burger Minister, Sector 58 Noida",
+              },
+            ].map((shot) => (
+              <div
+                key={shot.src}
+                className="relative aspect-[4/3] overflow-hidden rounded-2xl"
+              >
+                <Image
+                  src={shot.src}
+                  alt={shot.alt}
+                  fill
+                  sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                  className="object-cover"
+                />
               </div>
             ))}
           </div>
