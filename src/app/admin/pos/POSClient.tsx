@@ -604,7 +604,7 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
 
       <aside
         className={`fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white shadow-[0_-16px_34px_rgba(0,0,0,0.2)] transition-all md:static md:row-span-2 md:row-start-2 md:grid md:h-auto md:grid-rows-[auto_minmax(0,1fr)_auto] md:border-l md:border-black/10 md:shadow-none ${
-          billOpen ? "h-[min(470px,72vh)]" : "h-[74px]"
+          billOpen ? "h-[88vh]" : "h-[74px]"
         }`}
       >
         <button
@@ -694,10 +694,8 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
               )}
             </div>
           )}
-        </div>
 
-        <div className={`${billOpen ? "block" : "hidden"} shrink-0 border-t border-black/10 p-3 md:block`}>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="mt-3 grid grid-cols-3 gap-2">
             {[0, 5, 10, 30].map((percent) => (
               <button
                 key={percent}
@@ -743,8 +741,10 @@ function POSPanel({ onLogout }: { onLogout: () => void }) {
               </button>
             ))}
           </div>
+        </div>
 
-          <div className="mt-3 rounded-lg bg-[#faf7f0] p-3">
+        <div className={`${billOpen ? "block" : "hidden"} shrink-0 border-t border-black/10 p-3 md:block`}>
+          <div className="rounded-lg bg-[#faf7f0] p-3">
             <Row label="Items" value={String(totalQty)} />
             <Row label="Subtotal" value={money(subtotal)} />
             {discountAmount > 0 && <Row label="Discount" value={`-${money(discountAmount)}`} />}
